@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Common.Abstractions.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;

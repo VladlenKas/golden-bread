@@ -1,5 +1,4 @@
-﻿using GoldenBread.Application.Repositories;
-using GoldenBread.Domain.Enums;
+﻿using GoldenBread.Domain.Enums;
 using GoldenBread.Infrastructure.Data;
 using GoldenBread.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using GoldenBread.Application.Services;
 using GoldenBread.Infrastructure.Services;
+using GoldenBread.Application.Common.Abstractions.Repositories;
 
 
 namespace GoldenBread.Infrastructure;

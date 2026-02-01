@@ -1,6 +1,6 @@
 ﻿using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Application.Repositories;
+namespace GoldenBread.Application.Common.Abstractions.Repositories;
 
 public interface IUserRepository
 {

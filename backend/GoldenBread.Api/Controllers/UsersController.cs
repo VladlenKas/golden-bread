@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GoldenBread.Contracts.Requests;
-using GoldenBread.Application.UseCases;
 
 namespace GoldenBread.Api.Controllers;
 

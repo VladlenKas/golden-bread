@@ -1,6 +1,7 @@
 using GoldenBread.Api.Extensions;
 using GoldenBread.Application;
 using GoldenBread.Infrastructure;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,5 +1,4 @@
-﻿using GoldenBread.Application.UseCases;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace GoldenBread.Api.Controllers;
 

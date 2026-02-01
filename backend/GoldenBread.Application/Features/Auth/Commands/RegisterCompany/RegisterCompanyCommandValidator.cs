@@ -1,11 +1,16 @@
 ﻿using FluentValidation;
-using GoldenBread.Application.Repositories;
-using GoldenBread.Contracts.Requests;
-namespace GoldenBread.Application.Validators;
+using GoldenBread.Application.Common.Abstractions.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class CompanyValidator : AbstractValidator<RegisterCompanyRequest>
+namespace GoldenBread.Application.Features.Auth.Commands;
+
+public class RegisterCompanyCommandValidator : AbstractValidator<RegisterCompanyCommand>
 {
-    public CompanyValidator(
+    public RegisterCompanyCommandValidator( 
         IAccountRepository accountRepository,
         ICompanyRepository companyRepository)
     {
@@ -46,19 +51,6 @@ public class CompanyValidator : AbstractValidator<RegisterCompanyRequest>
             .MustAsync(async (command, ogrn, ct) =>
                 await companyRepository.GetByOgrnAsync(ogrn) == null)
                 .WithMessage("Компания с таким ОГРН уже зарегистрирована");
-
-
-        //RuleFor(x => x.Phone)
-        //    .MustAsync(async (command, phone, ct) =>
-        //        await companyRepository.GetByPhoneAsync(phone!) == null)
-        //    .WithMessage("Phone already exists")
-        //    .When(x => !string.IsNullOrWhiteSpace(x.Phone));
-
-        //RuleFor(x => x.Address)
-        //    .MustAsync(async (command, address, ct) =>
-        //        await companyRepository.GetByAddressAsync(address!) == null)
-        //    .WithMessage("Address already exists")
-        //    .When(x => !string.IsNullOrWhiteSpace(x.Address));
 
         RuleFor(x => x.Password)
             .NotEmpty()

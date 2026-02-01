@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
-using GoldenBread.Application;
-using GoldenBread.Infrastructure;
-using Scalar.AspNetCore;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using GoldenBread.Application.Common.Behaviors;
+using MediatR;
+using System.Reflection;
 
 namespace GoldenBread.Api.Extensions;
 
@@ -10,10 +9,15 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApi(this IServiceCollection services)
     {
+        //services.AddMediatR(cfg =>
+        //{
+        //    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        //    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+        //});
+
         services.AddProblemDetails();
         services.AddExceptionHandler<GlobalExceptionHandler>();
 
-        services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<Program>();
 
         services.AddControllers();

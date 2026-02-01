@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoldenBread.Application.Services;
+namespace GoldenBread.Application.Common.Abstractions.Services;
 
 public interface IJwtService
 {

@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Repositories;
+﻿using GoldenBread.Application.Common.Abstractions.Repositories;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
 using GoldenBread.Infrastructure.Data;
