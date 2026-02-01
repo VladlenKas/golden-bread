@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="backend/GoldenBread.Api/GoldenBread.Api.csproj" />
+  <Project Path="backend/GoldenBread.Application/GoldenBread.Application.csproj" />
+  <Project Path="backend/GoldenBread.Contracts/GoldenBread.Contracts.csproj" Id="7eb9d10e-18c3-4e95-aa88-ad9b6baba190" />
+  <Project Path="backend/GoldenBread.Domain/GoldenBread.Domain.csproj" />
+  <Project Path="backend/GoldenBread.Persistence/GoldenBread.Infrastructure.csproj" Id="5d17f648-35e2-4b6e-8870-c7ebfa986224" />
+  <Project Path="desktop/GoldenBread.Desktop/GoldenBread.Desktop.csproj" />
+</Solution>

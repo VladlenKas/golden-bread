@@ -1,0 +1,23 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="GoldenBread.Desktop.App"
+             xmlns:local="using:GoldenBread.Desktop"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:suki="clr-namespace:SukiUI;assembly=SukiUI"
+             RequestedThemeVariant="Dark">
+
+    <Application.Resources> 
+        <ResourceDictionary> 
+            <FontFamily x:Key="DefaultFontFamily"> avares://GoldenBread.Desktop/Assets/Fonts#SF Pro Display</FontFamily> 
+        </ResourceDictionary> 
+    </Application.Resources> 
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <suki:SukiTheme Locale="ru-RU" ThemeColor="Orange"/>
+        <avalonia:MaterialIconStyles />
+    </Application.Styles>
+</Application>
