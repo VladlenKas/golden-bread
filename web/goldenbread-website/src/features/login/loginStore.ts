@@ -30,5 +30,26 @@ export const useLoginStore = defineStore('login', {
       this.user = null;
       this.isAuthenticated = false;
     },
+
+    // async checkSession() {
+    //   try {
+    //     const session = cookies.get('session');
+        
+    //     if (!session) {
+    //       this.isAuthenticated = false;
+    //       return;
+    //     }
+
+    //     const userData = await checkSessionService(session);
+    //     this.setSession(userData);
+    //   } catch (error) {
+    //     this.logout();
+    //   }
+    // },
+
+    checkSessionLocal() {
+      const session = cookies.get('session');
+      this.isAuthenticated = !!session;
+    },
   },
 });

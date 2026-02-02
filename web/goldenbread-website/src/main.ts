@@ -1,15 +1,20 @@
-import './assets/index.css'
+import './assets/index.css';
+import '@/api/http/interceptors';
+import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
+import { useLoginStore } from '@/features/login/loginStore';
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import router from './utils/router';
+import App from './App.vue';
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import { autoAnimatePlugin } from '@formkit/auto-animate/vue'
-import App from './App.vue'
-import router from './utils/router'
+const app = createApp(App);
+// const loginStore = useLoginStore();
 
-const app = createApp(App)
+app.use(router);
+app.use(autoAnimatePlugin);
+app.use(createPinia());
 
-app.use(createPinia())
-app.use(router)
-app.use(autoAnimatePlugin)
+// loginStore.checkSessionLocal();
+// loginStore.checkSession();
 
-app.mount('#app')
+app.mount('#app');
