@@ -44,7 +44,7 @@ public partial class LoginWindowViewModel(
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                dialogService.ShowError(DialogManager, "Error");
+                dialogService.ShowError(DialogManager, "Не найдено");
 
             }
             else if (response.StatusCode == HttpStatusCode.RequestTimeout)

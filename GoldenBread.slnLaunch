@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "API + Desktop",
+    "Projects": [
+      {
+        "Path": "backend\\GoldenBread.Api\\GoldenBread.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "desktop\\GoldenBread.Desktop\\GoldenBread.Desktop.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

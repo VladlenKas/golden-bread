@@ -4,7 +4,7 @@ namespace GoldenBread.Api.Extensions;
 
 public static class MiddlewareExtensions
 {
-    public static WebApplication UseApiPipeline(this WebApplication app)
+    public static WebApplication UseApi(this WebApplication app)
     {
         app.UseExceptionHandler();
 

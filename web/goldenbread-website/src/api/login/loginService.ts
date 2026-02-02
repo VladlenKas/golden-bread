@@ -6,8 +6,9 @@ export async function loginService(
 ): Promise<LoginResponse> {
   console.log('Отправляем запрос на апи');
   const { data } = await api.post<LoginResponse>(
-    '/api/Login/company',
+    '/api/Auth/login/company',
     loginRequest,
   );
+  console.log('Возвращаем ответ');
   return data;
 }

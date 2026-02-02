@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoldenBread.Application.Features.Auth.Commands;
+namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
 public class RegisterCompanyCommand : IRequest<RegisterCompanyResponse?>
 {

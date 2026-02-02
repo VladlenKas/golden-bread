@@ -11,6 +11,7 @@ api.interceptors.response.use(
     const authStore = useLoginStore();
     const { errorApiToast } = useNotifications();
 
+    console.log('Ловим ошибку');
     if (!error.response) {
       errorApiToast(MESSAGES.NETWORK_ERROR, 0);
       return Promise.reject(new Error(MESSAGES.NETWORK_ERROR));
@@ -18,6 +19,7 @@ api.interceptors.response.use(
 
     const { status } = error.response;
 
+    console.log('Ловим другую ошибку', status);
     switch (status) {
       case 401: {
         authStore.logout();

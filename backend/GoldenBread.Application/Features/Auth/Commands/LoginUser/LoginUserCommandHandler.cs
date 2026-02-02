@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Common.Abstractions.Repositories;
+using GoldenBread.Application.Common.Abstractions.Services;
 using GoldenBread.Contracts.Responses;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
@@ -7,25 +8,28 @@ using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace GoldenBread.Application.Features.Auth.Commands.LoginUser;
 
-public class LoginUserCommandHandler(IAccountRepository accountRepository) 
+public class LoginUserCommandHandler(
+    IAccountRepository accountRepository,
+    ISessionService sessionService,
+    IPasswordHasher passwordHasher) 
     : IRequestHandler<LoginUserCommand, LoginUserResponse?>
 {
     public async Task<LoginUserResponse?> Handle(
-        LoginUserCommand request,
+        LoginUserCommand command,
         CancellationToken cancellationToken)
     {
-        Account? account = await accountRepository.GetByEmailAsync(request.Email);
+        Account? account = await accountRepository.GetByEmailAsync(command.Email, cancellationToken);
 
         if (account == null ||
             account.AccountType != AccountType.User ||
-            !BCryptNet.Verify(request.Password, account.Password))
+            !passwordHasher.VerifyPassword(command.Password, account.Password))
         {
             return null;
         }
 
         var fullname = $"{account.User.Lastname} {account.User.Firstname} {account.User.Patronymic}".Trim();
-        var session = $"{Guid.NewGuid()}@{DateTime.UtcNow:O}";
-        var sessionExpAt = DateTime.UtcNow.AddDays(7);
+        string session = sessionService.GenerateSessionId();
+        DateTime sessionExpAt = sessionService.GenerateSessionExpiry();
 
         return new LoginUserResponse
         {

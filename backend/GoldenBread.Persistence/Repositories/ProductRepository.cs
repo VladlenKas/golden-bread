@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GoldenBread.Infrastructure.Repositories;
 
-public class ProductRepository(GoldenBreadContext context) : IProductRepository
+public class ProductRepository() : IProductRepository
 {
     public async Task AddAsync(Product product)
     {

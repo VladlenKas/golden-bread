@@ -8,7 +8,7 @@ export async function registerService(
   registerRequest: RegisterRequest,
 ): Promise<RegisterResponse> {
   const { data } = await api.post<RegisterResponse>(
-    '/api/Register/company',
+    '/api/Auth/register/company',
     registerRequest,
   );
   return data;

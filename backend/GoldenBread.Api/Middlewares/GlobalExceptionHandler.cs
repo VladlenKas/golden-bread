@@ -1,9 +1,8 @@
 ﻿using GoldenBread.Contracts.Responses;
-using GoldenBread.Domain.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using System.ComponentModel.DataAnnotations;
 
-namespace GoldenBread.Api.Extensions;
+namespace GoldenBread.Api.Middlewares;
 
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {
@@ -12,22 +11,15 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        int statusCode = StatusCodes.Status500InternalServerError; 
+        int statusCode = httpContext.Response.StatusCode; 
         string message = "Внутренняя ошибка сервера";
 
-        // 409 errors
-        if (exception is EmailAlreadyExistsException ex)
-        {
-            statusCode = StatusCodes.Status409Conflict;
-            message = ex.Message;
-        }
-
-        httpContext.Response.StatusCode = statusCode;
         await httpContext.Response.WriteAsJsonAsync(new ErrorResponse
         {
             Message = message,
+            Status = statusCode,
             Timestamp = DateTime.Now
-        }, cancellationToken: cancellationToken);
+        }, cancellationToken);
 
         return true;
     }

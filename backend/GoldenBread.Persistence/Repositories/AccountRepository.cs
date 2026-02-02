@@ -11,42 +11,63 @@ using System.Threading.Tasks;
 
 namespace GoldenBread.Infrastructure.Repositories;
 
-internal class AccountRepository(GoldenBreadContext context) : IAccountRepository
+internal sealed class AccountRepository(
+    GoldenBreadContext context) : IAccountRepository
 {
-    public async Task AddAsync(Account account)
+    public async Task AddAsync(
+        Account account,
+        CancellationToken cancellationToken)
     {
-        await context.Accounts.AddAsync(account);
-        await context.SaveChangesAsync();
+        await context.Accounts.AddAsync(account, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Account account)
+    public async Task DeleteAsync(
+        Account account,
+        CancellationToken cancellationToken)
     {
-        account.IsActive = 1;
-        await context.SaveChangesAsync();
+        account.IsActive = 0;
+        await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Account?>> GetAllAsync()
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Account?> GetByEmailAsync(string email)
-    {
-        return await context.Accounts
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Email == email);
-    }
-
-    public async Task<Account?> GetByIdAsync(int id)
+    public async Task<Account?> GetByEmailAsync(
+        string email,
+        CancellationToken cancellationToken)
     {
         return await context.Accounts
             .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.AccountId == id);
+            .FirstOrDefaultAsync(
+                u => u.Email == email,
+                cancellationToken);
     }
 
-    public async Task UpdateAsync(Account account)
+    public async Task<Account?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        return await context.Accounts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                u => u.AccountId == id,
+                cancellationToken);
+    }
+
+    public async Task<Account?> GetBySessionAsync(
+        string session,
+        CancellationToken cancellationToken)
+    {
+        return await context.Accounts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                u => u.Session == session,
+                cancellationToken);
+    }
+
+    public async Task UpdateAsync(
+        Account account,
+        CancellationToken cancellationToken)
     {
         context.Accounts.Update(account);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

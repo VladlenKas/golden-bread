@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GoldenBread.Application.Common.Abstractions.Services;
 
-public interface IJwtService
+public interface INumericValidator
 {
-    string GenerateToken(string accountId, string email, IEnumerable<Claim> claims);
-    string? GenerateRefreshToken();
+    Task<bool> IsNumeric(string input, CancellationToken cancellationToken);
 }

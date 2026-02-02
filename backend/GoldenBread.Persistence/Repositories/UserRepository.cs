@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GoldenBread.Infrastructure.Repositories;
 
-public class UserRepository(GoldenBreadContext context) : IUserRepository
+public class UserRepository() : IUserRepository
 {
     public async Task AddAsync(User user)
     {

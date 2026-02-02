@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using GoldenBread.Infrastructure.Services;
 using GoldenBread.Application.Common.Abstractions.Repositories;
+using GoldenBread.Application.Common.Abstractions.Services;
 
 
 namespace GoldenBread.Infrastructure;
@@ -32,27 +33,6 @@ public static class DependencyInjection
                 npgsql.MapEnum<VerificationStatus>("verification_status");
             }).UseSnakeCaseNamingConvention();
         });
-
-        // JWT 
-        //services.AddAuthentication(options =>
-        //{
-        //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        //}).AddJwtBearer(o =>
-        //{
-        //    o.TokenValidationParameters = new TokenValidationParameters
-        //    {
-        //        ValidateIssuer = true,
-        //        ValidateAudience = true,
-        //        ValidateLifetime = true,
-        //        ValidateIssuerSigningKey = true,
-        //        ValidIssuer = configuration["Jwt:Issuer"],
-        //        ValidAudience = configuration["Jwt:Audience"],
-        //        IssuerSigningKey = new SymmetricSecurityKey
-        //            (System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? String.Empty))
-        //    };
-        //});
             
         // Repositories
         services.AddScoped<IUserRepository, UserRepository>();
@@ -60,7 +40,9 @@ public static class DependencyInjection
         services.AddScoped<IAccountRepository, AccountRepository>();
 
         // Servises
-        //services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<INumericValidator, NumericValidator>();
+        services.AddScoped<ISessionService, SessionService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         return services;
     }
