@@ -1,4 +1,5 @@
-﻿using GoldenBread.Application.Common.Abstractions.Repositories;
+﻿using GoldenBread.Application.Common.Abstractions;
+using GoldenBread.Application.Common.Abstractions.Data;
 using GoldenBread.Application.Common.Abstractions.Services;
 using GoldenBread.Contracts.Responses;
 using GoldenBread.Domain.Entities;
@@ -7,8 +8,7 @@ using GoldenBread.Domain.Enums;
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
 public class RegisterCompanyCommandHandler(
-    IAccountRepository accountRepository,
-    ICompanyRepository companyRepository,
+    IGoldenBreadContext context,
     ISessionService sessionService,
     IPasswordHasher passwordHasher)
     : IRequestHandler<RegisterCompanyCommand, RegisterCompanyResponse>
@@ -17,8 +17,8 @@ public class RegisterCompanyCommandHandler(
         RegisterCompanyCommand command,
         CancellationToken cancellationToken)
     {
-        (string session, DateTime sessionExpAt) = sessionService.GenerateSession();
-        string passwordHash = passwordHasher.GeneratePassword(command.Password);
+        (string session, DateTime sessionExpAt) = sessionService.Create();
+        string passwordHash = passwordHasher.Create(command.Password);
 
         var account = Account.Create(
             command.Email,
@@ -28,16 +28,16 @@ public class RegisterCompanyCommandHandler(
             sessionExpAt
         );
 
-        await accountRepository.AddAsync(account, cancellationToken);
+        await context.Accounts.AddAsync(account, cancellationToken);
 
         var company = Company.Create(
             command.Name,
             command.Inn,
             command.Ogrn,
-            account.AccountId
+            account
         );
 
-        await companyRepository.AddAsync(company, cancellationToken);
+        await context.Companies.AddAsync(company, cancellationToken);
 
         return new RegisterCompanyResponse
         {

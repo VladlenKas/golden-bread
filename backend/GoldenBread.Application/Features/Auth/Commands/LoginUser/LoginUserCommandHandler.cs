@@ -1,4 +1,5 @@
-﻿using GoldenBread.Application.Common.Abstractions.Repositories;
+﻿using GoldenBread.Application.Common.Abstractions;
+using GoldenBread.Application.Common.Abstractions.Data;
 using GoldenBread.Application.Common.Abstractions.Services;
 using GoldenBread.Contracts.Responses;
 using GoldenBread.Domain.Entities;
@@ -7,7 +8,7 @@ using GoldenBread.Domain.Enums;
 namespace GoldenBread.Application.Features.Auth.Commands.LoginUser;
 
 public class LoginUserCommandHandler(
-    IAccountRepository accountRepository,
+    IGoldenBreadContext context,
     ISessionService sessionService,
     IPasswordHasher passwordHasher) 
     : IRequestHandler<LoginUserCommand, LoginUserResponse?>
@@ -16,22 +17,24 @@ public class LoginUserCommandHandler(
         LoginUserCommand command,
         CancellationToken cancellationToken)
     {
-        Account? account = await accountRepository.GetByEmailAsync(command.Email, cancellationToken);
+        Account? account = await context.Accounts
+            .FirstOrDefaultAsync(c =>
+                c.Email == command.Email &&
+                c.AccountType == AccountType.User,
+                cancellationToken);
 
         if (account == null ||
-            account.AccountType != AccountType.User ||
-            !passwordHasher.VerifyPassword(command.Password, account.PasswordHash))
+            !passwordHasher.Verify(command.Password, account.PasswordHash))
         {
             return null;
         }
 
-        var fullname = $"{account.User.Lastname} {account.User.Firstname} {account.User.Patronymic}".Trim();
-        (string session, DateTime sessionExpAt) = sessionService.GenerateSession();
+        (string session, DateTime sessionExpAt) = sessionService.Create();
 
         return new LoginUserResponse
         {
             Id = account.AccountId,
-            Fullname = fullname,
+            Fullname = account.User.GetFullName(),
             Role = account.User.Role.ToString(),
             Session = session,
             SessionExpiresAt = sessionExpAt,

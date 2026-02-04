@@ -8,6 +8,6 @@ namespace GoldenBread.Application.Common.Abstractions.Services;
 
 public interface IPasswordHasher
 {
-    string GeneratePassword(string password);
-    bool VerifyPassword(string providedPassword, string hashedPassword);
+    string Create(string password);
+    bool Verify(string providedPassword, string hashedPassword);
 }

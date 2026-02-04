@@ -4,7 +4,7 @@ namespace GoldenBread.Infrastructure.Services;
 
 internal class SessionService : ISessionService
 {
-    public (string session, DateTime sessionExpiresAt) GenerateSession()
+    public (string session, DateTime sessionExpiresAt) Create()
     {
         var animals = new[] { "cat", "dog", "fox", "bunny", "bear", "panda", "owl" };
         var colors = new[] { "tiny", "soft", "fluffy", "happy", "sweet", "cozy", "cute" };

@@ -1,19 +1,19 @@
-﻿using GoldenBread.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using GoldenBread.Application.Common.Abstractions.Data;
+using GoldenBread.Domain.Entities;
 using System.Reflection;
 
 namespace GoldenBread.Infrastructure.Data;
 
-public class GoldenBreadContext : DbContext
+public class GoldenBreadContext : DbContext, IGoldenBreadContext
 {
     public GoldenBreadContext(DbContextOptions<GoldenBreadContext> options)
         : base(options)
     {
     }
 
-    public virtual DbSet<Account> Accounts { get; set; }
+    public DbSet<Account> Accounts { get; set; }
     public virtual DbSet<CartItem> CartItems { get; set; }
-    public virtual DbSet<Company> Companies { get; set; }
+    public DbSet<Company> Companies { get; set; }
     public virtual DbSet<Employee> Employees { get; set; }
     public virtual DbSet<EmployeeTask> EmployeeTasks { get; set; }
     public virtual DbSet<Favourite> Favourites { get; set; }
@@ -28,7 +28,7 @@ public class GoldenBreadContext : DbContext
     public virtual DbSet<ProductImage> ProductImages { get; set; }
     public virtual DbSet<Recipe> Recipes { get; set; }
     public virtual DbSet<Supplier> Suppliers { get; set; }
-    public virtual DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

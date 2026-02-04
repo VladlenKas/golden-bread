@@ -8,6 +8,6 @@ namespace GoldenBread.Application.Common.Abstractions.Services;
 
 public interface ISessionService
 {
-    (string session, DateTime sessionExpiresAt) GenerateSession();
+    (string session, DateTime sessionExpiresAt) Create();
     bool IsSessionValid(string sessionId, DateTime expiresAt);
 }

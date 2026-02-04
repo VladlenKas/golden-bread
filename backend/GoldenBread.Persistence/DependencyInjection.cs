@@ -1,16 +1,10 @@
 ﻿using GoldenBread.Domain.Enums;
 using GoldenBread.Infrastructure.Data;
-using GoldenBread.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using GoldenBread.Infrastructure.Services;
-using GoldenBread.Application.Common.Abstractions.Repositories;
 using GoldenBread.Application.Common.Abstractions.Services;
-using GoldenBread.Application.Common.Abstractions;
-
+using GoldenBread.Application.Common.Abstractions.Data;
 
 namespace GoldenBread.Infrastructure;
 
@@ -34,18 +28,11 @@ public static class DependencyInjection
                 npgsql.MapEnum<VerificationStatus>("verification_status");
             }).UseSnakeCaseNamingConvention();
         });
+        services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
             
-        // Repositories
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ICompanyRepository, CompanyRepository>();
-        services.AddScoped<IAccountRepository, AccountRepository>();
-
         // Servises
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-
-        // Other
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

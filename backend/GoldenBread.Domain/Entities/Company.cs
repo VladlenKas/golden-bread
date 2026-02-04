@@ -23,7 +23,7 @@ public class Company
         string name,
         string inn,
         string ogrn,
-        int accountId,
+        Account account,
         string? phone = null,
         string? address = null)
     {
@@ -34,7 +34,7 @@ public class Company
             Ogrn = ogrn,
             Phone = phone,
             Address = address,
-            AccountId = accountId
+            Account = account
         };
     }
 }

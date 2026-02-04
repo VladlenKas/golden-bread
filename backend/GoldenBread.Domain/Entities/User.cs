@@ -22,7 +22,7 @@ public partial class User
         string firstname,
         DateOnly birthay,
         UserRole role,
-        int accountId,
+        Account account,
         string? patronymic = null)
     {
         return new User
@@ -32,7 +32,10 @@ public partial class User
             Patronymic = patronymic,
             Birthday = birthay,
             Role = role,
-            AccountId = accountId
+            Account = account
         };
     }
+
+    public string GetFullName()
+        => $"{Lastname} {Firstname} {Patronymic}".Trim();
 }
