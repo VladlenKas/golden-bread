@@ -8,10 +8,9 @@ import { api } from './api';
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    const authStore = useLoginStore();
+    // const authStore = useLoginStore();
     const { errorApiToast } = useNotifications();
 
-    console.log('Ловим ошибку');
     if (!error.response) {
       errorApiToast(MESSAGES.NETWORK_ERROR, 0);
       return Promise.reject(new Error(MESSAGES.NETWORK_ERROR));
@@ -19,13 +18,12 @@ api.interceptors.response.use(
 
     const { status } = error.response;
 
-    console.log('Ловим другую ошибку', status);
     switch (status) {
-      case 401: {
-        authStore.logout();
-        errorApiToast(MESSAGES.UNAUTHORIZED, 401);
-        break;
-      }
+      // case 401: {
+      //   authStore.logout();
+      //   errorApiToast(MESSAGES.UNAUTHORIZED, 401);
+      //   break;
+      // }
       case 403: {
         errorApiToast(MESSAGES.FORBIDDEN, 403);
         break;

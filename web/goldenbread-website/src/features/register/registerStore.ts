@@ -5,7 +5,7 @@ import { defineStore } from 'pinia';
 export const useRegisterStore = defineStore('register', {
   actions: {
     async register(request: RegisterRequest) {
-      return await registerService(request);
+      const response = await registerService(request);
     },
   },
 });

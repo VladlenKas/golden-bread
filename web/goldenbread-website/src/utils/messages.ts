@@ -13,6 +13,12 @@ export const MESSAGES = {
   VALIDATION_MAX_LENGTH: (max: number) => `Максимальная длина: ${max} символов`,
   VALIDATION_EMAIL: 'Некорректный формат email',
   VALIDATION_PASSWORDS_MISMATCH: 'Пароли не совпадают',
+  VALIDATION_ONLY_DIGITS: "Поле должно содержать только цифры",
+
+  // Company validation messages
+  VALIDATION_OGRN_YEAR: 'Год регистрации должен быть не ранее 2002',
+  VALIDATION_OGRN_REGION: 'Код региона должен быть от 01 до 99',
+  VALIDATION_OGRN_TYPE: 'ОГРН должен начинаться с 1 (основной) или 5 (ГРН)',
   
   // Toast default titles
   TOAST_SUCCESS: 'Успех!',
@@ -24,11 +30,11 @@ export const MESSAGES = {
   LOGIN_SUCCESS: 'Вы успешно вошли в систему!',
   LOGIN_FAILED: 'Аккаунт не найден...',
   REGISTER_SUCCESS: 'Вы успешно зарегистрировались!',
-  REGISTER_FAILED: 'Реквизиты уже заняты...',
+  REGISTER_FAILED: 'Проверьте данные...',
   
   // Toast descriptions
   LOGIN_SUCCESS_DESC: 'Вход в систему выполнен успешно. Новая сессия зарегистрирована.',
   LOGIN_FAILED_DESC: 'Пользователь с введенными данными не найден или не существует.',
   REGISTER_SUCCESS_DESC: 'Регистрация аккаунта прошла успешно. Теперь вы можете войти в систему.',
-  REGISTER_FAILED_DESC: 'Некоторые данные уже зарегистрированы в системе. Измените их или попробуйте войти.',
+  REGISTER_FAILED_DESC: 'Некоторые данные невалидны или уже зарегистрированы в системе. Измените их и попробуйте снова.',
 } as const;

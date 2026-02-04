@@ -53,7 +53,7 @@ const { isOpen, onSubmit } = useRegisterDialog();
           class="space-y-4 w-full">
           <!-- Название компании -->
           <FormField v-slot="{ componentField }" name="name">
-            <FormItem >
+            <FormItem v-auto-animate>
               <FormLabel>Название компании</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="Golden Bread" v-bind="componentField" />

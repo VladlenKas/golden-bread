@@ -14,14 +14,19 @@ export function useRegisterDialog() {
       isOpen.value = false;
     } catch (error: any) {
       if (error.status === 400) {
-        const apiErrors = error.data?.errors || {};
+        const apiErrors = error.data.errors || [];
+
+        const groupedErrors = apiErrors.reduce((acc: any, err: any) => {
+          acc[err.propertyName] = err.errorMessage;
+          return acc;
+        }, {});
 
         setErrors({
-          name: apiErrors.Name?.[0],
-          email: apiErrors.Email?.[0],
-          password: apiErrors.Password?.[0],
-          inn: apiErrors.Inn?.[0],
-          ogrn: apiErrors.Ogrn?.[0],
+          name: groupedErrors.Name,
+          email: groupedErrors.Email,
+          password: groupedErrors.Password,
+          inn: groupedErrors.Inn,
+          ogrn: groupedErrors.Ogrn,
         });
 
         failedRegisterToast();
