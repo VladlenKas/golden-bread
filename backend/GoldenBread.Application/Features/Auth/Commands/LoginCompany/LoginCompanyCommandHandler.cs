@@ -3,7 +3,6 @@ using GoldenBread.Application.Common.Abstractions.Services;
 using GoldenBread.Contracts.Responses;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
-using MediatR;
 
 namespace GoldenBread.Application.Features.Auth.Commands.LoginCompany;
 
@@ -21,13 +20,12 @@ public class LoginCompanyCommandHandler(
 
         if (account == null ||
             account.AccountType != AccountType.Company ||
-            !passwordHasher.VerifyPassword(account.Password, command.Password))
+            !passwordHasher.VerifyPassword(command.Password, account.PasswordHash))
         {
             return null;
         }
 
-        string session = sessionService.GenerateSessionId();
-        DateTime sessionExpAt = sessionService.GenerateSessionExpiry();
+        (string session, DateTime sessionExpAt) = sessionService.GenerateSession();
 
         return new LoginCompanyResponse
         {

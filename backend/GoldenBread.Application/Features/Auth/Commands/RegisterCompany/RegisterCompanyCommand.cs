@@ -1,18 +1,10 @@
 ﻿using GoldenBread.Contracts.Responses;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
-public class RegisterCompanyCommand : IRequest<RegisterCompanyResponse?>
-{
-    public required string Email { get; set; }
-    public required string Password { get; set; }
-    public required string Name { get; set; }
-    public required string Inn { get; set; }
-    public required string Ogrn { get; set; }
-}
+public sealed record RegisterCompanyCommand(
+    string Email,
+    string Password,
+    string Name,
+    string Inn,
+    string Ogrn) : IRequest<RegisterCompanyResponse>;

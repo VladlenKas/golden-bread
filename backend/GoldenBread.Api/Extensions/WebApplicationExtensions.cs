@@ -14,7 +14,11 @@ public static class MiddlewareExtensions
             app.MapScalarApiReference();
         }
 
-        app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        app.UseCors(builder =>
+            builder.WithOrigins("http://localhost:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
         app.UseHttpsRedirection();
         app.MapControllers();
 

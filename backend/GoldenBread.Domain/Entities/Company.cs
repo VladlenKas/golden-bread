@@ -8,14 +8,33 @@ namespace GoldenBread.Domain.Entities;
 
 public class Company
 {
-    public int CompanyId { get; set; }
-    public int AccountId { get; set; }
+    public int CompanyId { get; private set; }
+    public int AccountId { get; private set; }
     public string Name { get; set; } = null!;
     public string Inn { get; set; } = null!;
     public string Ogrn { get; set; } = null!;
     public string? Phone { get; set; }
     public string? Address { get; set; }
-
-    // Navigation property
     public Account Account { get; set; } = null!;
+
+    private Company() { }
+
+    public static Company Create(
+        string name,
+        string inn,
+        string ogrn,
+        int accountId,
+        string? phone = null,
+        string? address = null)
+    {
+        return new Company
+        {
+            Name = name,
+            Inn = inn,
+            Ogrn = ogrn,
+            Phone = phone,
+            Address = address,
+            AccountId = accountId
+        };
+    }
 }

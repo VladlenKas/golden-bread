@@ -3,7 +3,6 @@ using GoldenBread.Application.Common.Abstractions.Services;
 using GoldenBread.Contracts.Responses;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
-using MediatR;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
@@ -12,45 +11,40 @@ public class RegisterCompanyCommandHandler(
     ICompanyRepository companyRepository,
     ISessionService sessionService,
     IPasswordHasher passwordHasher)
-    : IRequestHandler<RegisterCompanyCommand, RegisterCompanyResponse?>
+    : IRequestHandler<RegisterCompanyCommand, RegisterCompanyResponse>
 {
-    public async Task<RegisterCompanyResponse?> Handle(
-        RegisterCompanyCommand command, 
+    public async Task<RegisterCompanyResponse> Handle(
+        RegisterCompanyCommand command,
         CancellationToken cancellationToken)
     {
-        string session = sessionService.GenerateSessionId();
-        DateTime sessionExpAt = sessionService.GenerateSessionExpiry();
-        string password = passwordHasher.GeneratePassword(command.Password);
+        (string session, DateTime sessionExpAt) = sessionService.GenerateSession();
+        string passwordHash = passwordHasher.GeneratePassword(command.Password);
 
-        var account = new Account()
-        {
-            Email = command.Email,
-            Password = password,
-            AccountType = AccountType.Company,
-            Session = session,
-            SessionExpiresAt = sessionExpAt,
-        };
+        var account = Account.Create(
+            command.Email,
+            passwordHash,
+            AccountType.Company,
+            session,
+            sessionExpAt
+        );
 
         await accountRepository.AddAsync(account, cancellationToken);
 
-        var company = new Company()
-        {
-            Name = command.Name,
-            Inn = command.Inn,
-            Ogrn = command.Ogrn,
-            AccountId = account.AccountId,
-        };
+        var company = Company.Create(
+            command.Name,
+            command.Inn,
+            command.Ogrn,
+            account.AccountId
+        );
 
         await companyRepository.AddAsync(company, cancellationToken);
 
-        var response = new RegisterCompanyResponse
+        return new RegisterCompanyResponse
         {
             Id = account.AccountId,
             Session = session,
             SessionExpiresAt = sessionExpAt,
             AccountStatus = account.VerificationStatus.ToString(),
         };
-
-        return response;
     }
 }

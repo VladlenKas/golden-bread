@@ -1,26 +1,45 @@
-﻿using GoldenBread.Contracts.Responses;
-using Microsoft.AspNetCore.Diagnostics;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Diagnostics;
 
 namespace GoldenBread.Api.Middlewares;
 
-public sealed class GlobalExceptionHandler : IExceptionHandler
+public sealed class GlobalExceptionHandler(
+    IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
         CancellationToken cancellationToken)
     {
-        int statusCode = httpContext.Response.StatusCode; 
-        string message = "Внутренняя ошибка сервера";
+        var (statusCode, title) = MapException(exception);
 
-        await httpContext.Response.WriteAsJsonAsync(new ErrorResponse
+        httpContext.Response.StatusCode = statusCode;
+
+        var problemDetails = new ProblemDetails
         {
-            Message = message,
             Status = statusCode,
-            Timestamp = DateTime.Now
-        }, cancellationToken);
+            Title = title,
+            Type = exception.GetType().Name,
+            Instance = httpContext.Request.Path,
+            Extensions = GetExtension(exception)
+        };
 
-        return true;
+        return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+        {
+            HttpContext = httpContext,
+            ProblemDetails = problemDetails
+        });
     }
+
+    private static (int StatusCode, string Title) MapException(Exception exception) => exception switch
+    {
+        ValidationException => (StatusCodes.Status400BadRequest, "One or more validation errors has occurred"),
+        UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
+        _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
+    };
+
+    private static Dictionary<string, object?> GetExtension(Exception exception) => exception switch
+    {
+        ValidationException vEx => new Dictionary<string, object?> { ["errors"] = vEx.Errors },
+        _ => new Dictionary<string, object?> { ["message"] = exception.Message }
+    };
 }

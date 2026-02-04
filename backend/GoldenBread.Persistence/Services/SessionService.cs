@@ -1,15 +1,10 @@
 ﻿using GoldenBread.Application.Common.Abstractions.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoldenBread.Infrastructure.Services;
 
 internal class SessionService : ISessionService
 {
-    public string GenerateSessionId()
+    public (string session, DateTime sessionExpiresAt) GenerateSession()
     {
         var animals = new[] { "cat", "dog", "fox", "bunny", "bear", "panda", "owl" };
         var colors = new[] { "tiny", "soft", "fluffy", "happy", "sweet", "cozy", "cute" };
@@ -18,12 +13,10 @@ internal class SessionService : ISessionService
         var color = colors[Random.Shared.Next(colors.Length)];
         var num = Random.Shared.Next(100, 999);
 
-        return $"{color}-{animal}-{num}";
-    }
+        var session = $"{color}-{animal}-{num}";
+        var sessionExpiresAt = DateTime.UtcNow.AddDays(7);
 
-    public DateTime GenerateSessionExpiry()
-    {
-        return DateTime.UtcNow.AddDays(7);
+        return (session, sessionExpiresAt);
     }
 
     public bool IsSessionValid(string sessionId, DateTime expiresAt)

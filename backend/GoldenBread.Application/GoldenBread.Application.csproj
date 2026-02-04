@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\Validation\Messages\" />
     <Folder Include="Features\Employee\Commands\" />
     <Folder Include="Features\Employee\Queries\" />
   </ItemGroup>

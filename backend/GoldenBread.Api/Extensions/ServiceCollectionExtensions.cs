@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using GoldenBread.Api.Middlewares;
+﻿using GoldenBread.Api.Middlewares;
 
 namespace GoldenBread.Api.Extensions;
 
@@ -11,6 +10,7 @@ public static class DependencyInjection
         services.AddExceptionHandler<GlobalExceptionHandler>();
 
         services.AddValidatorsFromAssemblyContaining<Program>();
+
         services.AddControllers();
         services.AddOpenApi();
 

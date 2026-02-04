@@ -1,13 +1,7 @@
 ﻿using GoldenBread.Application.Common.Abstractions.Repositories;
 using GoldenBread.Domain.Entities;
-using GoldenBread.Domain.Enums;
 using GoldenBread.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoldenBread.Infrastructure.Repositories;
 
@@ -19,7 +13,6 @@ internal sealed class AccountRepository(
         CancellationToken cancellationToken)
     {
         await context.Accounts.AddAsync(account, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(
@@ -27,7 +20,6 @@ internal sealed class AccountRepository(
         CancellationToken cancellationToken)
     {
         account.IsActive = 0;
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Account?> GetByEmailAsync(
@@ -68,6 +60,5 @@ internal sealed class AccountRepository(
         CancellationToken cancellationToken)
     {
         context.Accounts.Update(account);
-        await context.SaveChangesAsync(cancellationToken);
     }
 }

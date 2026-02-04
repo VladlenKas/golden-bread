@@ -19,7 +19,6 @@ public class CartItemConfiguration : IEntityTypeConfiguration<CartItem>
         builder.ToTable("cart_items");
 
         builder.HasIndex(e => e.BatchId, "fk_cart_items_product_batch_id_idx");
-
         builder.HasIndex(e => e.AccountId, "fk_cart_items_account_id_idx");
 
         builder.Property(e => e.CartItemId)

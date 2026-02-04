@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GoldenBread.Infrastructure.Configurations;
 
-public class AccountConfigurationpublic : IEntityTypeConfiguration<Account>
+public class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
     public void Configure(EntityTypeBuilder<Account> entity)
     {
@@ -17,10 +17,8 @@ public class AccountConfigurationpublic : IEntityTypeConfiguration<Account>
 
         entity.ToTable("accounts");
         
-        entity.HasKey(e => e.AccountId);
-        entity.Property(e => e.AccountId).HasColumnName("account_id");
         entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(255).IsRequired();
-        entity.Property(e => e.Password).HasColumnName("password").HasMaxLength(255).IsRequired();
+        entity.Property(e => e.PasswordHash).HasColumnName("password_hash").HasMaxLength(255).IsRequired();
         entity.Property(e => e.AccountType).HasColumnName("account_type").IsRequired();
         entity.Property(e => e.VerificationStatus).HasColumnName("verification_status").IsRequired();
         entity.Property(e => e.Session).HasColumnName("session").HasMaxLength(512);

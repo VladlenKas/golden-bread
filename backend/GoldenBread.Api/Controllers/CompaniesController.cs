@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace GoldenBread.Api.Controllers;
+﻿namespace GoldenBread.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

@@ -16,19 +16,16 @@ internal sealed class CompanyRepository(GoldenBreadContext context) : ICompanyRe
     public async Task AddAsync(Company company, CancellationToken cancellationToken)
     {
         await context.Companies.AddAsync(company, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UpdateAsync(Company company, CancellationToken cancellationToken)
     {
         context.Companies.Update(company);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteAsync(Company company, CancellationToken cancellationToken)
     {
         context.Companies.Remove(company);
-        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Company?>> GetAllAsync(CancellationToken cancellationToken)
@@ -47,9 +44,9 @@ internal sealed class CompanyRepository(GoldenBreadContext context) : ICompanyRe
 
     public async Task<bool> ExistsAsync(
         Expression<Func<Company, bool>> predicate,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken)
     {
-        return await context.Companies
+        return !await context.Companies
             .AnyAsync(predicate, cancellationToken);
     }
 }

@@ -1,12 +1,5 @@
-﻿using FluentValidation;
-using GoldenBread.Application.Common.Abstractions.Repositories;
-using GoldenBread.Application.Common.Abstractions.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+﻿using GoldenBread.Application.Common.Abstractions.Repositories;
+using GoldenBread.Application.Common.Validation.Rules;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
@@ -17,69 +10,57 @@ public class RegisterCompanyCommandValidator : AbstractValidator<RegisterCompany
 
     public RegisterCompanyCommandValidator( 
         IAccountRepository accountRepository,
-        ICompanyRepository companyRepository,
-        INumericValidator validator)
+        ICompanyRepository companyRepository)
     {
         _accountRepository = accountRepository;
         _companyRepository = companyRepository;
 
         RuleFor(x => x.Email)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .EmailAddress()
             .MustAsync(BeUniqueEmail)
-                .WithMessage("Пользователь с такой почтой уже существует");
+                .WithMessage("Почта уже занята");
 
         RuleFor(x => x.Name)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .MustAsync(BeUniqueCompanyName)
-                .WithMessage("Компания с таким названием уже существует");
+            .MustAsync(BeUniqueName)
+                .WithMessage("Название уже занято");
 
         RuleFor(x => x.Inn)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .Length(12)
-            .MustAsync(validator.IsNumeric)
+            .MustAsync(NumericRule.IsNumeric)
                 .WithMessage("ИНН должен содержать только цифры")
             .MustAsync(BeUniqueInn)
-                .WithMessage("Компания с таким ИНН уже зарегистрирована");
+                .WithMessage("ИНН уже занят");
 
         RuleFor(x => x.Ogrn)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .Length(13)
-            .MustAsync(validator.IsNumeric)
+            .MustAsync(NumericRule.IsNumeric)
                 .WithMessage("ОГРН должен содержать только цифры")
             .MustAsync(BeUniqueOgrn)
-                .WithMessage("Компания с таким ОГРН уже зарегистрирована");
+                .WithMessage("ОГРН уже занят");
 
         RuleFor(x => x.Password)
+            .Cascade(CascadeMode.Stop)
             .NotEmpty()
             .MinimumLength(8);
     }
 
-    private async Task<bool> BeUniqueEmail(
-        string email,
-        CancellationToken cancellationToken)
-    {
-        return await _accountRepository.GetByEmailAsync(email, cancellationToken) is null;
-    }
+    private async Task<bool> BeUniqueEmail(string email, CancellationToken cancellationToken) =>
+        await _accountRepository.GetByEmailAsync(email, cancellationToken) is null;
 
-    private async Task<bool> BeUniqueCompanyName(
-        string name,
-        CancellationToken cancellationToken)
-    {
-        return await _companyRepository.ExistsAsync(c => c.Name == name, cancellationToken);
-    }
+    private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken) =>
+        await _companyRepository.ExistsAsync(c => c.Name == name, cancellationToken);
 
-    private async Task<bool> BeUniqueInn(
-        string inn,
-        CancellationToken cancellationToken)
-    {
-        return await _companyRepository.ExistsAsync(c => c.Inn == inn, cancellationToken);
-    }
+    private async Task<bool> BeUniqueInn(string inn, CancellationToken cancellationToken) =>
+        await _companyRepository.ExistsAsync(c => c.Inn == inn, cancellationToken);
 
-    private async Task<bool> BeUniqueOgrn(
-        string ogrn,
-        CancellationToken cancellationToken)
-    {
-        return await _companyRepository.ExistsAsync(c => c.Ogrn == ogrn, cancellationToken);
-    }
+    private async Task<bool> BeUniqueOgrn(string ogrn,CancellationToken cancellationToken) =>
+        await _companyRepository.ExistsAsync(c => c.Ogrn == ogrn, cancellationToken);
 }

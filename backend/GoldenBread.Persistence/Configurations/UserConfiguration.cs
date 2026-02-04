@@ -17,19 +17,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.ToTable("users");
 
-        builder.Property(e => e.UserId).HasColumnName("user_id");
+        builder.Property(e => e.AccountId).HasColumnName("account_id").IsRequired();
         builder.Property(e => e.Birthday).HasColumnName("birthday");
-        builder.Property(e => e.Firstname)
-            .HasMaxLength(50)
-            .HasColumnName("firstname");
-        builder.Property(e => e.Lastname)
-            .HasMaxLength(50)
-            .HasColumnName("lastname");
-        builder.Property(e => e.Patronymic)
-            .HasMaxLength(50)
-            .HasColumnName("patronymic");
-        builder.Property(e => e.AccountId).HasColumnName("account_id")
-            .IsRequired();
+        builder.Property(e => e.Firstname).HasColumnName("firstname").HasMaxLength(50);
+        builder.Property(e => e.Lastname).HasColumnName("lastname").HasMaxLength(50);
+        builder.Property(e => e.Patronymic).HasColumnName("patronymic").HasMaxLength(50);
 
         builder.HasOne(e => e.Account)
             .WithOne(a => a.User)

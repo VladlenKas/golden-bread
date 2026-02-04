@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using GoldenBread.Infrastructure.Services;
 using GoldenBread.Application.Common.Abstractions.Repositories;
 using GoldenBread.Application.Common.Abstractions.Services;
+using GoldenBread.Application.Common.Abstractions;
 
 
 namespace GoldenBread.Infrastructure;
@@ -40,9 +41,11 @@ public static class DependencyInjection
         services.AddScoped<IAccountRepository, AccountRepository>();
 
         // Servises
-        services.AddScoped<INumericValidator, NumericValidator>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+        // Other
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }

@@ -1,8 +1,6 @@
 ﻿using GoldenBread.Application.Features.Auth.Commands.LoginCompany;
 using GoldenBread.Application.Features.Auth.Commands.LoginUser;
 using GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace GoldenBread.Api.Controllers;
 
