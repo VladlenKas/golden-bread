@@ -1,5 +1,4 @@
-﻿using GoldenBread.Application.Features.Auth.Commands.LoginCompany;
-using GoldenBread.Application.Features.Auth.Commands.LoginUser;
+﻿using GoldenBread.Application.Features.Auth.Commands.Login;
 using GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
 namespace GoldenBread.Api.Controllers;
@@ -8,15 +7,8 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class AuthController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("login/user")]
-    public async Task<IActionResult> LoginUser([FromBody] LoginUserCommand command)
-    {
-        var result = await mediator.Send(command);
-        return result == null ? Unauthorized() : Ok(result);
-    }
-
-    [HttpPost("login/company")]
-    public async Task<IActionResult> LoginCompany([FromBody] LoginCompanyCommand command)
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginUser([FromBody] LoginCommand command)
     {
         var result = await mediator.Send(command);
         return result == null ? Unauthorized() : Ok(result);

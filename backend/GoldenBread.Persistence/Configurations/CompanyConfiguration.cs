@@ -20,7 +20,7 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         builder.Property(e => e.CompanyId).HasColumnName("company_id");
         builder.Property(e => e.AccountId).HasColumnName("account_id").IsRequired();
         builder.Property(e => e.Name).HasColumnName("name").HasMaxLength(150).IsRequired();
-        builder.Property(e => e.Inn).HasColumnName("inn").HasMaxLength(12).IsRequired();
+        builder.Property(e => e.Inn).HasColumnName("inn").HasMaxLength(10).IsRequired();
         builder.Property(e => e.Ogrn).HasColumnName("ogrn").HasMaxLength(13).IsRequired();
         builder.Property(e => e.Phone).HasColumnName("phone").HasMaxLength(11);
         builder.Property(e => e.Address).HasColumnName("address");

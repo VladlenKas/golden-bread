@@ -1,7 +1,5 @@
-﻿using GoldenBread.Application.Common.Abstractions;
-using GoldenBread.Application.Common.Abstractions.Data;
+﻿using GoldenBread.Application.Common.Abstractions.Data;
 using GoldenBread.Application.Common.Abstractions.Services;
-using GoldenBread.Contracts.Responses;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
 
@@ -11,9 +9,9 @@ public class RegisterCompanyCommandHandler(
     IGoldenBreadContext context,
     ISessionService sessionService,
     IPasswordHasher passwordHasher)
-    : IRequestHandler<RegisterCompanyCommand, RegisterCompanyResponse>
+    : IRequestHandler<RegisterCompanyCommand, AuthResponse>
 {
-    public async Task<RegisterCompanyResponse> Handle(
+    public async Task<AuthResponse> Handle(
         RegisterCompanyCommand command,
         CancellationToken cancellationToken)
     {
@@ -28,8 +26,6 @@ public class RegisterCompanyCommandHandler(
             sessionExpAt
         );
 
-        await context.Accounts.AddAsync(account, cancellationToken);
-
         var company = Company.Create(
             command.Name,
             command.Inn,
@@ -37,14 +33,13 @@ public class RegisterCompanyCommandHandler(
             account
         );
 
+        await context.Accounts.AddAsync(account, cancellationToken);
         await context.Companies.AddAsync(company, cancellationToken);
 
-        return new RegisterCompanyResponse
-        {
-            Id = account.AccountId,
-            Session = session,
-            SessionExpiresAt = sessionExpAt,
-            AccountStatus = account.VerificationStatus.ToString(),
-        };
+        return new AuthResponse(
+            account.AccountId,
+            session,
+            sessionExpAt,
+            account.VerificationStatus);
     }
 }

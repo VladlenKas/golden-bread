@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace GoldenBread.Contracts.Requests;
 
-public class RegisterCompanyRequest
-{
-    public required string Name { get; set; } 
-    public required string Inn { get; set; }
-    public required string Ogrn { get; set; }
-    public required string Email { get; set; }
-    public required string Password { get; set; }
-}
+public sealed record class RegisterCompanyRequest(
+    string Name,
+    string Inn,
+    string Ogrn,
+    string Email,
+    string Password);

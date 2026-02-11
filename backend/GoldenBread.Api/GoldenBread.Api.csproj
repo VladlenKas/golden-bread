@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GoldenBread.Contracts\GoldenBread.Contracts.csproj" />
     <ProjectReference Include="..\GoldenBread.Persistence\GoldenBread.Infrastructure.csproj" />
   </ItemGroup>
 

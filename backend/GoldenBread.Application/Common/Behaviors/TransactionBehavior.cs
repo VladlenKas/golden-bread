@@ -11,7 +11,8 @@ public class TransactionBehavior<TRequest, TResponse>(IGoldenBreadContext contex
         RequestHandlerDelegate<TResponse> next, 
         CancellationToken cancellationToken)
     {
+        var response = await next(cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        return await next();
+        return response;
     }
 }

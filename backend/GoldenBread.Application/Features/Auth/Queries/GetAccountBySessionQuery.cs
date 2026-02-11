@@ -1,5 +1,4 @@
 ﻿namespace GoldenBread.Application.Features.Auth.Queries;
 
-internal class GetAccountBySessionQuery
-{
-}
+public sealed record class GetAccountBySessionQuery(
+    string Session) : IRequest<AuthResponse?>;
