@@ -5,13 +5,29 @@ namespace GoldenBread.Application.Features.Auth.Queries;
 
 public sealed class GetAccountBySessionQueryHandler(
     IGoldenBreadContext context,
-    ISessionService sessionService)
-    : IRequestHandler<GetAccountBySessionQuery, AuthResponse?>
+    ICookieService cookieService)
+    : IRequestHandler<GetAccountBySessionQuery, AuthResponse>
 {
-    public async Task<AuthResponse?> Handle(
-        GetAccountBySessionQuery request, 
+    public async Task<AuthResponse> Handle(
+        GetAccountBySessionQuery query, 
         CancellationToken cancellationToken)
     {
-        return null;
+        string? session = await cookieService.FindMeAsync();
+
+        var account = await context.Accounts
+            .FirstOrDefaultAsync(c =>
+                c.Session == session &&
+                c.SessionExpiresAt > DateTime.UtcNow,
+                cancellationToken);
+
+        if (account == null)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        return new AuthResponse(
+            account.AccountId,
+            account.AccountType,
+            account.VerificationStatus);
     }
 }

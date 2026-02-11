@@ -1,21 +1,20 @@
 ﻿using GoldenBread.Application.Common.Abstractions.Data;
 using GoldenBread.Application.Common.Abstractions.Services;
-using GoldenBread.Application.Features.Auth.Commands.Login;
-using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
 
 public sealed class LoginCompanyCommandHandler(
     IGoldenBreadContext context,
+    ICookieService cookieService,
     ISessionService sessionService,
     IPasswordHasher passwordHasher)
-    : IRequestHandler<LoginCommand, AuthResponse?>
+    : IRequestHandler<LoginCommand, AuthResponse>
 {
-    public async Task<AuthResponse?> Handle(
+    public async Task<AuthResponse> Handle(
         LoginCommand command,
         CancellationToken cancellationToken)
     {
-        Account? account = await context.Accounts
+        var account = await context.Accounts
             .FirstOrDefaultAsync(c =>
                 c.Email == command.Email,
                 cancellationToken);
@@ -23,15 +22,17 @@ public sealed class LoginCompanyCommandHandler(
         if (account == null ||
             !passwordHasher.Verify(command.Password, account.PasswordHash))
         {
-            return null;
+            throw new UnauthorizedAccessException();
         }
 
         (string session, DateTime sessionExpAt) = sessionService.Create();
+        account.SetSession(session, sessionExpAt);
+
+        await cookieService.SignInAsync(session);
 
         return new AuthResponse(
             account.AccountId,
-            session,
-            sessionExpAt,
+            account.AccountType,
             account.VerificationStatus);
     }
 }

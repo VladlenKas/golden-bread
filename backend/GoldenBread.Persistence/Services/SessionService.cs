@@ -14,7 +14,7 @@ internal class SessionService : ISessionService
         var num = Random.Shared.Next(100, 999);
 
         var session = $"{color}-{animal}-{num}";
-        var sessionExpiresAt = DateTime.UtcNow.AddDays(7);
+        var sessionExpiresAt = DateTime.UtcNow.AddDays(1);
 
         return (session, sessionExpiresAt);
     }

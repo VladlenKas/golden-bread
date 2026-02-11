@@ -29,8 +29,9 @@ public static class DependencyInjection
             }).UseSnakeCaseNamingConvention();
         });
         services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
-            
+
         // Servises
+        services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 

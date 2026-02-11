@@ -38,5 +38,13 @@ public partial class Account
             IsActive = 1
         };
     }
+
+    public void SetSession(
+        string session,
+        DateTime sessionExpAt)
+    {
+        Session = session;
+        SessionExpiresAt = sessionExpAt;
+    }
 }
 

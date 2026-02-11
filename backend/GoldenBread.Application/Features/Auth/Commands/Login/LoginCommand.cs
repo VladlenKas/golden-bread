@@ -2,4 +2,4 @@
 
 public sealed record class LoginCommand(
     string Email,
-    string Password) : IRequest<AuthResponse?>;
+    string Password) : IRequest<AuthResponse>;

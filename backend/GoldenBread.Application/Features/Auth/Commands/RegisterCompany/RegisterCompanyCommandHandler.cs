@@ -5,8 +5,9 @@ using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
-public class RegisterCompanyCommandHandler(
+public sealed class RegisterCompanyCommandHandler(
     IGoldenBreadContext context,
+    ICookieService cookieService,
     ISessionService sessionService,
     IPasswordHasher passwordHasher)
     : IRequestHandler<RegisterCompanyCommand, AuthResponse>
@@ -36,10 +37,11 @@ public class RegisterCompanyCommandHandler(
         await context.Accounts.AddAsync(account, cancellationToken);
         await context.Companies.AddAsync(company, cancellationToken);
 
+        await cookieService.SignInAsync(session);
+
         return new AuthResponse(
             account.AccountId,
-            session,
-            sessionExpAt,
+            account.AccountType,
             account.VerificationStatus);
     }
 }

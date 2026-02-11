@@ -2,7 +2,7 @@
 
 [Route("api/[controller]")]
 [ApiController]
-public class CompaniesController : ControllerBase
+public class CompaniesController(IMediator mediator) : ControllerBase
 {
     [HttpGet]
     public IEnumerable<string> Get()

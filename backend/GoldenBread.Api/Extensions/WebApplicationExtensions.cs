@@ -19,6 +19,10 @@ public static class MiddlewareExtensions
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.UseHttpsRedirection();
         app.MapControllers();
 

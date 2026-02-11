@@ -3,7 +3,7 @@ using GoldenBread.Application.Common.Validation.Extensions;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
-public class RegisterCompanyCommandValidator : AbstractValidator<RegisterCompanyCommand>
+public sealed class RegisterCompanyCommandValidator : AbstractValidator<RegisterCompanyCommand>
 {
     private readonly IGoldenBreadContext _context;
 
