@@ -1,5 +1,4 @@
-﻿using GoldenBread.Application.Common.Abstractions;
-using GoldenBread.Application.Common.Abstractions.Data;
+﻿using GoldenBread.Application.Common.Abstractions.Data;
 
 namespace GoldenBread.Application.Common.Behaviors;
 

@@ -32,7 +32,6 @@ public static class DependencyInjection
 
         // Servises
         services.AddScoped<ICookieService, CookieService>();
-        services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
         return services;

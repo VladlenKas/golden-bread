@@ -39,12 +39,10 @@ public partial class Account
         };
     }
 
-    public void SetSession(
-        string session,
-        DateTime sessionExpAt)
+    public void SetSession()
     {
-        Session = session;
-        SessionExpiresAt = sessionExpAt;
+        Session = Guid.NewGuid().ToString("N");
+        SessionExpiresAt = DateTime.UtcNow.AddDays(1);
     }
 
     public void ClearSession() 

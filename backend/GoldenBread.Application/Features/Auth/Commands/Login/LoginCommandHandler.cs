@@ -6,7 +6,6 @@ namespace GoldenBread.Application.Features.Auth.Commands.Login;
 public sealed class LoginCompanyCommandHandler(
     IGoldenBreadContext context,
     ICookieService cookieService,
-    ISessionService sessionService,
     IPasswordHasher passwordHasher)
     : IRequestHandler<LoginCommand, AuthResponse>
 {
@@ -23,10 +22,9 @@ public sealed class LoginCompanyCommandHandler(
             !passwordHasher.Verify(command.Password, account.PasswordHash))
             throw new UnauthorizedAccessException();
 
-        (string session, DateTime sessionExpAt) = sessionService.Create();
-        account.SetSession(session, sessionExpAt);
+        account.SetSession();
 
-        await cookieService.SignInAsync(session);
+        await cookieService.SignInAsync(account.Session!);
 
         return new AuthResponse(
             account.AccountId,
