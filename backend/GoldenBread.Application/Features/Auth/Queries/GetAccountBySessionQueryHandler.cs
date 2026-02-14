@@ -2,22 +2,16 @@
 
 namespace GoldenBread.Application.Features.Auth.Queries;
 
-public sealed class GetAccountBySessionQueryHandler(
-    ICurrentUserService currentUserService)
+public sealed class GetAccountBySessionQueryHandler()
     : IRequestHandler<GetAccountBySessionQuery, AuthResponse>
 {
     public async Task<AuthResponse> Handle(
         GetAccountBySessionQuery query, 
         CancellationToken cancellationToken)
     {
-        var account = await currentUserService.Account(cancellationToken);
-
-        if (account == null)
-            throw new UnauthorizedAccessException();
-
         return new AuthResponse(
-            account.AccountId,
-            account.AccountType,
-            account.VerificationStatus);
+            query.Account.AccountId,
+            query.Account.AccountType,
+            query.Account.VerificationStatus);
     }
 }

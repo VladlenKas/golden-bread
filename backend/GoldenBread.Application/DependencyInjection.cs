@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Common.Behaviors;
+using GoldenBread.Application.Common.Behaviors.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -13,6 +14,7 @@ public static class DependencyInjection
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            cfg.AddOpenBehavior(typeof(AuthenticationBehavior<,>));
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
         });

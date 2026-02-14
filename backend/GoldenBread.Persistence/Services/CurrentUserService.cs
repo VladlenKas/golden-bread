@@ -17,8 +17,7 @@ internal class CurrentUserService(
     public async Task<Account?> Account(CancellationToken cancellationToken)
     {
         _accountCache ??= LoadAccountAsync(cancellationToken);
-        var account = await _accountCache;
-        return account ?? throw new KeyNotFoundException();
+        return await _accountCache;
     }
 
     private async Task<Account?> LoadAccountAsync(CancellationToken cancellationToken)
@@ -28,7 +27,6 @@ internal class CurrentUserService(
             return null;
 
         return await context.Accounts
-            .AsNoTracking()
             .FirstOrDefaultAsync(a => 
                 a.Session == session &&
                 a.SessionExpiresAt > DateTime.UtcNow,

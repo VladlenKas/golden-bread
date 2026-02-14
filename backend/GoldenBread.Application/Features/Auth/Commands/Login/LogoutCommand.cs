@@ -1,3 +1,6 @@
-﻿namespace GoldenBread.Application.Features.Auth.Commands.Login;
+﻿using GoldenBread.Application.Common.Behaviors.Authentication;
+using GoldenBread.Domain.Entities;
 
-public sealed record class LogoutCommand() : IRequest<Unit>;
+namespace GoldenBread.Application.Features.Auth.Commands.Login;
+
+public sealed record class LogoutCommand() : AuthenticatedRequest<Unit>;
