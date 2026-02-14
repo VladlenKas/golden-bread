@@ -1,6 +1,6 @@
 ﻿using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Application.Common.Behaviors.Authentication;
+namespace GoldenBread.Application.Behaviors.Authentication;
 
 public interface IAuthenticatedRequest<TResponse> : IRequest<TResponse>
 {

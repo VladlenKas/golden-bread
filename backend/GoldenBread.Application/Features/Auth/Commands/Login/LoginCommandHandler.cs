@@ -1,5 +1,5 @@
-﻿using GoldenBread.Application.Common.Abstractions.Data;
-using GoldenBread.Application.Common.Abstractions.Services;
+﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Services;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
 

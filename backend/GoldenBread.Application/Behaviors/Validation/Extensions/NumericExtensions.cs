@@ -1,4 +1,4 @@
-﻿namespace GoldenBread.Application.Common.Validation.Extensions;
+﻿namespace GoldenBread.Application.Behaviors.Validation.Extensions;
 
 public static class NumericExtensions
 {

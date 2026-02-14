@@ -1,4 +1,4 @@
-﻿namespace GoldenBread.Application.Common.Behaviors;
+﻿namespace GoldenBread.Application.Behaviors.Validation;
 
 public sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>

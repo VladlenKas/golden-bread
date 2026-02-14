@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Common.Abstractions.Services;
+﻿using GoldenBread.Application.Services;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
 

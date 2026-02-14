@@ -1,4 +1,4 @@
-﻿namespace GoldenBread.Application.Common.Abstractions.Services;
+﻿namespace GoldenBread.Application.Services;
 
 public interface IPasswordHasher
 {

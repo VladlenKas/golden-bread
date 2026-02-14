@@ -3,8 +3,8 @@ using GoldenBread.Infrastructure.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using GoldenBread.Infrastructure.Services;
-using GoldenBread.Application.Common.Abstractions.Services;
-using GoldenBread.Application.Common.Abstractions.Data;
+using GoldenBread.Application.Services;
+using GoldenBread.Application.Abstractions.Data;
 
 namespace GoldenBread.Infrastructure;
 

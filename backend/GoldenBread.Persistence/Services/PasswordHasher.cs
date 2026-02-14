@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Common.Abstractions.Services;
+﻿using GoldenBread.Application.Services;
 using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace GoldenBread.Infrastructure.Services;

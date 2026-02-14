@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Common.Abstractions.Data;
+﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Domain.Entities;
 using System.Reflection;
 

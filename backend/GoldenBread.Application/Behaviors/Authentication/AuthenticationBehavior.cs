@@ -1,6 +1,6 @@
-﻿using GoldenBread.Application.Common.Abstractions.Services;
+﻿using GoldenBread.Application.Services;
 
-namespace GoldenBread.Application.Common.Behaviors.Authentication;
+namespace GoldenBread.Application.Behaviors.Authentication;
 
 public sealed class AuthenticationBehavior<TRequest, TResponse>(ICurrentUserService currentUserService)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IAuthenticatedRequest<TResponse>

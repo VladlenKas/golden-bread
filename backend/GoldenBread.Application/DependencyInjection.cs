@@ -1,5 +1,6 @@
-﻿using GoldenBread.Application.Common.Behaviors;
-using GoldenBread.Application.Common.Behaviors.Authentication;
+﻿using GoldenBread.Application.Behaviors;
+using GoldenBread.Application.Behaviors.Authentication;
+using GoldenBread.Application.Behaviors.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

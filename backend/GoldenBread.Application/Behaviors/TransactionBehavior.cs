@@ -1,6 +1,6 @@
-﻿using GoldenBread.Application.Common.Abstractions.Data;
+﻿using GoldenBread.Application.Abstractions.Data;
 
-namespace GoldenBread.Application.Common.Behaviors;
+namespace GoldenBread.Application.Behaviors;
 
 public sealed class TransactionBehavior<TRequest, TResponse>(IGoldenBreadContext context)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>

@@ -1,6 +1,6 @@
 ﻿using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Application.Common.Abstractions.Data;
+namespace GoldenBread.Application.Abstractions.Data;
 
 public interface IGoldenBreadContext
 {
