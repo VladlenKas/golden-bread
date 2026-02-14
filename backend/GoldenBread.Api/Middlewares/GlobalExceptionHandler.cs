@@ -32,8 +32,9 @@ public sealed class GlobalExceptionHandler(
 
     private static (int StatusCode, string Title) MapException(Exception exception) => exception switch
     {
-        ValidationException => (StatusCodes.Status400BadRequest, "One or more validation errors has occurred"),
+        ValidationException => (StatusCodes.Status422UnprocessableEntity, "One or more validation errors has occurred"),
         UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
+        KeyNotFoundException => (StatusCodes.Status404NotFound, "Not found"),
         _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
     };
 

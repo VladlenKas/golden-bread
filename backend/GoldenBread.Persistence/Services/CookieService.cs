@@ -12,7 +12,7 @@ public sealed class CookieService(IHttpContextAccessor httpContextAccessor) : IC
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, session)
+            new Claim("session", session)
         };
 
         var identity = new ClaimsIdentity(
@@ -27,12 +27,10 @@ public sealed class CookieService(IHttpContextAccessor httpContextAccessor) : IC
                 principal);
     }
 
-    public async Task<string?> FindMeAsync()
+    public string? GetSession()
     {
-        var session = httpContextAccessor.HttpContext!
-            .User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-
-        return session;
+        return httpContextAccessor.HttpContext!
+            .User.FindFirst("session")?.Value;
     }
 
     public async Task SignOutAsync()

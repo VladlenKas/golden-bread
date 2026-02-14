@@ -3,7 +3,7 @@ using GoldenBread.Application.Common.Abstractions.Data;
 
 namespace GoldenBread.Application.Common.Behaviors;
 
-public class TransactionBehavior<TRequest, TResponse>(IGoldenBreadContext context)
+public sealed class TransactionBehavior<TRequest, TResponse>(IGoldenBreadContext context)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
     public async Task<TResponse> Handle(

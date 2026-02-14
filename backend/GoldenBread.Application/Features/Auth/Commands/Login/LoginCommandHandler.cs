@@ -21,9 +21,7 @@ public sealed class LoginCompanyCommandHandler(
 
         if (account == null ||
             !passwordHasher.Verify(command.Password, account.PasswordHash))
-        {
             throw new UnauthorizedAccessException();
-        }
 
         (string session, DateTime sessionExpAt) = sessionService.Create();
         account.SetSession(session, sessionExpAt);

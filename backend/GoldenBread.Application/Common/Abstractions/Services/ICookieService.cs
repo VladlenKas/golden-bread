@@ -3,6 +3,6 @@
 public interface ICookieService
 {
     Task SignInAsync(string session);
-    Task<string?> FindMeAsync();
+    string? GetSession();
     Task SignOutAsync();
 }

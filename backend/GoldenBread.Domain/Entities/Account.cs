@@ -46,5 +46,11 @@ public partial class Account
         Session = session;
         SessionExpiresAt = sessionExpAt;
     }
+
+    public void ClearSession() 
+    { 
+        Session = null;
+        SessionExpiresAt = null;
+    }
 }
 

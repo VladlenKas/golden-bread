@@ -8,6 +8,8 @@ public static class MiddlewareExtensions
     {
         app.UseExceptionHandler();
 
+        app.UseHttpsRedirection();
+
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
@@ -15,7 +17,7 @@ public static class MiddlewareExtensions
         }
 
         app.UseCors(builder =>
-            builder.WithOrigins("http://localhost:5173")
+            builder.WithOrigins("https://localhost:5173")
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
@@ -23,9 +25,9 @@ public static class MiddlewareExtensions
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseHttpsRedirection();
         app.MapControllers();
 
         return app;
     }
 }
+    

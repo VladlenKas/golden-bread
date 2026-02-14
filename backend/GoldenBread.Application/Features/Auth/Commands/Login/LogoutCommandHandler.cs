@@ -1,21 +1,21 @@
 ﻿using GoldenBread.Application.Common.Abstractions.Data;
 using GoldenBread.Application.Common.Abstractions.Services;
 
-namespace GoldenBread.Application.Features.Auth.Queries;
+namespace GoldenBread.Application.Features.Auth.Commands.Login;
 
-public sealed class GetAccountBySessionQueryHandler(
+public sealed class LogoutCommandHandler(
     IGoldenBreadContext context,
-    ICookieService cookieService)
-    : IRequestHandler<GetAccountBySessionQuery, AuthResponse>
+    ICookieService cookieService) 
+    : IRequestHandler<LogoutCommand, Unit>
 {
-    public async Task<AuthResponse> Handle(
-        GetAccountBySessionQuery query, 
+    public async Task<Unit> Handle(
+        LogoutCommand command, 
         CancellationToken cancellationToken)
     {
         string? session = cookieService.GetSession();
 
         if (session == null)
-            throw new KeyNotFoundException();
+            throw new KeyNotFoundException(nameof(session));
 
         var account = await context.Accounts
             .FirstOrDefaultAsync(c =>
@@ -26,9 +26,10 @@ public sealed class GetAccountBySessionQueryHandler(
         if (account == null)
             throw new UnauthorizedAccessException();
 
-        return new AuthResponse(
-            account.AccountId,
-            account.AccountType,
-            account.VerificationStatus);
+        account.ClearSession();
+
+        await cookieService.SignOutAsync();
+
+        return Unit.Value;
     }
 }
