@@ -1,27 +1,16 @@
-﻿using GoldenBread.Application.Common.Abstractions.Data;
-using GoldenBread.Application.Common.Abstractions.Services;
+﻿using GoldenBread.Application.Common.Abstractions.Services;
 
 namespace GoldenBread.Application.Features.Auth.Queries;
 
 public sealed class GetAccountBySessionQueryHandler(
-    IGoldenBreadContext context,
-    ICookieService cookieService)
+    ICurrentUserService currentUserService)
     : IRequestHandler<GetAccountBySessionQuery, AuthResponse>
 {
     public async Task<AuthResponse> Handle(
         GetAccountBySessionQuery query, 
         CancellationToken cancellationToken)
     {
-        string? session = cookieService.GetSession();
-
-        if (session == null)
-            throw new KeyNotFoundException();
-
-        var account = await context.Accounts
-            .FirstOrDefaultAsync(c =>
-                c.Session == session &&
-                c.SessionExpiresAt > DateTime.UtcNow,
-                cancellationToken);
+        var account = await currentUserService.Account(cancellationToken);
 
         if (account == null)
             throw new UnauthorizedAccessException();

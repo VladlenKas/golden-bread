@@ -27,12 +27,6 @@ public sealed class CookieService(IHttpContextAccessor httpContextAccessor) : IC
                 principal);
     }
 
-    public string? GetSession()
-    {
-        return httpContextAccessor.HttpContext!
-            .User.FindFirst("session")?.Value;
-    }
-
     public async Task SignOutAsync()
     {
         await httpContextAccessor.HttpContext!

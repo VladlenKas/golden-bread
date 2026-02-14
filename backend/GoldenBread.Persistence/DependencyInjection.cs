@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
 
         // Servises
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
 
