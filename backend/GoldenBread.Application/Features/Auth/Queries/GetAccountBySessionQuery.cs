@@ -1,6 +1,5 @@
 ﻿using GoldenBread.Application.Behaviors.Authentication;
-using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Application.Features.Auth.Queries;
 
-public sealed record class GetAccountBySessionQuery : AuthenticatedRequest<AuthResponse>;
+public sealed record class GetAccountBySessionQuery() : AuthenticatedRequest<AuthResponse>;

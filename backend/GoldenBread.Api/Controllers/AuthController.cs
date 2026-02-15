@@ -1,4 +1,5 @@
-﻿using GoldenBread.Application.Features.Auth.Commands.Login;
+﻿using GoldenBread.Application.Abstractions.Enums;
+using GoldenBread.Application.Features.Auth.Commands.Login;
 using GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 using GoldenBread.Application.Features.Auth.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -9,9 +10,19 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class AuthController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginCommand command)
-        => Ok(await mediator.Send(command));
+    [HttpPost("login/company")]
+    public async Task<IActionResult> LoginCompany([FromBody] LoginCommand command)
+    {
+        command = command with { PortalType = PortalType.Company };
+        return Ok(await mediator.Send(command));
+    }
+
+    [HttpPost("login/user")]
+    public async Task<IActionResult> LoginUser([FromBody] LoginCommand command)
+    {
+        command = command with { PortalType = PortalType.Company };
+        return Ok(await mediator.Send(command));
+    }
 
     [HttpPost("logout")]
     [Authorize]

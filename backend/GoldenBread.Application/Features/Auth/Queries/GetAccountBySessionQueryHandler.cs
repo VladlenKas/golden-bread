@@ -1,6 +1,4 @@
-﻿using GoldenBread.Application.Common.Abstractions.Services;
-
-namespace GoldenBread.Application.Features.Auth.Queries;
+﻿namespace GoldenBread.Application.Features.Auth.Queries;
 
 public sealed class GetAccountBySessionQueryHandler()
     : IRequestHandler<GetAccountBySessionQuery, AuthResponse>
@@ -9,9 +7,6 @@ public sealed class GetAccountBySessionQueryHandler()
         GetAccountBySessionQuery query, 
         CancellationToken cancellationToken)
     {
-        return new AuthResponse(
-            query.Account.AccountId,
-            query.Account.AccountType,
-            query.Account.VerificationStatus);
+        return new AuthResponse(query.Account.VerificationStatus);
     }
 }

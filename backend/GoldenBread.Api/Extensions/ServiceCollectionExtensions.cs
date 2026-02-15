@@ -30,7 +30,9 @@ public static class DependencyInjection
             {
                 options.Cookie.Name = "gb.session";
                 options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromDays(1);
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
                 options.SlidingExpiration = true;
             });
         services.AddDataProtection()

@@ -1,5 +1,7 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Enums;
 using GoldenBread.Application.Services;
+using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
 
@@ -19,16 +21,22 @@ public sealed class LoginCompanyCommandHandler(
                 cancellationToken);
 
         if (account == null ||
-            !passwordHasher.Verify(command.Password, account.PasswordHash))
+            !passwordHasher.Verify(command.Password, account.PasswordHash) ||
+            !HasAccess(account.AccountType, command.PortalType))
             throw new UnauthorizedAccessException();
 
         account.SetSession();
 
         await cookieService.SignInAsync(account.Session!);
 
-        return new AuthResponse(
-            account.AccountId,
-            account.AccountType,
-            account.VerificationStatus);
+        return new AuthResponse(account.VerificationStatus);
     }
+
+    private bool HasAccess(AccountType accountType, PortalType portal)
+        => (accountType, portal) switch
+        {
+            (AccountType.Company, PortalType.Company) => true,
+            (AccountType.User, PortalType.User) => true,
+            _ => false,
+        };
 }

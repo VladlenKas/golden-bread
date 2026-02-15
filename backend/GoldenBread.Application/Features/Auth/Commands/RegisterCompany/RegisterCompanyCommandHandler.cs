@@ -37,9 +37,6 @@ public sealed class RegisterCompanyCommandHandler(
 
         await cookieService.SignInAsync(account.Session!);
 
-        return new AuthResponse(
-            account.AccountId,
-            account.AccountType,
-            account.VerificationStatus);
+        return new AuthResponse(account.VerificationStatus);
     }
 }
