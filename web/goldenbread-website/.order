@@ -1,0 +1,10 @@
+.vscode
+node_modules
+public
+src
+src/app
+src/widgets
+src/pages
+src/features
+src/entities
+src/shared
