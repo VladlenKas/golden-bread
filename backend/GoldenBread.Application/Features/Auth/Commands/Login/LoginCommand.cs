@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Application.Abstractions.Enums;
-using System.Text.Json.Serialization;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
 

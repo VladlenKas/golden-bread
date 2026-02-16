@@ -20,7 +20,7 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("login/user")]
     public async Task<IActionResult> LoginUser([FromBody] LoginCommand command)
     {
-        command = command with { PortalType = PortalType.Company };
+        command = command with { PortalType = PortalType.User };
         return Ok(await mediator.Send(command));
     }
 

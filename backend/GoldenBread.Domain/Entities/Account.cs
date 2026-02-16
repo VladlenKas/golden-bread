@@ -50,10 +50,5 @@ public partial class Account
         Session = null;
         SessionExpiresAt = null;
     }
-
-    public static implicit operator Task<object>(Account? v)
-    {
-        throw new NotImplementedException();
-    }
 }
 
