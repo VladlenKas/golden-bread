@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Application.Services;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
@@ -7,14 +8,20 @@ namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
 public sealed class RegisterCompanyCommandHandler(
     IGoldenBreadContext context,
+    IUniquenessChecker checker,
     ICookieService cookieService,
-    IPasswordHasher passwordHasher)
-    : IRequestHandler<RegisterCompanyCommand, AuthResponse>
+    IPasswordHasher passwordHasher) : 
+    IRequestHandler<RegisterCompanyCommand, AuthResponse>
 {
     public async Task<AuthResponse> Handle(
         RegisterCompanyCommand command,
         CancellationToken cancellationToken)
     {
+        await checker.EmailMustBeUniqueAsync(command.Email, ct: cancellationToken);
+        await checker.CompanyNameMustBeUniqueAsync(command.Name, ct: cancellationToken);
+        await checker.CompanyInnMustBeUniqueAsync(command.Inn, ct: cancellationToken);
+        await checker.CompanyOgrnMustBeUniqueAsync(command.Ogrn, ct: cancellationToken);
+
         string passwordHash = passwordHasher.Create(command.Password);
 
         var account = Account.Create(
@@ -25,7 +32,7 @@ public sealed class RegisterCompanyCommandHandler(
 
         account.SetSession();
 
-        var company = Company.Create(
+        var company = Entities.Company.Create(
             command.Name,
             command.Inn,
             command.Ogrn,
@@ -37,6 +44,8 @@ public sealed class RegisterCompanyCommandHandler(
 
         await cookieService.SignInAsync(account.Session!);
 
-        return new AuthResponse(account.VerificationStatus);
+        return new AuthResponse(
+            account.AccountId,
+            account.VerificationStatus);
     }
 }

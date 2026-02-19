@@ -1,4 +1,3 @@
-<!-- pages/register/ui/RegisterPage.vue -->
 <script setup lang="ts">
 import {
   Form,
@@ -31,7 +30,7 @@ const { handleRegister } = useRegister();
       <CardHeader class="space-y-1">
         <CardTitle class="text-2xl">Регистрация профиля</CardTitle>
         <CardDescription>
-          Создайте аккаунт для оформления заказов и доступа к профилю
+          Создайте аккаунт для доступа к профилю и оформлению заказов
         </CardDescription>
       </CardHeader>
 
@@ -50,7 +49,7 @@ const { handleRegister } = useRegister();
               <FormItem v-auto-animate>
                 <FormLabel>Название компании</FormLabel>
                 <FormControl>
-                  <Input placeholder="Golden Bread" v-bind="componentField" />
+                  <Input placeholder="Пример: Golden Bread" v-bind="componentField" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -60,7 +59,7 @@ const { handleRegister } = useRegister();
               <FormItem v-auto-animate>
                 <FormLabel>ИНН</FormLabel>
                 <FormControl>
-                  <Input placeholder="0000000000" v-bind="componentField" />
+                  <Input placeholder="10 цифр" v-bind="componentField" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -70,7 +69,7 @@ const { handleRegister } = useRegister();
               <FormItem v-auto-animate>
                 <FormLabel>ОГРН</FormLabel>
                 <FormControl>
-                  <Input placeholder="0000000000000" v-bind="componentField" />
+                  <Input placeholder="13 цифр" v-bind="componentField" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -80,7 +79,7 @@ const { handleRegister } = useRegister();
               <FormItem v-auto-animate>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="goldenbread@yandex.ru" v-bind="componentField" />
+                  <Input placeholder="Пример: goldenbread@yandex.ru" v-bind="componentField" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -107,11 +106,7 @@ const { handleRegister } = useRegister();
             </FormField>
 
             <Button type="submit" :disabled="isSubmitting" class="w-full">
-              <Loader2
-                v-if="isSubmitting"
-                class="w-4 h-4 mr-2 animate-spin"/>
-
-              {{ isSubmitting ? 'Регистрируемся…' : 'Зарегистрироваться' }}
+              <Loader2 v-if="isSubmitting" class="w-4 h-4 mr-2 animate-spin"/>
             </Button>
           </form>
         </Form>

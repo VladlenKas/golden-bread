@@ -16,7 +16,7 @@ export function useRegister() {
       successToast("Регистрация прошла успешно. На вашу электронную почту поступит уведомление," +
          "когда аккаунт будет проверен");
     } catch (error: any) {
-      if (error.status === 422) {
+      if (error.status === 422 || error.status === 409) {
         const apiErrors = error.data.errors || [];
 
         const groupedErrors = apiErrors.reduce((acc: any, err: any) => {

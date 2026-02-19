@@ -36,8 +36,4 @@
 	<PackageReference Include="HotAvalonia" Version="3.0.2" PrivateAssets="All" Publish="True" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\backend\GoldenBread.Contracts\GoldenBread.Contracts.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Enums;
+using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Application.Services;
 using GoldenBread.Domain.Enums;
 
@@ -8,8 +9,8 @@ namespace GoldenBread.Application.Features.Auth.Commands.Login;
 public sealed class LoginCompanyCommandHandler(
     IGoldenBreadContext context,
     ICookieService cookieService,
-    IPasswordHasher passwordHasher)
-    : IRequestHandler<LoginCommand, AuthResponse>
+    IPasswordHasher passwordHasher) : 
+    IRequestHandler<LoginCommand, AuthResponse>
 {
     public async Task<AuthResponse> Handle(
         LoginCommand command,
@@ -29,7 +30,9 @@ public sealed class LoginCompanyCommandHandler(
 
         await cookieService.SignInAsync(account.Session!);
 
-        return new AuthResponse(account.VerificationStatus);
+        return new AuthResponse(
+            account.AccountId,
+            account.VerificationStatus);
     }
 
     private bool HasAccess(AccountType accountType, PortalType portal)

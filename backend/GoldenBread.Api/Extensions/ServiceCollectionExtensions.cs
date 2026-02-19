@@ -1,6 +1,7 @@
 ﻿using GoldenBread.Api.Middlewares;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System.Text.Json.Serialization;
 
 namespace GoldenBread.Api.Extensions;
@@ -21,6 +22,7 @@ public static class DependencyInjection
             {
                 options.JsonSerializerOptions.Converters.Add(
                     new JsonStringEnumConverter());
+
             });
         services.AddOpenApi();
 

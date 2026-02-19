@@ -1,4 +1,6 @@
-﻿namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
+﻿using GoldenBread.Application.Features.Auth.Dtos;
+
+namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
 public sealed record class RegisterCompanyCommand(
     string Email,

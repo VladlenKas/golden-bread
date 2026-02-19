@@ -49,3 +49,4 @@ export const registerSchema = toTypedSchema(
       path: ['passwordConfirm'],
     }),
 );
+  

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using GoldenBread.Application.Exceptions;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace GoldenBread.Api.Middlewares;
 
@@ -34,12 +35,16 @@ public sealed class GlobalExceptionHandler(
     {
         ValidationException => (StatusCodes.Status422UnprocessableEntity, "One or more validation errors has occurred"),
         UnauthorizedAccessException => (StatusCodes.Status401Unauthorized, "Account not found or session expired"),
+        DuplicateValueException ex => (StatusCodes.Status409Conflict, $"Error duplicating the value for the \"{ex.PropertyName}\" parameter"),
+        BusinessValidationException => (StatusCodes.Status422UnprocessableEntity, "One validation error has occurred"),
         _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
     };
 
     private static Dictionary<string, object?> GetExtension(Exception exception) => exception switch
     {
-        ValidationException vEx => new Dictionary<string, object?> { ["errors"] = vEx.Errors },
+        ValidationException ex => new Dictionary<string, object?> { ["errors"] = ex.Errors },
+        DuplicateValueException ex => new Dictionary<string, object?> { ["errors"] = ex.Error },
+        BusinessValidationException ex => new Dictionary<string, object?> { ["errors"] = ex.Error },
         _ => new Dictionary<string, object?> { ["message"] = exception.Message }
     };
 }

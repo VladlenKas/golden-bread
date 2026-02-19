@@ -1,6 +1,7 @@
 import type { VerificationStatus } from "./user";
 
 export interface AuthResponse {
+  id: number;
   verificationStatus: VerificationStatus;
 }
 

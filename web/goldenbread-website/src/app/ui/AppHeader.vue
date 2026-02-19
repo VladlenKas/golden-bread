@@ -17,7 +17,9 @@ const userStore = useUserStore();
 
       <NavigationMenu>
         <NavigationMenuList class="flex items-center gap-8 text-sm text-muted-foreground">
-          <NavigationMenuItem><a class="hover:text-foreground" href="#">Главная</a></NavigationMenuItem>
+          <NavigationMenuItem as-child>
+            <RouterLink class="hover:text-foreground" to="/home">Главная</RouterLink>
+          </NavigationMenuItem>
           <NavigationMenuItem><a class="hover:text-foreground" href="#">Каталог</a></NavigationMenuItem>
           <NavigationMenuItem><a class="hover:text-foreground" href="#">Корзина</a></NavigationMenuItem>
           <NavigationMenuItem><a class="hover:text-foreground" href="#">О нас</a></NavigationMenuItem>
@@ -35,7 +37,9 @@ const userStore = useUserStore();
       </div>
 
       <div v-else>
-        <Button>Профиль</Button>
+        <Button as-child>
+          <RouterLink to="/profile">Профиль</RouterLink>
+        </Button>
       </div>
     </div>
   </div>

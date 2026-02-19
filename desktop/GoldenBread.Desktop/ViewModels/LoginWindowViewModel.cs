@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using GoldenBread.Contracts.Requests;
 using GoldenBread.Desktop.Api;
 using GoldenBread.Desktop.Services.Dialogs;
 using ReactiveUI;
@@ -32,9 +31,9 @@ public partial class LoginWindowViewModel(
 
         IsLoading = true;
 
-        try
+        /*try
         {
-            var request = new LoginRequest { Email = Email, Password = Password };
+            var request = new { Email = Email, Password = Password };
             var response = await userApi.Login(request);
 
             if (response.IsSuccessStatusCode)
@@ -59,6 +58,6 @@ public partial class LoginWindowViewModel(
         finally
         {
             IsLoading = false; 
-        }
+        }*/
     }   
 }

@@ -34,7 +34,7 @@ export const router = createRouter({
   ],
 });
 
-router.beforeEach( async (to) => {
+router.beforeEach(async (to) => {
   const userStore = useUserStore();
   await userStore.initialize();
   

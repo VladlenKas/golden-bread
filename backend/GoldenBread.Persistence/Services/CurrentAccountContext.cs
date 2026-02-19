@@ -5,19 +5,20 @@ using Microsoft.AspNetCore.Http;
 
 namespace GoldenBread.Infrastructure.Services;
 
-internal class CurrentUserService(
+internal class CurrentAccountContext(
     IHttpContextAccessor httpContextAccessor,
-    IGoldenBreadContext context) : ICurrentUserService
+    IGoldenBreadContext context) : 
+    ICurrentAccountContext
 {
     private Task<Account?>? _accountCache;
 
     private string? SessionToken => httpContextAccessor.HttpContext?
         .User.FindFirst("session")?.Value;
 
-    public async Task<Account?> Account(CancellationToken cancellationToken)
+    public async Task<Account> GetAccountAsync(CancellationToken cancellationToken)
     {
         _accountCache ??= LoadAccountAsync(cancellationToken);
-        return await _accountCache;
+        return await _accountCache ?? throw new UnauthorizedAccessException();
     }
 
     private async Task<Account?> LoadAccountAsync(CancellationToken cancellationToken)

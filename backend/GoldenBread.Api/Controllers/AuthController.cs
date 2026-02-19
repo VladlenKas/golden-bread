@@ -1,12 +1,13 @@
 ﻿using GoldenBread.Application.Abstractions.Enums;
 using GoldenBread.Application.Features.Auth.Commands.Login;
+using GoldenBread.Application.Features.Auth.Commands.Logout;
 using GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
-using GoldenBread.Application.Features.Auth.Queries;
+using GoldenBread.Application.Features.Auth.Queries.GetAccountBySession;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GoldenBread.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/auth")]
 [ApiController]
 public class AuthController(IMediator mediator) : ControllerBase
 {
@@ -27,14 +28,21 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
-        => Ok(await mediator.Send(new LogoutCommand()));
+    {
+        await mediator.Send(new LogoutCommand());
+        return NoContent();
+    }
 
     [HttpPost("register/company")]
     public async Task<IActionResult> RegisterCompany([FromBody] RegisterCompanyCommand command)
-        => CreatedAtAction(nameof(Me), await mediator.Send(command));
+    {
+        await mediator.Send(command);
+        return Created();
+    }
 
     [HttpGet("me")]
-    [Authorize]
-    public async Task<IActionResult> Me() 
-        => Ok(await mediator.Send(new GetAccountBySessionQuery()));
+    public async Task<IActionResult> Me()
+    {
+        return Ok(await mediator.Send(new GetAccountBySessionQuery()));
+    }
 }
