@@ -5,7 +5,6 @@ namespace GoldenBread.Application.Features.CompanyAccount.Commands.ChangeMyEmail
 
 public sealed class ChangeMyEmailCommandHandler(
     ICurrentAccountContext accountContext,
-    ICookieService cookieService,
     IUniquenessChecker checker,
     IPasswordHasher hasher) :
     IRequestHandler<ChangeMyEmailCommand, Unit>
@@ -16,15 +15,12 @@ public sealed class ChangeMyEmailCommandHandler(
     {
         var account = await accountContext.GetAccountAsync(cancellationToken);
 
-        await checker.EmailMustBeUniqueAsync(command.NewEmail, account.AccountId, cancellationToken);
         if (!hasher.Verify(command.Password, account.PasswordHash)) 
             throw new PasswordsMismatchException();
+        await checker.EmailMustBeUniqueAsync(command.NewEmail, account.AccountId, cancellationToken);
 
         account.UpdateEmail(command.NewEmail);
-        account.SetPendingVerification();
         account.ClearSession();
-
-        await cookieService.SignOutAsync();
 
         return Unit.Value;
     }

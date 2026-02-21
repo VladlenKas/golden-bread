@@ -9,7 +9,7 @@ namespace GoldenBread.Api.Controllers;
 
 [Route("api/account-company")]
 [ApiController]
-public class MyCompanyController(IMediator mediator) : ControllerBase
+public class AccountCompanyController(IMediator mediator) : ControllerBase
 {
 
     // GET api/account-company/profile

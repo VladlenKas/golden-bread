@@ -11,6 +11,7 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class AuthController(IMediator mediator) : ControllerBase
 {
+    // POST api/login/company 
     [HttpPost("login/company")]
     public async Task<IActionResult> LoginCompany([FromBody] LoginCommand command)
     {
@@ -18,6 +19,7 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Ok(await mediator.Send(command));
     }
 
+    // POST api/login/user 
     [HttpPost("login/user")]
     public async Task<IActionResult> LoginUser([FromBody] LoginCommand command)
     {
@@ -25,6 +27,7 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Ok(await mediator.Send(command));
     }
 
+    // POST api/logout 
     [HttpPost("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
@@ -33,6 +36,7 @@ public class AuthController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
+    // POST api/register/company 
     [HttpPost("register/company")]
     public async Task<IActionResult> RegisterCompany([FromBody] RegisterCompanyCommand command)
     {
@@ -40,9 +44,11 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Created();
     }
 
+    // POST api/me 
     [HttpGet("me")]
     public async Task<IActionResult> Me()
     {
-        return Ok(await mediator.Send(new GetAccountBySessionQuery()));
+        var result = await mediator.Send(new GetAccountBySessionQuery());
+        return result == null ? NoContent() : Ok(result);
     }
 }

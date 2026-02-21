@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Exceptions;
 using GoldenBread.Application.Services;
 using GoldenBread.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +16,16 @@ internal class CurrentAccountContext(
     private string? SessionToken => httpContextAccessor.HttpContext?
         .User.FindFirst("session")?.Value;
 
+    public string? GetSessionFromCookie()
+    {
+        return httpContextAccessor.HttpContext?
+            .Request.Cookies["gb.session"]; 
+    }
+
     public async Task<Account> GetAccountAsync(CancellationToken cancellationToken)
     {
         _accountCache ??= LoadAccountAsync(cancellationToken);
-        return await _accountCache ?? throw new UnauthorizedAccessException();
+        return await _accountCache ?? throw new SessionExpiredException();
     }
 
     private async Task<Account?> LoadAccountAsync(CancellationToken cancellationToken)

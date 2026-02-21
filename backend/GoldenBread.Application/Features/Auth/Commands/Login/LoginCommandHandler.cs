@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Enums;
+using GoldenBread.Application.Exceptions;
 using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Application.Services;
 using GoldenBread.Domain.Enums;
@@ -24,7 +25,7 @@ public sealed class LoginCompanyCommandHandler(
         if (account == null ||
             !passwordHasher.Verify(command.Password, account.PasswordHash) ||
             !HasAccess(account.AccountType, command.PortalType))
-            throw new UnauthorizedAccessException();
+            throw new AccountNotFoundException();
 
         account.SetSession();
 

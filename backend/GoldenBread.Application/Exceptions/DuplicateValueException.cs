@@ -48,3 +48,9 @@ public class AddressDuplicateException : DuplicateValueException
     public AddressDuplicateException()
         : base("Address", "Адрес уже занят") { }
 }
+
+public class NewPasswrodDuplicateException : DuplicateValueException
+{
+    public NewPasswrodDuplicateException()
+        : base("NewPassword", "Новый пароль не должен совпадать со старым") { }
+}

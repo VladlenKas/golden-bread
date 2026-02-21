@@ -17,6 +17,9 @@ public sealed class ChangePasswordCommandHandler(
         if (!hasher.Verify(command.OldPassword, account.PasswordHash))
             throw new PasswordsMismatchException();
 
+        if (command.OldPassword == command.NewPassword)
+            throw new NewPasswrodDuplicateException();
+
         account.UpdatePassword(hasher.Create(command.NewPassword));
 
         return Unit.Value;
