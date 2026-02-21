@@ -26,9 +26,9 @@ export function useNotifications() {
       description: `${msg}`,
     });
     
-    const errorApiToast = (msg: string, st: number) =>
+    const unhandledErrorToast = (msg: string, st: number) =>
       toast({
-        title: "Критическая ошибка",
+        title: "Необработанная ошибка",
         description: `Статус: ${st}. ${msg}`,
         variant: 'destructive',
       });
@@ -38,6 +38,6 @@ export function useNotifications() {
     infoToast,
     warningToast,
     errorToast,
-    errorApiToast,
+    unhandledErrorToast,
   };
 }

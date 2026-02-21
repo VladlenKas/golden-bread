@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { useNotifications } from '@/shared/composables/useNotifications';
-import { ErrorKind, type ApiError } from './types/error';
+import { ErrorKind } from './types';
+
+export interface ApiError {
+  message: string;
+  kind: ErrorKind;
+  status: number;
+  data: [] | null;
+}
 
 export const client = axios.create({
   baseURL: 'https://localhost:7107',
@@ -13,7 +20,7 @@ export const client = axios.create({
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    const { errorApiToast, errorToast } = useNotifications();
+    const { unhandledErrorToast, errorToast, infoToast } = useNotifications();
 
     if (!error.response) {
       const err: ApiError = {
@@ -22,20 +29,31 @@ client.interceptors.response.use(
         status: 0,
         data: null
       };
-      errorApiToast(err.message, 0);
+      unhandledErrorToast(err.message, 0);
       return Promise.reject(err);
     }
 
     const status = error.response.status;
-    const message = error.response.message;
+    const message = error.response.data.message;
+    const type = error.response.data.type;
+    let kind = ErrorKind.Http;
 
     switch (status) {
       case 401: {
-        errorToast("Пользователь не найден или не существует");
+        if (type === "SessionExpiredException") {
+          infoToast(message);
+        } else {
+          errorToast(message);
+        }
         break;
       }
       case 409: {
         errorToast("Введены данные, которые в настоящий момент уже используются. Попробуйте ввести другие");
+        break;
+      }
+      case 404: {
+        errorToast("У вас недостаточно прав для этого действия. Выполните вход в систему и попробуйте снова")
+        kind = ErrorKind.NoRights;
         break;
       }
       case 422: {
@@ -43,16 +61,17 @@ client.interceptors.response.use(
         break;
       }
       case 500: {
-        errorApiToast("Внутренняя ошибка на сервере", 500);
+        unhandledErrorToast("Внутренняя ошибка на сервере", 500);
         break;
       }
       default:
-        errorApiToast(message, status);
+        unhandledErrorToast(message, status);
+        kind = ErrorKind.Unknown
     }
 
     return Promise.reject({
       message,
-      kind: ErrorKind.Http,
+      kind: kind,
       status,
       data: error.response.data
     } as ApiError);

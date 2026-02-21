@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
-import { default as Header } from './AppHeader.vue';
-import { default as Footer } from './AppFooter.vue';
 </script>
 
 <template>
-  <Header/>
-  <div class="flex-1 min-h-screen">
-    <RouterView />
+  <div class="flex flex-col min-h-screen">
+    <main class="flex-1 bg-muted/40">
+      <RouterView />
+    </main>
   </div>
-  <Footer/>
 </template>

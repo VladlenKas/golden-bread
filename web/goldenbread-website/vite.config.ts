@@ -17,6 +17,12 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+   build: {
+    sourcemap: true, 
+  },
+  esbuild: {
+    sourcemap: true,
+  },
   server: {
     https: {
       key: fs.readFileSync('./localhost+2-key.pem'),
