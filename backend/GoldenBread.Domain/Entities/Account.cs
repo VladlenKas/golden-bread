@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Domain.Enums;
+using System;
 
 namespace GoldenBread.Domain.Entities;
 
@@ -10,7 +11,7 @@ public sealed class Account
     public string PasswordHash { get; set; } = null!;
     public string? Session { get; set; }
     public DateTime? SessionExpiresAt { get; set; }
-    public short IsActive { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public AccountType AccountType { get; set; }
     public VerificationStatus VerificationStatus { get; set; }
@@ -35,7 +36,7 @@ public sealed class Account
             VerificationStatus = VerificationStatus.Pending,
             Session = session,
             SessionExpiresAt = sessionExpiresAt,
-            IsActive = 1
+            DeletedAt = null
         };
     }
 

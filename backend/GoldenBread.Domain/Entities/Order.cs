@@ -1,10 +1,13 @@
 ﻿using GoldenBread.Domain.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace GoldenBread.Domain.Entities;
 
-public sealed class Order
+public class Order
 {
     public int OrderId { get; set; }
+
     public int CompanyId { get; set; }
     public int TariffId { get; set; }
 

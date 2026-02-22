@@ -44,7 +44,7 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Created();
     }
 
-    // POST api/me 
+    // GET api/me 
     [HttpGet("me")]
     public async Task<IActionResult> Me()
     {

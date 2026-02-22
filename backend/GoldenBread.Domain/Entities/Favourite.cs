@@ -1,8 +1,9 @@
 ﻿namespace GoldenBread.Domain.Entities;
 
-public sealed class Favourite
+public class Favourite
 {
     public int FavouriteId { get; set; }
+
     public int CompanyId { get; set; }
     public int ProductId { get; set; }
 

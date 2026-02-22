@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GoldenBread.Domain.Entities;
 
-public partial class OrderItem
+public class OrderItem
 {
     public int OrderItemId { get; set; }
 
     public int OrderId { get; set; }
-
     public int? BatchId { get; set; }
 
     public int Quantity { get; set; }
-
     public int? TotalUnits { get; set; }
+    public decimal? UnitPriceAtOrder { get; set; }
 
-    public virtual ProductBatch? Batch { get; set; }
+    public ProductBatch? Batch { get; set; }
+    public Order Order { get; set; } = null!;
 
-    public virtual ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
-
-    public virtual Order Order { get; set; } = null!;
+    public ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
 }

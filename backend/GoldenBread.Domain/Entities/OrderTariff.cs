@@ -1,6 +1,9 @@
-﻿namespace GoldenBread.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
 
-public sealed class OrderTariff
+namespace GoldenBread.Domain.Entities;
+
+public class OrderTariff
 {
     public int OrderTariffId { get; set; }
 
@@ -8,7 +11,7 @@ public sealed class OrderTariff
     public string Description { get; set; } = null!;
     public decimal MarkupPercent { get; set; }
     public decimal FreeEmployeesPercent { get; set; }
-    public short IsDelete { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

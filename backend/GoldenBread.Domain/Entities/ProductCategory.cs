@@ -3,19 +3,15 @@ using System.Collections.Generic;
 
 namespace GoldenBread.Domain.Entities;
 
-public partial class ProductCategory
+public class ProductCategory
 {
     public int ProductCategoryId { get; set; }
 
     public string Name { get; set; } = null!;
-
-    public short IsDelete { get; set; }
-
     public string Color { get; set; } = null!;
-
     public byte[]? Icon { get; set; }
-
     public byte[]? Image { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }
