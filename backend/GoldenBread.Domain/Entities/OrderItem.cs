@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-
-namespace GoldenBread.Domain.Entities;
+﻿namespace GoldenBread.Domain.Entities;
 
 public class OrderItem
 {
-    public int OrderItemId { get; set; }
+    public int OrderItemId { get; private set; }
 
-    public int OrderId { get; set; }
-    public int? BatchId { get; set; }
+    public int OrderId { get; private set; }
+    public int? BatchId { get; private set; }
 
     public int Quantity { get; set; }
     public int? TotalUnits { get; set; }
@@ -17,4 +15,6 @@ public class OrderItem
     public Order Order { get; set; } = null!;
 
     public ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
+
+    public OrderItem() { }
 }

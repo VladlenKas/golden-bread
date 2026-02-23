@@ -1,12 +1,12 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Features.CompanyAccount.Dtos;
+using GoldenBread.Application.Features.CompanyProfile.Dtos;
 
 namespace GoldenBread.Application.Features.Company.Queries.GetById;
 
 public sealed class GetByIdQueryHandler(IGoldenBreadContext context) : 
-    IRequestHandler<GetByIdQuery, CompanyResponse>
+    IRequestHandler<GetByIdQuery, ProfileResponse>
 {
-    public async Task<CompanyResponse> Handle(
+    public async Task<ProfileResponse> Handle(
         GetByIdQuery query, 
         CancellationToken cancellationToken)
     {

@@ -74,3 +74,4 @@ public class UniquenessChecker(IGoldenBreadContext context) : IUniquenessChecker
             throw new EmailDuplicateException();
     }
 }
+

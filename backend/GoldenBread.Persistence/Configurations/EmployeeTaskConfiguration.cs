@@ -20,7 +20,6 @@ public class EmployeeTaskConfiguration : IEntityTypeConfiguration<EmployeeTask>
             .HasColumnName("assigned_quantity");
 
         builder.Property(e => e.CompletedQuantity)
-            .HasDefaultValue(0)
             .HasColumnName("completed_quantity");
 
         builder.Property(e => e.EmployeeId)

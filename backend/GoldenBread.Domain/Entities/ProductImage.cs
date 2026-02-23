@@ -6,7 +6,7 @@ public class ProductImage
 
     public int ProductId { get; set; }
 
-    public byte[] Image { get; set; } = null!;
+    public string ImagePath { get; set; } = null!;
 
     public Product Product { get; set; } = null!;
 }

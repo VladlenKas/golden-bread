@@ -1,6 +1,4 @@
 ﻿using GoldenBread.Domain.Enums;
-using System;
-using System.Collections.Generic;
 
 namespace GoldenBread.Domain.Entities;
 

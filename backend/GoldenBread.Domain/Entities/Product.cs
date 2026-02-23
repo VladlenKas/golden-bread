@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GoldenBread.Domain.Entities;
+﻿namespace GoldenBread.Domain.Entities;
 
 public class Product
 {
@@ -12,8 +9,6 @@ public class Product
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public decimal CostPrice { get; set; }
-    public decimal SalePrice { get; set; }
-    public int MarkupPercent { get; set; }
     public decimal Weight { get; set; }
     public int ProductionTime { get; set; }
     public DateTime? DeletedAt { get; set; }

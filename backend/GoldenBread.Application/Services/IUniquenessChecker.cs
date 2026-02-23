@@ -9,3 +9,4 @@ public interface IUniquenessChecker
     Task CompanyOgrnMustBeUniqueAsync(string ogrn, int? excludeId = null, CancellationToken ct = default);
     Task EmailMustBeUniqueAsync(string email, int? excludeId = null, CancellationToken ct = default);
 }
+

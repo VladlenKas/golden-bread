@@ -30,19 +30,12 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(e => e.Description)
             .HasColumnName("description");
 
-        builder.Property(e => e.MarkupPercent)
-            .HasColumnName("markup_percent");
-
         builder.Property(e => e.Name)
             .HasMaxLength(100)
             .HasColumnName("name");
 
         builder.Property(e => e.ProductionTime)
             .HasColumnName("production_time");
-
-        builder.Property(e => e.SalePrice)
-            .HasPrecision(4, 2)
-            .HasColumnName("sale_price");
 
         builder.Property(e => e.Weight)
             .HasPrecision(5, 3)

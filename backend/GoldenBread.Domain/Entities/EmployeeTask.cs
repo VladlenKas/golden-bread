@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GoldenBread.Domain.Entities;
+﻿namespace GoldenBread.Domain.Entities;
 
 public class EmployeeTask
 {

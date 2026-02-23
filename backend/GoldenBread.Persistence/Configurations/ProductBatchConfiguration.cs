@@ -18,8 +18,11 @@ public class ProductBatchConfiguration : IEntityTypeConfiguration<ProductBatch>
         builder.Property(e => e.ProductId)
             .HasColumnName("product_id");
 
+        builder.Property(e => e.MarkupPercent)
+            .HasColumnName("markup_percent");
+
         builder.Property(e => e.QuantityPerBatch)
-            .HasColumnName("units");
+            .HasColumnName("quantity_per_batch");
 
         builder.HasOne(d => d.Product)
             .WithMany(p => p.ProductBatches)

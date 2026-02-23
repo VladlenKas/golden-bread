@@ -15,8 +15,8 @@ public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
         builder.Property(e => e.ProductImageId)
             .HasColumnName("product_image_id");
 
-        builder.Property(e => e.Image)
-            .HasColumnName("image");
+        builder.Property(e => e.ImagePath)
+            .HasColumnName("image_path");
 
         builder.Property(e => e.ProductId)
             .HasColumnName("product_id");
@@ -28,3 +28,4 @@ public class ProductImageConfiguration : IEntityTypeConfiguration<ProductImage>
             .HasConstraintName("fk_product_images_product_id");
     }
 }
+    

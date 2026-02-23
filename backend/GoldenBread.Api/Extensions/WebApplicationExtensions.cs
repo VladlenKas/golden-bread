@@ -1,4 +1,5 @@
-﻿using Scalar.AspNetCore;
+﻿using Microsoft.Extensions.FileProviders;
+using Scalar.AspNetCore;
 
 namespace GoldenBread.Api.Extensions;
 
@@ -26,6 +27,12 @@ public static class MiddlewareExtensions
         app.UseAuthorization();
 
         app.MapControllers();
+
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(app.Configuration["Data:DbUploadsPath"]!),
+            RequestPath = "/db_uploads"
+        });
 
         return app;
     }

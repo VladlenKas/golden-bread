@@ -37,7 +37,7 @@ public static class DependencyInjection
                 options.SlidingExpiration = true;
             });
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(configuration["Keys:Path"]!))
+            .PersistKeysToFileSystem(new DirectoryInfo(configuration["Data:KeysPath"]!))
             .SetApplicationName("GoldenBread");
         services.AddAuthorization();
 
