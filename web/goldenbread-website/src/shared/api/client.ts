@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useNotifications } from '@/shared/composables/useNotifications';
 import { ErrorKind } from './types';
+import { API_BASE_URL } from '../constants';
 
 export interface ApiError {
   message: string;
@@ -10,7 +11,7 @@ export interface ApiError {
 }
 
 export const client = axios.create({
-  baseURL: 'https://localhost:7107',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -29,7 +30,8 @@ client.interceptors.response.use(
         status: 0,
         data: null
       };
-      unhandledErrorToast(err.message, 0);
+
+      errorToast(err.message);
       return Promise.reject(err);
     }
 
@@ -61,7 +63,7 @@ client.interceptors.response.use(
         break;
       }
       case 500: {
-        unhandledErrorToast("Внутренняя ошибка на сервере", 500);
+        errorToast("Внутренняя ошибка на сервере");
         break;
       }
       default:

@@ -55,19 +55,16 @@ export const router = createRouter({
       path: '/privacy',
       name: 'privacy',
       component: () => import('@/pages/PrivacyPage.vue'),
-      meta: { requiresAuth: true },
     },
     {
       path: '/faq',
       name: 'faq',
       component: () => import('@/pages/FaqPage.vue'),
-      meta: { requiresAuth: true },
     },
     {
       path: '/docs',
       name: 'docs',
       component: () => import('@/pages/DocsPage.vue'),
-      meta: { requiresAuth: true },
     },
   ],
 });

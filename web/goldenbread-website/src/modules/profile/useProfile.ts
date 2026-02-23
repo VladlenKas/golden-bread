@@ -28,6 +28,7 @@ export function useProfile() {
 
   onMounted(loadProfile);
 
+  // Загрузка профиля
   async function loadProfile() {
     isLoading.value = true;
     try {
@@ -40,6 +41,7 @@ export function useProfile() {
     }
   }
 
+  // Обновление реквизитов
   async function handleUpdateRequisites(values: UpdateRequisitesRequest, setErrors: any) {
     try {
       await updateRequisites(values);
@@ -55,6 +57,7 @@ export function useProfile() {
     }
   }
 
+  // Обновление контактов
   async function handleUpdateContacts(values: UpdateContactsRequest, setErrors: any) {
     try {
       await updateContacts(values);
@@ -69,6 +72,7 @@ export function useProfile() {
     }
   }
 
+  // Смена пароля
   async function handleChangePassword(values: ChangePasswordRequest, setErrors: any) {
     try {
       await changePassword(values);
@@ -84,6 +88,7 @@ export function useProfile() {
     }
   }
 
+  // Смена email
   async function handleChangeEmail(values: ChangeEmailRequest, setErrors: any) {
     try {
       await changeEmail(values);

@@ -9,22 +9,22 @@ import type {
 } from './types';
 
 export async function changeEmail(value: ChangeEmailRequest): Promise<void> {
-  await client.put('/api/account-company/email', value);
+  await client.put('/api/company-profile/email', value);
 }
 
 export async function changePassword(value: ChangePasswordRequest,): Promise<void> {
-  await client.put('/api/account-company/password', value);
+  await client.put('/api/company-profile/password', value);
 }
 
 export async function updateContacts(value: UpdateContactsRequest,): Promise<void> {
-  await client.put('/api/account-company/contacts', value);
+  await client.put('/api/company-profile/contacts', value);
 }
 
 export async function updateRequisites(value: UpdateRequisitesRequest,): Promise<void> {
-  await client.put('/api/account-company/requisites', value);
+  await client.put('/api/company-profile/requisites', value);
 }
 
 export async function getProfile(): Promise<ProfileResponse> {
-  const { data } = await client.get('/api/account-company/profile');
+  const { data } = await client.get('/api/company-profile');
   return data;
 }

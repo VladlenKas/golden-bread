@@ -63,7 +63,7 @@ async function onLogoutConfirm() {
         ? 'bg-background/80 backdrop-blur-md border-b shadow-sm' 
         : 'bg-background border-b'
     ]">
-    <div class="mx-auto max-w-[1400px] h-16">
+    <div class="mx-auto max-w-screen-2xl h-16">
       <div class="grid grid-cols-[1fr_auto_1fr] h-full items-center gap-4">
         
         <!-- Логотип -->
