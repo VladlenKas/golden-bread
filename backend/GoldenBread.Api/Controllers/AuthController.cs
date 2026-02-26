@@ -48,7 +48,8 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpGet("me")]
     public async Task<IActionResult> Me()
     {
-        var result = await mediator.Send(new GetAccountBySessionQuery());
+        var query = new GetAccountBySessionQuery();
+        var result = await mediator.Send(query);
         return result == null ? NoContent() : Ok(result);
     }
 }

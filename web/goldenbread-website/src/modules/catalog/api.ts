@@ -7,3 +7,9 @@ export async function getAllProducts(): Promise<ProductListItem[]> {
   return data;
 }
 
+export async function addToFavorites(productId: number): Promise<void> {
+  await client.post(`api/products/${productId}/favourite`);
+}
+
+
+

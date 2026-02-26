@@ -3,4 +3,7 @@ export {
   ogrnMessages
  } from './messages'
 
- export { API_BASE_URL} from './api'
+export { 
+  API_BASE_URL,
+  API_DB_UPLOAD_URL
+} from './api'

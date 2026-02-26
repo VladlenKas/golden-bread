@@ -4,8 +4,8 @@ namespace GoldenBread.Application.Features.CompanyProfile.Commands.UpdateContact
 
 public sealed class UpdateCompanyContactsCommandHandler(
     ICurrentAccountContext accountContext,
-    IUniquenessChecker checker) :
-    IRequestHandler<UpdateContactsCommand, Unit>
+    IUniquenessChecker checker) :   
+    IRequestHandler<UpdateContactsCommand, Unit>    
 {
     public async Task<Unit> Handle(
         UpdateContactsCommand command,

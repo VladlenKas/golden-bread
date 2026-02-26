@@ -37,7 +37,7 @@ public sealed class RegisterCompanyCommandHandler(
             command.Inn,
             command.Ogrn,
             account
-        );
+        );  
 
         await context.Accounts.AddAsync(account, cancellationToken);
         await context.Companies.AddAsync(company, cancellationToken);

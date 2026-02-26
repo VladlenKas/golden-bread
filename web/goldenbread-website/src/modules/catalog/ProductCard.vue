@@ -11,12 +11,19 @@ import {
 import { useAuthStore } from '@/modules/auth/stores';
 import type { ProductCard } from './types';
 import { useProductCard } from './useProductCard';
-import { API_BASE_URL } from '@/shared/constants';
+import { API_DB_UPLOAD_URL } from '@/shared/constants';
+import { ref } from 'vue';
 
 const props = defineProps<ProductCard>();
 
 const authStore = useAuthStore();
 const { addToCart, addToFavorites } = useProductCard();
+
+const isFav = ref(props.isFavourite);
+
+const toggleFavorite = async (productId: number) => {
+  isFav.value = await addToFavorites(productId, isFav.value);
+};
 </script>
 <template>
   <Card class="group relative overflow-hidden transition-all hover:shadow-lg cursor-pointer flex flex-col">
@@ -26,14 +33,14 @@ const { addToCart, addToFavorites } = useProductCard();
       variant="ghost"
       size="icon"
       class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
-      @click="addToFavorites(productId)">
-      <Heart class="w-5 h-5" />
+      @click="toggleFavorite(productId)">
+      <Heart class="w-5 h-5" :class="{ 'fill-current text-red-500': isFav }"/>
     </Button>
 
     <!-- Изображение -->
     <div class="aspect-[4/3] bg-muted relative overflow-hidden shrink-0">
       <img v-if="imageUrl"
-        :src="`${API_BASE_URL}/db_uploads/${imageUrl}`"
+        :src="`${API_DB_UPLOAD_URL}/${imageUrl}`"
         class="w-full h-full object-cover transition-transform group-hover:scale-105"/>
       <div v-else 
         class="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground">

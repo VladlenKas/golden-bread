@@ -169,7 +169,7 @@ export function useCatalog() {
     filteredProducts,
     groupedProducts,
     
-    // Фильтры (для v-model)
+    // Фильтры 
     selectedCategory,
     searchQuery,
     priceRange,
@@ -186,3 +186,4 @@ export function useCatalog() {
     toggleTimeFilter,
   };
 }
+

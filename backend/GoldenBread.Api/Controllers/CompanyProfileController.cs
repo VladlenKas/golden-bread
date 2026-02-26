@@ -11,11 +11,10 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class CompanyProfileController(IMediator mediator) : ControllerBase
 {
-
     // GET api/company-profile/profile
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> GetProfile()
     {
         return Ok(await mediator.Send(new GetProfileQuery()));
     }
@@ -23,7 +22,8 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
     // PUT api/company-profile/requisites — блокирует аккаунт
     [HttpPut("requisites")]
     [Authorize]
-    public async Task<IActionResult> UpdateRequisites([FromBody] UpdateRequisitesCommand command)
+    public async Task<IActionResult> UpdateRequisites(
+        [FromBody] UpdateRequisitesCommand command)
     {
         await mediator.Send(command);
         return NoContent();
@@ -32,7 +32,8 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
     // PUT api/company-profile/contacts
     [HttpPut("contacts")]
     [Authorize]
-    public async Task<IActionResult> UpdateContacts([FromBody] UpdateContactsCommand command)
+    public async Task<IActionResult> UpdateContacts(
+        [FromBody] UpdateContactsCommand command)
     {
         await mediator.Send(command);
         return NoContent();
@@ -41,7 +42,8 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
     // PUT api/company-profile/password
     [HttpPut("password")]
     [Authorize]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+    public async Task<IActionResult> ChangePassword(
+        [FromBody] ChangePasswordCommand command)
     {
         await mediator.Send(command);
         return NoContent();
@@ -50,7 +52,8 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
     // PUT api/company-profile/email
     [HttpPut("email")]
     [Authorize]
-    public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailCommand command)
+    public async Task<IActionResult> ChangeEmail(
+        [FromBody] ChangeEmailCommand command)
     {
         await mediator.Send(command);
         return NoContent();

@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
 import { 
   Card, 
   CardContent, 
   CardHeader, 
   CardTitle, 
-  CardDescription 
 } from '@/shared/ui/card';
-import { 
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/shared/ui/accordion';
 import { 
   Select,
   SelectContent,
@@ -42,25 +34,12 @@ import {
   Separator 
 } from '@/shared/ui/separator';
 import { 
-  ScrollArea 
-} from '@/shared/ui/scroll-area';
-import { 
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/shared/ui/breadcrumb';
-import { 
   Search, 
   Filter, 
   X, 
   Clock, 
   Package,
   ChevronRight,
-  LayoutGrid,
-  List,
   Loader2
 } from 'lucide-vue-next';
 import { useCatalog } from './useCatalog';
@@ -262,6 +241,7 @@ const {
                   :imageUrl="product.imageUrl"
                   :categoryName="product.categoryName"
                   :categoryColor="product.categoryColor"
+                  :isFavourite="product.isFavourite"
                 />
               </div>
             </section>

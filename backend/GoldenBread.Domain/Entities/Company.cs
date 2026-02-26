@@ -28,7 +28,7 @@ public sealed class Company
         string? address = null)
     {
         return new Company
-        {
+        {       
             Name = name,
             Inn = inn,
             Ogrn = ogrn,

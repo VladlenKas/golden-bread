@@ -14,5 +14,7 @@ public class ProductListItemResponse
     public int QuantityPerBatch { get; set; }  
     public decimal SalePrice { get; set; }
 
-    public string? ImageUrl { get; set; } // Изображение для превью
+    public string? ImageUrl { get; set; } 
+
+    public bool IsFavourite { get; set; }
 }

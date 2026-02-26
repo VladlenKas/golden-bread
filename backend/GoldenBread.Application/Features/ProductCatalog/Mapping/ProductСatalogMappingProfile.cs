@@ -31,7 +31,12 @@ public class ProductСatalogMappingProfile : Profile
             .ForMember(dest => dest.ImageUrl,
                 opt => opt.MapFrom(src => src.ProductImages
                     .Select(i => i.ImagePath)
-                    .FirstOrDefault()));
+                    .FirstOrDefault()))
+
+            .ForMember(dest => dest.IsFavourite,
+                opt => opt.MapFrom((src, dest, _, context) =>
+                    src.Favourites.Any(f => 
+                        f.CompanyId == (int)context.Items["CompanyId"])));
 
         // ProductDetailResponse
 

@@ -9,6 +9,7 @@ export interface ProductListItem {
   quantityPerBatch: number;
   salePrice: number;
   imageUrl: string | null;
+  isFavourite: boolean
 }
 
 export interface ProductCard {
@@ -21,5 +22,8 @@ export interface ProductCard {
   imageUrl: string | null;
   categoryName: string;
   categoryColor: string;
+  isFavourite: boolean
 }
+
+
 
