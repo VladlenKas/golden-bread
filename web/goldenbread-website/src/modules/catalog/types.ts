@@ -6,24 +6,18 @@ export interface ProductListItem {
   categoryId: number;
   categoryName: string;
   categoryColor: string;
+  productBatchId: number;
   quantityPerBatch: number;
   salePrice: number;
   imageUrl: string | null;
   isFavourite: boolean
+  quantityInCart: number
 }
 
-export interface ProductCard {
-  productId: number;
-  name: string;
-  description: string;
-  salePrice: number;
-  productionTime: number;
-  quantityPerBatch: number;
-  imageUrl: string | null;
-  categoryName: string;
-  categoryColor: string;
-  isFavourite: boolean
+export interface UpdateCartItemRequest {
+  productId: number,
+  productBatchId: number,
+  quantity: number
 }
-
 
 

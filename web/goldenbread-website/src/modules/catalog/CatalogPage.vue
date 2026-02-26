@@ -229,22 +229,12 @@ const {
 
               <!-- Здесь будет отображение товаров -->
               <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                <ProductCard
+                <ProductCard 
                   v-for="product in group.items"
-                  :key="product.productId"
-                  :productId="product.productId"
-                  :name="product.name"
-                  :description="product.description"
-                  :salePrice="product.salePrice"
-                  :productionTime="product.productionTime"
-                  :quantityPerBatch="product.quantityPerBatch"
-                  :imageUrl="product.imageUrl"
-                  :categoryName="product.categoryName"
-                  :categoryColor="product.categoryColor"
-                  :isFavourite="product.isFavourite"
-                />
+                  v-bind="product"
+                  :key="product.productId"/>
               </div>
-            </section>
+            </section>  
           </div>
 
           <!-- Пустое состояние -->

@@ -16,6 +16,7 @@ public class ProductBatch
 
     public ProductBatch() { }
 
+
     public decimal SalePrice
         => Product.CostPrice * (1 + MarkupPercent / 100m);
 }

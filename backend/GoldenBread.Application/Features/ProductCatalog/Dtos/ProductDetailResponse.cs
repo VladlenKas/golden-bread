@@ -15,6 +15,6 @@ public class ProductDetailResponse
 
     public virtual ProductCategory Category { get; set; } = null!;
 
-    public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
+    public virtual ICollection<Favorite> Favourites { get; set; } = new List<Favorite>();
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
 }

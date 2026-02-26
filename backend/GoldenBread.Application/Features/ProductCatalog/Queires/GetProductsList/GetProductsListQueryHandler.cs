@@ -28,11 +28,12 @@ public sealed class GetProductsListQueryHandler(
         }
             
         var products = await context.Products
-            .AsNoTracking()
+            .AsSplitQuery()
             .Include(p => p.Favourites)
             .Include(p => p.Category)
             .Include(p => p.ProductImages)  
             .Include(p => p.ProductBatches)
+                .ThenInclude(p => p.CartItems)
             .ToListAsync(cancellationToken);
 
         return mapper.Map<List<ProductListItemResponse>>(products,

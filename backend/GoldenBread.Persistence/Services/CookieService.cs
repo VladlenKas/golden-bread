@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Application.Services;
-using GoldenBread.Domain.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -7,7 +6,8 @@ using System.Security.Claims;
 
 namespace GoldenBread.Infrastructure.Services;
 
-public sealed class CookieService(IHttpContextAccessor httpContextAccessor) : ICookieService
+public sealed class CookieService(
+    IHttpContextAccessor httpContextAccessor) : ICookieService
 {
     public async Task SignInAsync(string session)
     {

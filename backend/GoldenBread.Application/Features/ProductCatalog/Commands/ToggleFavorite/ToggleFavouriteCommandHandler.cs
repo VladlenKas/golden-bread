@@ -2,24 +2,19 @@
 using GoldenBread.Application.Services;
 using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Application.Features.ProductCatalog.Commands.ToggleFavourite;
+namespace GoldenBread.Application.Features.ProductCatalog.Commands.ToggleFavorite;
 
-public class ToggleFavouriteCommandHandle(
+public sealed class ToggleFavouriteCommandHandle(
     IGoldenBreadContext context,
     ICurrentAccountContext accountContext) : 
-    IRequestHandler<ToggleFavouriteCommand, Unit>
+    IRequestHandler<ToggleFavoriteCommand, Unit>
 {
     public async Task<Unit> Handle(
-        ToggleFavouriteCommand command, 
+        ToggleFavoriteCommand command, 
         CancellationToken cancellationToken)
     {
         var account = await accountContext.GetAccountAsync(cancellationToken);
-
-        int companyId = (await context.Companies
-            .FirstAsync(c => 
-                c.AccountId == account.AccountId,
-                cancellationToken))
-            .CompanyId;
+        int companyId = account.Company.CompanyId;
 
         var favourite = context.Favourites
             .FirstOrDefault(f =>
@@ -27,17 +22,9 @@ public class ToggleFavouriteCommandHandle(
                 f.CompanyId == companyId);
 
         if (favourite == null)
-        {
-            favourite = Favourite.Create(
-                companyId,
-                command.ProductId);
-
-            await context.Favourites.AddAsync(favourite, cancellationToken);
-        }
+            context.Favourites.Add(Favorite.Create(companyId, command.ProductId));
         else
-        {
             context.Favourites.Remove(favourite);
-        }
 
         return Unit.Value;  
     }

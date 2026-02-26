@@ -12,7 +12,7 @@ public sealed class Company
     public string? Address { get; set; }
 
     public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
-    public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
+    public ICollection<Favorite> Favourites { get; set; } = new List<Favorite>();
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public Account Account { get; set; } = null!;

@@ -6,25 +6,42 @@ import {
   Heart, 
   Clock, 
   Package, 
-  ImageOff 
+  ImageOff,
+  Minus,
+  Plus,
+  Loader2
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/modules/auth/stores';
-import type { ProductCard } from './types';
 import { useProductCard } from './useProductCard';
 import { API_DB_UPLOAD_URL } from '@/shared/constants';
 import { ref } from 'vue';
+import type { ProductListItem } from './types';
 
-const props = defineProps<ProductCard>();
+const props = defineProps<ProductListItem>();
 
 const authStore = useAuthStore();
-const { addToCart, addToFavorites } = useProductCard();
+const { 
+  updateCartQuantity, 
+  switchFavoriteStatus,
+  isLoading 
+} = useProductCard();
 
-const isFav = ref(props.isFavourite);
+const isFavoriteRef = ref(props.isFavourite);
+const quantityRef = ref(props.quantityInCart);
 
-const toggleFavorite = async (productId: number) => {
-  isFav.value = await addToFavorites(productId, isFav.value);
+const onFavoriteClick = async (productId: number) => {
+  isFavoriteRef.value = await switchFavoriteStatus(productId, isFavoriteRef.value);
+};
+
+const onCartClick = async (
+  productId: number, 
+  batchId: number, 
+  quantity: number
+) => {
+  quantityRef.value = await updateCartQuantity(productId, batchId, quantity);
 };
 </script>
+
 <template>
   <Card class="group relative overflow-hidden transition-all hover:shadow-lg cursor-pointer flex flex-col">
     <!-- Кнопка избранного-->
@@ -33,8 +50,8 @@ const toggleFavorite = async (productId: number) => {
       variant="ghost"
       size="icon"
       class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
-      @click="toggleFavorite(productId)">
-      <Heart class="w-5 h-5" :class="{ 'fill-current text-red-500': isFav }"/>
+      @click="onFavoriteClick(productId)">
+      <Heart class="w-5 h-5" :class="{ 'fill-current text-red-500': isFavoriteRef }"/>
     </Button>
 
     <!-- Изображение -->
@@ -70,22 +87,47 @@ const toggleFavorite = async (productId: number) => {
         </div>
       </div>
 
-      <!-- Цена и кнопка -->
+      <!-- Цена и кнопки -->
       <div class="mt-auto flex items-center justify-between gap-3">
         <div class="min-w-0">
           <p class="text-xl sm:text-2xl font-bold truncate">{{ salePrice.toFixed(2) }} ₽</p>
           <p class="text-xs text-muted-foreground">за 1 шт. в партии</p>
         </div>
-        
-        <Button
-          v-if="authStore.isAuthenticated"
+
+        <!-- "В корзину" -->
+        <Button 
+          v-if="authStore.isAuthenticated && quantityRef === 0" 
           class="gap-2 shrink-0"
-          @click="addToCart(productId)"
-        >
+          @click="onCartClick(productId, productBatchId, (quantityRef  + 1))"
+          :disabled="isLoading">
           <ShoppingCart class="w-4 h-4" />
-          <span class="hidden sm:inline">В корзину</span>
-          <span class="sm:hidden">В корз.</span>
+          <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
+          <div v-else>
+            <span class="hidden sm:inline">В корзину</span>
+            <span class="sm:hidden">В корз.</span>
+          </div>
         </Button>
+
+        <!-- - 1 + -->
+        <div v-else-if="authStore.isAuthenticated" class="flex items-center gap-2 shrink-0">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            @click="onCartClick(productId, productBatchId, (quantityRef  - 1))"
+            :disabled="isLoading">
+            <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
+            <Minus v-else class="w-4 h-4 shrink-0" />
+          </Button>
+          <span class="w-8 text-center font-medium">{{ quantityRef }}</span>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            @click="onCartClick(productId, productBatchId, (quantityRef  + 1))"
+            :disabled="isLoading">
+            <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
+            <Plus v-else class="w-4 h-4 shrink-0" />
+          </Button>
+        </div>
       </div>
     </CardContent>
   </Card>

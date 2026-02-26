@@ -10,7 +10,7 @@ export async function register(value: RegisterRequest): Promise<void> {
 }
 
 export async function login(value: LoginRequest): Promise<AuthResponse> {
-  const { data } = await client.post('/api/auth/login/company', value);
+  const { data } = await client.post('/api/auth/login/Company', value);
   return data;
 }
 

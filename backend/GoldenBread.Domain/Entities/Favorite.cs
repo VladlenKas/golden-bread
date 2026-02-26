@@ -2,9 +2,9 @@
 
 namespace GoldenBread.Domain.Entities;
 
-public class Favourite
+public class Favorite
 {
-    public int FavouriteId { get; private set; }
+    public int FavoriteId { get; private set; }
 
     public int CompanyId { get; private set; }
     public int ProductId { get; private set; }
@@ -12,13 +12,13 @@ public class Favourite
     public Product Product {    get; set; } = null!;
     public Company Company { get; set; } = null!;
 
-    public Favourite() { }
+    public Favorite() { }
 
-    public static Favourite Create(
+    public static Favorite Create(
         int companyId,
         int productId)
     {   
-        return new Favourite
+        return new Favorite
         {
             ProductId = productId,
             CompanyId = companyId

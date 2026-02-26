@@ -1,35 +1,54 @@
 import { ref } from 'vue';
-import { addToFavorites as addToFavoritesApi } from './api'
+import { updateCartItem, toggleFavorite } from './api'
 import { ErrorKind } from '@/shared/api';
+import { useNotifications } from '@/shared/composables';
+import type { UpdateCartItemRequest } from './types';
 
 export function useProductCard() {
-  const isAddingToCart = ref(false);
-  const isAddingToFavorites = ref(false);
+  const { unhandledErrorToast } = useNotifications();
+  const isLoading = ref(false);
 
-  async function addToCart(productId: number) {
-    // TODO: Реализовать добавление в корзину
-    console.log('Add to cart:', productId);
+  async function updateCartQuantity(
+    productId: number, 
+    productBatchId: number, 
+    quantity: number,
+  ) {
+    try {
+      isLoading.value = true
+      const request: UpdateCartItemRequest = {
+        productId: productId,
+        productBatchId: productBatchId,
+        quantity: quantity,
+      }
+      quantity = await updateCartItem(request);
+      return quantity;
+    } catch (error: any) {
+      if (error.kind === ErrorKind.Unknown)
+        unhandledErrorToast(error.message, error.status);
+      throw error;
+    } finally {
+      isLoading.value = false;
+    }
   }
-  
-  async function addToFavorites(productId: number, isFav: boolean): Promise<boolean> {
-  try {
-    await addToFavoritesApi(productId);
-    return !isFav;  
-  } catch (error: any) {
-    if (error.kind === ErrorKind.Unknown) 
-      unhandledErrorToast(error.message, error.status);
-    throw error;
+
+  async function switchFavoriteStatus(productId: number, isFavorite: boolean):
+    Promise<boolean> {
+    try {
+      isLoading.value = true
+      await toggleFavorite(productId);
+      return !isFavorite;
+    } catch (error: any) {
+      if (error.kind === ErrorKind.Unknown)
+        unhandledErrorToast(error.message, error.status);
+      throw error;
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 
   return {
-    isAddingToCart,
-    isAddingToFavorites,
-    addToCart,
-    addToFavorites,
+    updateCartQuantity,
+    switchFavoriteStatus,
+    isLoading
   };
-}
-
-function unhandledErrorToast(message: any, status: any) {
-  throw new Error('Function not implemented.');
 }

@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GoldenBread.Infrastructure.Configurations;
 
-public class FavouriteConfiguration : IEntityTypeConfiguration<Favourite>
+public class FavoriteConfiguration : IEntityTypeConfiguration<Favorite>
 {
-    public void Configure(EntityTypeBuilder<Favourite> builder)
+    public void Configure(EntityTypeBuilder<Favorite> builder)
     {
-        builder.HasKey(e => e.FavouriteId).HasName("favourites_pkey");
-        builder.ToTable("favourites");
+        builder.HasKey(e => e.FavoriteId).HasName("favorites_pkey");
+        builder.ToTable("favorites");
 
         builder.Property(e => e.ProductId)
             .HasColumnName("product_id");
@@ -20,12 +20,12 @@ public class FavouriteConfiguration : IEntityTypeConfiguration<Favourite>
             .WithMany(p => p.Favourites)
             .HasForeignKey(d => d.ProductId)
             .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("fk_favourites_product_id");
+            .HasConstraintName("fk_favorites_product_id");
 
         builder.HasOne(d => d.Company)
             .WithMany(p => p.Favourites)
             .HasForeignKey(d => d.CompanyId)
             .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("fk_favourites_company_id");
+            .HasConstraintName("fk_favorites_company_id");
     }
 }

@@ -9,7 +9,7 @@ public interface IGoldenBreadContext
     DbSet<Company> Companies { get; set; }
     DbSet<Employee> Employees { get; set; }
     DbSet<EmployeeTask> EmployeeTasks { get; set; }
-    DbSet<Favourite> Favourites { get; set; }
+    DbSet<Favorite> Favourites { get; set; }
     DbSet<Ingredient> Ingredients { get; set; }
     DbSet<IngredientBatch> IngredientBatches { get; set; }
     DbSet<Order> Orders { get; set; }

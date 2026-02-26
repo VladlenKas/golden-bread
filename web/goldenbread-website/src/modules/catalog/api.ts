@@ -1,15 +1,17 @@
 import { client } from '@/shared/api';
 
-import type { ProductListItem } from './types';
+import type { ProductListItem, UpdateCartItemRequest } from './types';
 
 export async function getAllProducts(): Promise<ProductListItem[]> {
   const { data } = await client.get('/api/products');
   return data;
 }
 
-export async function addToFavorites(productId: number): Promise<void> {
-  await client.post(`api/products/${productId}/favourite`);
+export async function toggleFavorite(productId: number): Promise<void> {
+  await client.patch(`api/products/${productId}/favorite`);
 }
 
-
-
+export async function updateCartItem(request: UpdateCartItemRequest): Promise<number> {
+  const { data } = await client.patch(`api/products/${request.productId}/cart`, request);
+  return data;
+}

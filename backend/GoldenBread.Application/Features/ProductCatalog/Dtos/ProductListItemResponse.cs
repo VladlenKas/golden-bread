@@ -11,10 +11,12 @@ public class ProductListItemResponse
     public string CategoryName { get; set; } = null!;
     public string? CategoryColor { get; set; }
 
+    public int ProductBatchId { get; set; }
     public int QuantityPerBatch { get; set; }  
     public decimal SalePrice { get; set; }
 
     public string? ImageUrl { get; set; } 
 
-    public bool IsFavourite { get; set; }
+    public bool IsFavorite { get; set; }
+    public int QuantityInCart { get; set; }
 }

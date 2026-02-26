@@ -35,10 +35,16 @@ client.interceptors.response.use(
       return Promise.reject(err);
     }
 
-    const status = error.response.status;
-    const message = error.response.data.message;
-    const type = error.response.data.type;
+    let message;
     let kind = ErrorKind.Http;
+    const status = error.response.status;
+    const type = error.response.data.type;
+    
+    if (error.response.data.message) {
+      message = error.response.data.message;
+    } else {
+      message = error.message;
+    }
 
     switch (status) {
       case 401: {
@@ -54,7 +60,7 @@ client.interceptors.response.use(
         break;
       }
       case 404: {
-        errorToast("У вас недостаточно прав для этого действия. Выполните вход в систему и попробуйте снова")
+        errorToast("У вас недостаточно прав для этого действия. Обновите страницу и попробуйте снова")
         kind = ErrorKind.NoRights;
         break;
       }
