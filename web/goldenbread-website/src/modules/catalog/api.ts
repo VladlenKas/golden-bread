@@ -1,8 +1,8 @@
 import { client } from '@/shared/api';
 
-import type { ProductListItem, UpdateCartItemRequest } from './types';
+import type { CatalogResponse, ProductListItem, UpdateCartItemRequest } from './types';
 
-export async function getAllProducts(): Promise<ProductListItem[]> {
+export async function getAllProducts(): Promise<CatalogResponse> {
   const { data } = await client.get('/api/products');
   return data;
 }

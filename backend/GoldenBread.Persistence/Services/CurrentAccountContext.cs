@@ -13,14 +13,15 @@ internal class CurrentAccountContext(
 {
     private Task<Account?>? _accountCache;
 
-    private string? SessionToken => httpContextAccessor.HttpContext?
-        .User.FindFirst("session")?.Value;
+    public string? GetSessionToken() => httpContextAccessor
+        .HttpContext?
+        .User
+        .FindFirst("session")?.Value;
 
-    public string? GetSessionFromCookie()
-    {
-        return httpContextAccessor.HttpContext?
-            .Request.Cookies["gb.session"]; 
-    }
+    public string? GetSessionFromCookie() => httpContextAccessor
+        .HttpContext?
+        .Request
+        .Cookies["gb.session"]; 
 
     public async Task<Account> GetAccountAsync(CancellationToken cancellationToken)
     {
@@ -30,7 +31,7 @@ internal class CurrentAccountContext(
 
     private async Task<Account?> LoadAccountAsync(CancellationToken cancellationToken)
     {
-        var session = SessionToken;
+        var session = GetSessionToken();
         if (session == null)
             return null;
 

@@ -1,3 +1,8 @@
+export interface CatalogResponse {
+  productsList: ProductListItem[];
+  categories: Category[];
+}
+
 export interface ProductListItem {
   productId: number;
   name: string;
@@ -12,6 +17,13 @@ export interface ProductListItem {
   imageUrl: string | null;
   isFavourite: boolean
   quantityInCart: number
+}
+
+export interface Category {
+  productCategoryId: number; 
+  name: string;
+  color: string;
+  productCount: number;
 }
 
 export interface UpdateCartItemRequest {

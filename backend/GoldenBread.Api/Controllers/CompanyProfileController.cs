@@ -11,7 +11,6 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class CompanyProfileController(IMediator mediator) : ControllerBase
 {
-    // GET api/company-profile/profile
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetProfile()
@@ -19,7 +18,6 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
         return Ok(await mediator.Send(new GetProfileQuery()));
     }
 
-    // PUT api/company-profile/requisites — блокирует аккаунт
     [HttpPut("requisites")]
     [Authorize]
     public async Task<IActionResult> UpdateRequisites(
@@ -29,7 +27,6 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    // PUT api/company-profile/contacts
     [HttpPut("contacts")]
     [Authorize]
     public async Task<IActionResult> UpdateContacts(
@@ -39,7 +36,6 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    // PUT api/company-profile/password
     [HttpPut("password")]
     [Authorize]
     public async Task<IActionResult> ChangePassword(
@@ -49,7 +45,6 @@ public class CompanyProfileController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    // PUT api/company-profile/email
     [HttpPut("email")]
     [Authorize]
     public async Task<IActionResult> ChangeEmail(

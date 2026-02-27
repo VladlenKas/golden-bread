@@ -1,6 +1,6 @@
 ﻿namespace GoldenBread.Domain.Entities;
 
-public class Recipe
+public sealed class Recipe
 {
     public int RecipeId { get; set; }
 

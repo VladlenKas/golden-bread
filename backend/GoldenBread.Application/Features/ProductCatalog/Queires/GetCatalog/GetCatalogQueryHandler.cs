@@ -2,16 +2,16 @@
 using GoldenBread.Application.Features.ProductCatalog.Dtos;
 using GoldenBread.Application.Services;
 
-namespace GoldenBread.Application.Features.ProductCatalog.Queires.GetProductDetail;
+namespace GoldenBread.Application.Features.ProductCatalog.Queires.GetCatalog;
 
-public sealed class GetProductDetailQueryHandler(
+public sealed class GetCatalogQueryHandler(
     IGoldenBreadContext context,
     ICurrentAccountContext accountContext,
     IMapper mapper) :
-    IRequestHandler<GetProductDetailQuery, ProductDetailResponse>
+    IRequestHandler<GetCatalogQuery, CatalogResponse>
 {
-    public async Task<ProductDetailResponse> Handle(
-        GetProductDetailQuery query, 
+    public async Task<CatalogResponse> Handle(
+        GetCatalogQuery query, 
         CancellationToken cancellationToken)
     {
         int companyId = 0;
@@ -23,18 +23,27 @@ public sealed class GetProductDetailQueryHandler(
             companyId = account.Company.CompanyId;
         }
 
-        var product = await context.Products
-            .Where(p => p.ProductId == query.ProductId)
+        var products = await context.Products
             .Include(p => p.Favourites)
             .Include(p => p.Category)
             .Include(p => p.ProductImages)
-            .Include(p => p.Recipes)
-                .ThenInclude(p => p.Ingredient)
             .Include(p => p.ProductBatches)
                 .ThenInclude(p => p.CartItems)
-            .FirstOrDefaultAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 
-        return mapper.Map<ProductDetailResponse>(product,
+        var categories = await context.ProductCategories
+            .ToListAsync(cancellationToken);
+
+        var productsList = mapper.Map<List<ProductListItemResponse>>(products,
             opts => opts.Items["CompanyId"] = companyId);
+
+        var categoriesList = mapper.Map<List<ProductCategoryResponse>>(categories);
+
+        return new CatalogResponse
+        {
+            ProductsList = productsList,
+            Categories = categoriesList
+        };
     }
 }
+        

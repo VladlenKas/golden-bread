@@ -1,27 +1,36 @@
 import { ref, computed, onMounted } from 'vue';
 import { useNotifications } from '@/shared/composables';
 import { ErrorKind } from '@/shared/api';
-import type { ProductListItem } from './types';
+import type { Category, ProductListItem } from './types';
 import { getAllProducts } from './api';
 
 // Опции времени приготовления
 const timeOptions = [
   { label: 'Быстро (до 60 мин)', value: 'fast', max: 60 },
   { label: 'Средне (60-120 мин)', value: 'medium', min: 60, max: 120 },
-  { label: 'Долго (более 120 мин)', value: 'slow', min: 120 }
+  { label: 'Долго (более 120 мин)', value: 'slow', min: 120 },
 ];
 
 export function useCatalog() {
   const { unhandledErrorToast } = useNotifications();
 
   const products = ref<ProductListItem[]>([]);
+  const categories = ref<Category[]>([]);
   const isLoading = ref(false);
 
   const selectedCategory = ref<number | null>(null);
   const searchQuery = ref('');
-  const priceRange = ref<[number, number]>([0, 500]);
+  const priceRange = ref<[number, number]>([0, 1000]);
   const selectedProductionTime = ref<string[]>([]);
   const sortBy = ref('name');
+
+  const categoryCounts = computed(() => {
+    const counts = new Map();
+    products.value.forEach((p) => {
+      counts.set(p.categoryId, (counts.get(p.categoryId) || 0) + 1);
+    });
+    return counts;
+  });
 
   onMounted(fetchProducts);
 
@@ -29,9 +38,11 @@ export function useCatalog() {
   async function fetchProducts() {
     isLoading.value = true;
     try {
-      products.value = await getAllProducts();
+      const response = await getAllProducts();
+      products.value = response.productsList;
+      categories.value = response.categories;
     } catch (error: any) {
-      if (error.kind === ErrorKind.Unknown) 
+      if (error.kind === ErrorKind.Unknown)
         unhandledErrorToast(error.message, error.status);
     } finally {
       isLoading.value = false;
@@ -44,32 +55,37 @@ export function useCatalog() {
 
     // Фильтр по категории
     if (selectedCategory.value) {
-      result = result.filter(p => p.categoryId === selectedCategory.value);
+      result = result.filter((p) => p.categoryId === selectedCategory.value);
     }
 
     // Поиск по названию
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(query) || 
-        p.description.toLowerCase().includes(query)
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query) ||
+          p.description.toLowerCase().includes(query),
       );
     }
 
     // Фильтр по цене
-    result = result.filter(p => 
-      p.salePrice >= priceRange.value[0] && 
-      p.salePrice <= priceRange.value[1]
+    result = result.filter(
+      (p) =>
+        p.salePrice >= priceRange.value[0] &&
+        p.salePrice <= priceRange.value[1],
     );
 
     // Фильтр по времени приготовления
     if (selectedProductionTime.value.length > 0) {
-      result = result.filter(p => {
-        return selectedProductionTime.value.some(time => {
-          const option = timeOptions.find(t => t.value === time);
+      result = result.filter((p) => {
+        return selectedProductionTime.value.some((time) => {
+          const option = timeOptions.find((t) => t.value === time);
           if (!option) return false;
           if (option.max && !option.min) return p.productionTime <= option.max;
-          if (option.min && option.max) return p.productionTime >= option.min && p.productionTime <= option.max;
+          if (option.min && option.max)
+            return (
+              p.productionTime >= option.min && p.productionTime <= option.max
+            );
           if (option.min && !option.max) return p.productionTime >= option.min;
           return false;
         });
@@ -79,11 +95,16 @@ export function useCatalog() {
     // Сортировка
     result = [...result].sort((a, b) => {
       switch (sortBy.value) {
-        case 'name': return a.name.localeCompare(b.name);
-        case 'price-asc': return a.salePrice - b.salePrice;
-        case 'price-desc': return b.salePrice - a.salePrice;
-        case 'time': return a.productionTime - b.productionTime;
-        default: return 0;
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'price-asc':
+          return a.salePrice - b.salePrice;
+        case 'price-desc':
+          return b.salePrice - a.salePrice;
+        case 'time':
+          return a.productionTime - b.productionTime;
+        default:
+          return 0;
       }
     });
 
@@ -95,40 +116,25 @@ export function useCatalog() {
     if (checked) {
       selectedProductionTime.value.push(value);
     } else {
-      selectedProductionTime.value = selectedProductionTime.value.filter(v => v !== value);
+      selectedProductionTime.value = selectedProductionTime.value.filter(
+        (v) => v !== value,
+      );
     }
   }
-
-  // Получение уникальных категорий
-  const categories = computed(() => {
-    const uniqueCategories = new Map();
-    products.value.forEach(product => {
-      if (!uniqueCategories.has(product.categoryId)) {
-        uniqueCategories.set(product.categoryId, {
-          id: product.categoryId,
-          name: product.categoryName,
-          color: product.categoryColor,
-          count: 0
-        });
-      }
-      uniqueCategories.get(product.categoryId).count++;
-    });
-    return Array.from(uniqueCategories.values());
-  });
 
   // Группировка по категориям
   const groupedProducts = computed(() => {
     const groups = new Map();
-    
-    filteredProducts.value.forEach(product => {
+
+    filteredProducts.value.forEach((product) => {
       if (!groups.has(product.categoryId)) {
         groups.set(product.categoryId, {
           category: {
             id: product.categoryId,
             name: product.categoryName,
-            color: product.categoryColor
+            color: product.categoryColor,
           },
-          items: []
+          items: [],
         });
       }
       groups.get(product.categoryId).items.push(product);
@@ -147,7 +153,7 @@ export function useCatalog() {
     let count = 0;
     if (selectedCategory.value) count++;
     if (searchQuery.value) count++;
-    if (priceRange.value[0] > 0 || priceRange.value[1] < 500) count++;
+    if (priceRange.value[0] > 0 || priceRange.value[1] < 1000) count++;
     if (selectedProductionTime.value.length > 0) count++;
     return count;
   });
@@ -156,7 +162,7 @@ export function useCatalog() {
   function resetFilters() {
     selectedCategory.value = null;
     searchQuery.value = '';
-    priceRange.value = [0, 500];
+    priceRange.value = [0, 1000];
     selectedProductionTime.value = [];
     sortBy.value = 'name';
   }
@@ -168,22 +174,21 @@ export function useCatalog() {
     categories,
     filteredProducts,
     groupedProducts,
-    
-    // Фильтры 
+
+    // Фильтры
     selectedCategory,
     searchQuery,
     priceRange,
     selectedProductionTime,
     sortBy,
     timeOptions,
-    
+
     // Вычисляемые
     activeFiltersCount,
-    
+
     // Методы
     fetchProducts,
     resetFilters,
     toggleTimeFilter,
   };
 }
-

@@ -1,6 +1,7 @@
 ﻿using GoldenBread.Application.Features.ProductCatalog.Commands.UpdateCartItem;
 using GoldenBread.Application.Features.ProductCatalog.Commands.ToggleFavorite;
-using GoldenBread.Application.Features.ProductCatalog.Queires.GetProductsList;
+using GoldenBread.Application.Features.ProductCatalog.Queires.GetCatalog;
+using GoldenBread.Application.Features.ProductCatalog.Queires.GetProductDetail;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GoldenBread.Api.Controllers;
@@ -9,40 +10,37 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class ProductsController(IMediator mediator) : ControllerBase
 {
-    // GET api/products
     [HttpGet]
     public async Task<IActionResult> GetList()
     {
-        var command = new GetProductsListQuery();
+        var command = new GetCatalogQuery();
         return Ok(await mediator.Send(command));
     }
 
-    // PATCH api/products/{productId}/favourite
-    [HttpPatch("{productId}/favorite")]
-    [Authorize]
-    public async Task<IActionResult> ToggleFavorite(int productId)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetDetail(int id)
     {
-        var command = new ToggleFavoriteCommand(productId);
+        var result = await mediator.Send(new GetProductDetailQuery(id));
+        return result == null ? NotFound() : Ok(result);
+    }
+
+    [HttpPatch("{id}/favorite")]
+    [Authorize]
+    public async Task<IActionResult> ToggleFavorite(int id)
+    {
+        var command = new ToggleFavoriteCommand(id);
         await mediator.Send(command);
         return NoContent();
     }
 
-    // PATCH api/products/{productId}/cart
-    [HttpPatch("{productId}/cart")]
+    [HttpPatch("{id}/cart")]
     [Authorize]
     public async Task<IActionResult> UpdateCartItem(
-        int productId, 
+        int id, 
         [FromBody] UpdateCartItemCommand command)
     {
-        command = command with { ProductId = productId };
+        command = command with { ProductId = id };
         var result = await mediator.Send(command);
         return Ok(result);
     }
-
-    //[HttpGet("{id}")]
-    //public async Task<ActionResult<ClientProductDetailResponse>> GetDetail(int id)
-    //{
-    //    var result = await mediator.Send(new GetProductDetailQuery(id));
-    //    return result == null ? NotFound() : Ok(result);
-    //}
 }

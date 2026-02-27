@@ -6,4 +6,5 @@ public interface ICurrentAccountContext
 {
     Task<Account> GetAccountAsync(CancellationToken cancellationToken);
     string? GetSessionFromCookie();
+    string? GetSessionToken();
 }

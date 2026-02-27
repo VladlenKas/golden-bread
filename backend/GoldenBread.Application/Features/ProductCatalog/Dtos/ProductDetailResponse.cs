@@ -1,11 +1,9 @@
-﻿using GoldenBread.Domain.Entities;
-
-namespace GoldenBread.Application.Features.ProductCatalog.Dtos;
+﻿namespace GoldenBread.Application.Features.ProductCatalog.Dtos;
 
 public class ProductDetailResponse
 {
-    public int ProductId { get; private set; }
-    public int CategoryId { get; private set; }
+    public int ProductId { get; set; }
+    public int CategoryId { get; set; }
 
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
@@ -13,8 +11,37 @@ public class ProductDetailResponse
     public decimal Weight { get; set; }
     public int ProductionTime { get; set; }
 
-    public virtual ProductCategory Category { get; set; } = null!;
+    // Категория
+    public string CategoryName { get; set; } = null!;
+    public string CategoryColor { get; set; } = null!;
+        
+    // Поставки
+    public int ProductBatchId { get; set; }
+    public int QuantityPerBatch { get; set; }
+    public List<ProductBatchResponse> AvailableBatches { get; set; } = new();
 
-    public virtual ICollection<Favorite> Favourites { get; set; } = new List<Favorite>();
-    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    // Медиа
+    public List<string> ImageUrls { get; set; } = new();
+
+    // Пользовательские данные
+    public bool IsFavorite { get; set; }
+    public int QuantityInCart { get; set; }
+
+    // Рецепт
+    public List<IngredientResponse> Ingredients { get; set; } = new();
+}
+
+public class ProductBatchResponse
+{
+    public int ProductBatchId { get; set; }
+    public int QuantityPerBatch { get; set; }
+    public decimal SalePrice { get; set; }
+}
+
+public class IngredientResponse
+{
+    public int IngredientId { get; set; }
+    public string Name { get; set; } = null!;
+    public decimal Quantity { get; set; }
+    public string Unit { get; set; } = null!;
 }

@@ -130,18 +130,18 @@ const {
                 
                 <Button
                   v-for="category in categories"
-                  :key="category.id"
+                  :key="category.productCategoryId"
                   variant="ghost"
                   class="w-full justify-start gap-2 font-normal"
-                  :class="{ 'bg-muted': selectedCategory === category.id }"
-                  @click="selectedCategory = category.id"
+                  :class="{ 'bg-muted': selectedCategory === category.productCategoryId }"
+                  @click="selectedCategory = category.productCategoryId"
                 >
                   <span 
                     class="w-3 h-3 rounded-full"
                     :style="{ backgroundColor: '#' + category.color }"
                   />
                   <span class="flex-1 text-left">{{ category.name }}</span>
-                  <Badge variant="secondary">{{ category.count }}</Badge>
+                  <Badge variant="secondary">{{ category.productCount }}</Badge>
                 </Button>
               </div>
             </CardContent>
@@ -178,7 +178,7 @@ const {
           <Loader2 class="w-8 h-8 animate-spin text-muted-foreground" />
         </div>
         
-        <main v-else-if="products" class="min-w-0">
+        <main v-else-if="products.length > 0" class="min-w-0">
           <!-- Активные фильтры -->
           <div v-if="activeFiltersCount > 0" class="mb-4 flex flex-wrap items-center gap-2">
             <span class="text-sm text-muted-foreground">Активные фильтры:</span>
@@ -188,7 +188,7 @@ const {
               class="gap-1 cursor-pointer hover:bg-muted-foreground/20"
               @click="selectedCategory = null"
             >
-              {{ categories.find(c => c.id === selectedCategory)?.name }}
+              {{ categories.find(c => c.productCategoryId === selectedCategory)?.name }}
               <X class="h-3 w-3" />
             </Badge>
             <Badge 
@@ -227,7 +227,7 @@ const {
                 <Badge variant="outline">{{ group.items.length }}</Badge>
               </div>
 
-              <!-- Здесь будет отображение товаров -->
+              <!-- Отображение товаров -->
               <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 <ProductCard 
                   v-for="product in group.items"
@@ -275,7 +275,7 @@ const {
                   <Slider 
                     v-model="priceRange"
                     :min="0"
-                    :max="500"
+                    :max="1000"
                     :step="10"
                     class="w-full"
                   />
