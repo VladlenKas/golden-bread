@@ -34,6 +34,11 @@ export const router = createRouter({
       component: () => import('@/modules/catalog/CatalogPage.vue'),
     },
     {
+      path: '/product/:id',
+      name: 'ProductDetail',
+      component: () => import('@/modules/catalog/ProductDetailPage.vue'),
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/modules/auth/LoginPage.vue'),

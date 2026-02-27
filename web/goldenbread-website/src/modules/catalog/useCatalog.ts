@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
 import { useNotifications } from '@/shared/composables';
 import { ErrorKind } from '@/shared/api';
 import type { Category, ProductListItem } from './types';
@@ -24,15 +24,20 @@ export function useCatalog() {
   const selectedProductionTime = ref<string[]>([]);
   const sortBy = ref('name');
 
-  const categoryCounts = computed(() => {
-    const counts = new Map();
-    products.value.forEach((p) => {
-      counts.set(p.categoryId, (counts.get(p.categoryId) || 0) + 1);
-    });
-    return counts;
+  onMounted(() => {
+    fetchProducts();
+    restoreScrollPosition();
   });
 
-  onMounted(fetchProducts);
+  function restoreScrollPosition() {
+    const saved = sessionStorage.getItem('catalogScroll');
+    if (saved) {
+      nextTick(() => {
+        window.scrollTo(0, parseInt(saved));
+        sessionStorage.removeItem('catalogScroll');
+      });
+    }
+  }
 
   // Загрузка продукций
   async function fetchProducts() {
@@ -185,6 +190,7 @@ export function useCatalog() {
 
     // Вычисляемые
     activeFiltersCount,
+    restoreScrollPosition,
 
     // Методы
     fetchProducts,

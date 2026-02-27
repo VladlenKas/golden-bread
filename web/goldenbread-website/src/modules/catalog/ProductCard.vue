@@ -23,10 +23,11 @@ const authStore = useAuthStore();
 const { 
   updateCartQuantity, 
   switchFavoriteStatus,
+  goToProductDetail,
   isLoading 
 } = useProductCard();
 
-const isFavoriteRef = ref(props.isFavourite);
+const isFavoriteRef = ref(props.isFavorite);
 const quantityRef = ref(props.quantityInCart);
 
 const onFavoriteClick = async (productId: number) => {
@@ -40,17 +41,24 @@ const onCartClick = async (
 ) => {
   quantityRef.value = await updateCartQuantity(productId, batchId, quantity);
 };
+
+const onCardClick = () => {
+  goToProductDetail(props.productId);
+};
 </script>
 
 <template>
-  <Card class="group relative overflow-hidden transition-all hover:shadow-lg cursor-pointer flex flex-col">
+  <Card 
+    class="group relative overflow-hidden transition-all hover:shadow-lg cursor-pointer flex flex-col"
+    @click="onCardClick">
+
     <!-- Кнопка избранного-->
     <Button
       v-if="authStore.isAuthenticated"
       variant="ghost"
       size="icon"
       class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
-      @click="onFavoriteClick(productId)">
+      @click.stop="onFavoriteClick(productId)">
       <Heart class="w-5 h-5" :class="{ 'fill-current text-red-500': isFavoriteRef }"/>
     </Button>
 
@@ -98,7 +106,7 @@ const onCartClick = async (
         <Button 
           v-if="authStore.isAuthenticated && quantityRef === 0" 
           class="gap-2 shrink-0"
-          @click="onCartClick(productId, productBatchId, (quantityRef  + 1))"
+          @click.stop="onCartClick(productId, productBatchId, (quantityRef  + 1))"
           :disabled="isLoading">
           <ShoppingCart class="w-4 h-4" />
           <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
@@ -113,7 +121,7 @@ const onCartClick = async (
           <Button 
             variant="outline" 
             size="icon" 
-            @click="onCartClick(productId, productBatchId, (quantityRef  - 1))"
+            @click.stop="onCartClick(productId, productBatchId, (quantityRef  - 1))"
             :disabled="isLoading">
             <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
             <Minus v-else class="w-4 h-4 shrink-0" />
@@ -122,7 +130,7 @@ const onCartClick = async (
           <Button 
             variant="outline" 
             size="icon" 
-            @click="onCartClick(productId, productBatchId, (quantityRef  + 1))"
+            @click.stop="onCartClick(productId, productBatchId, (quantityRef  + 1))"
             :disabled="isLoading">
             <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
             <Plus v-else class="w-4 h-4 shrink-0" />

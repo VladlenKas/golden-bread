@@ -3,9 +3,10 @@ import { updateCartItem, toggleFavorite } from './api'
 import { ErrorKind } from '@/shared/api';
 import { useNotifications } from '@/shared/composables';
 import type { UpdateCartItemRequest } from './types';
+import { router } from '@/app/providers/router';
 
 export function useProductCard() {
-  const { unhandledErrorToast } = useNotifications();
+  const { unhandledErrorToast, successToast } = useNotifications();
   const isLoading = ref(false);
 
   async function updateCartQuantity(
@@ -46,9 +47,15 @@ export function useProductCard() {
     }
   }
 
+  function goToProductDetail(productId: number) {
+    sessionStorage.setItem('catalogScroll', String(window.scrollY));
+    router.push(`/product/${productId}`);
+  }
+
   return {
     updateCartQuantity,
     switchFavoriteStatus,
+    goToProductDetail,
     isLoading
   };
 }

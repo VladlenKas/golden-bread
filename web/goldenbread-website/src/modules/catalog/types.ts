@@ -15,7 +15,7 @@ export interface ProductListItem {
   quantityPerBatch: number;
   salePrice: number;
   imageUrl: string | null;
-  isFavourite: boolean
+  isFavorite: boolean
   quantityInCart: number
 }
 
@@ -24,6 +24,38 @@ export interface Category {
   name: string;
   color: string;
   productCount: number;
+}
+
+export interface ProductDetail {
+  productId: number;
+  categoryId: number;
+  name: string;
+  description: string;
+  salePrice: number;
+  weight: number;
+  productionTime: number;
+  categoryName: string;
+  categoryColor: string;
+  productBatchId: number;
+  quantityPerBatch: number;
+  availableBatches: AvailableBatch[];
+  imageUrls: string[];
+  isFavorite: boolean;
+  quantityInCart: number;
+  ingredients: Ingredient[];
+}
+
+export interface Ingredient {
+  ingredientId: number;
+  name: string;
+  quantity: number;
+  unit: string;
+}
+
+export interface AvailableBatch {
+  productBatchId: number;
+  quantityPerBatch: number;
+  salePrice: number;
 }
 
 export interface UpdateCartItemRequest {
