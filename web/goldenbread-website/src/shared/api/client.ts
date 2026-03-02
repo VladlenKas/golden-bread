@@ -69,7 +69,7 @@ client.interceptors.response.use(
         break;
       }
       case 500: {
-        errorToast("Внутренняя ошибка на сервере");
+        errorToast("Произошла внутренняя ошибка на сервере");
         break;
       }
       default:

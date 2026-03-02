@@ -1,28 +1,35 @@
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { updateCartItem, toggleFavorite } from './api'
 import { ErrorKind } from '@/shared/api';
 import { useNotifications } from '@/shared/composables';
-import type { UpdateCartItemRequest } from './types';
+import type { ProductListItem, UpdateCartItemRequest } from './types';
 import { router } from '@/app/providers/router';
 
-export function useProductCard() {
-  const { unhandledErrorToast, successToast } = useNotifications();
+export function useProductCard(props: ProductListItem) {
+  // Переиспользуемая логика
+  const { unhandledErrorToast } = useNotifications();
+
+  // Локальное состояние
   const isLoading = ref(false);
+  const isFavorite = ref(props.isFavorite);
+  const quantityInCart = ref(props.quantityInCart);
 
-  async function updateCartQuantity(
-    productId: number, 
-    productBatchId: number, 
-    quantity: number,
-  ) {
+  const incrementCart = () => updateCartQuantity(quantityInCart.value + 1);
+  const decrementCart = () => updateCartQuantity(quantityInCart.value - 1);
+  const goToProductDetail = () => router.push(`/product/${props.productId}`);
+
+  async function updateCartQuantity(newQuantity: number) {
+    if (newQuantity < 0) return;
+    
     try {
-      isLoading.value = true
+      isLoading.value = true;
       const request: UpdateCartItemRequest = {
-        productId: productId,
-        productBatchId: productBatchId,
-        quantity: quantity,
-      }
-      quantity = await updateCartItem(request);
-      return quantity;
+        productId: props.productId,
+        productBatchId: props.productBatchId,
+        quantity: newQuantity,
+      };
+      quantityInCart.value = (await updateCartItem(request)).totalQuantity;
+      props.quantityInCart = quantityInCart.value
     } catch (error: any) {
       if (error.kind === ErrorKind.Unknown)
         unhandledErrorToast(error.message, error.status);
@@ -32,12 +39,11 @@ export function useProductCard() {
     }
   }
 
-  async function switchFavoriteStatus(productId: number, isFavorite: boolean):
-    Promise<boolean> {
+  async function toggleFavoriteStatus() {
     try {
-      isLoading.value = true
-      await toggleFavorite(productId);
-      return !isFavorite;
+      isLoading.value = true;
+      await toggleFavorite(props.productId);
+      isFavorite.value = !isFavorite.value;
     } catch (error: any) {
       if (error.kind === ErrorKind.Unknown)
         unhandledErrorToast(error.message, error.status);
@@ -45,17 +51,18 @@ export function useProductCard() {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  function goToProductDetail(productId: number) {
-    sessionStorage.setItem('catalogScroll', String(window.scrollY));
-    router.push(`/product/${productId}`);
   }
 
   return {
-    updateCartQuantity,
-    switchFavoriteStatus,
+    // Состояние
+    isLoading,
+    isFavorite,
+    quantityInCart,
+
+    // Действия
+    incrementCart,
+    decrementCart,
+    toggleFavoriteStatus,
     goToProductDetail,
-    isLoading
   };
 }

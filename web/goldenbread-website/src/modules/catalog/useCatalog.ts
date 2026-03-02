@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useNotifications } from '@/shared/composables';
 import { ErrorKind } from '@/shared/api';
 import type { Category, ProductListItem } from './types';
@@ -12,32 +12,22 @@ const timeOptions = [
 ];
 
 export function useCatalog() {
+  // Переиспользуемая логика
   const { unhandledErrorToast } = useNotifications();
 
+  // Локальное состояние
   const products = ref<ProductListItem[]>([]);
   const categories = ref<Category[]>([]);
   const isLoading = ref(false);
 
+  // Фильтры
   const selectedCategory = ref<number | null>(null);
   const searchQuery = ref('');
   const priceRange = ref<[number, number]>([0, 1000]);
   const selectedProductionTime = ref<string[]>([]);
   const sortBy = ref('name');
 
-  onMounted(() => {
-    fetchProducts();
-    restoreScrollPosition();
-  });
-
-  function restoreScrollPosition() {
-    const saved = sessionStorage.getItem('catalogScroll');
-    if (saved) {
-      nextTick(() => {
-        window.scrollTo(0, parseInt(saved));
-        sessionStorage.removeItem('catalogScroll');
-      });
-    }
-  }
+  onMounted(fetchProducts);
 
   // Загрузка продукций
   async function fetchProducts() {
@@ -86,12 +76,12 @@ export function useCatalog() {
         return selectedProductionTime.value.some((time) => {
           const option = timeOptions.find((t) => t.value === time);
           if (!option) return false;
-          if (option.max && !option.min) return p.productionTime <= option.max;
+          if (option.max && !option.min) return p.productionTimeMinutes <= option.max;
           if (option.min && option.max)
             return (
-              p.productionTime >= option.min && p.productionTime <= option.max
+              p.productionTimeMinutes >= option.min && p.productionTimeMinutes <= option.max
             );
-          if (option.min && !option.max) return p.productionTime >= option.min;
+          if (option.min && !option.max) return p.productionTimeMinutes >= option.min;
           return false;
         });
       });
@@ -107,7 +97,7 @@ export function useCatalog() {
         case 'price-desc':
           return b.salePrice - a.salePrice;
         case 'time':
-          return a.productionTime - b.productionTime;
+          return a.productionTimeMinutes - b.productionTimeMinutes;
         default:
           return 0;
       }
@@ -190,7 +180,6 @@ export function useCatalog() {
 
     // Вычисляемые
     activeFiltersCount,
-    restoreScrollPosition,
 
     // Методы
     fetchProducts,

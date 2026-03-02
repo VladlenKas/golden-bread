@@ -14,43 +14,25 @@ import {
 import { useAuthStore } from '@/modules/auth/stores';
 import { useProductCard } from './useProductCard';
 import { API_DB_UPLOAD_URL } from '@/shared/constants';
-import { ref } from 'vue';
 import type { ProductListItem } from './types';
 
 const props = defineProps<ProductListItem>();
-
 const authStore = useAuthStore();
 const { 
-  updateCartQuantity, 
-  switchFavoriteStatus,
+  isFavorite,
+  quantityInCart,
+  isLoading,
+  incrementCart,
+  decrementCart,
+  toggleFavoriteStatus,
   goToProductDetail,
-  isLoading 
-} = useProductCard();
-
-const isFavoriteRef = ref(props.isFavorite);
-const quantityRef = ref(props.quantityInCart);
-
-const onFavoriteClick = async (productId: number) => {
-  isFavoriteRef.value = await switchFavoriteStatus(productId, isFavoriteRef.value);
-};
-
-const onCartClick = async (
-  productId: number, 
-  batchId: number, 
-  quantity: number
-) => {
-  quantityRef.value = await updateCartQuantity(productId, batchId, quantity);
-};
-
-const onCardClick = () => {
-  goToProductDetail(props.productId);
-};
+} = useProductCard(props);
 </script>
 
 <template>
   <Card 
     class="group relative overflow-hidden transition-all hover:shadow-lg cursor-pointer flex flex-col"
-    @click="onCardClick">
+    @click="goToProductDetail">
 
     <!-- Кнопка избранного-->
     <Button
@@ -58,8 +40,8 @@ const onCardClick = () => {
       variant="ghost"
       size="icon"
       class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 backdrop-blur-sm"
-      @click.stop="onFavoriteClick(productId)">
-      <Heart class="w-5 h-5" :class="{ 'fill-current text-red-500': isFavoriteRef }"/>
+      @click.stop="toggleFavoriteStatus()">
+      <Heart class="w-5 h-5" :class="{ 'fill-current text-red-500': isFavorite }"/>
     </Button>
 
     <!-- Изображение -->
@@ -87,7 +69,7 @@ const onCardClick = () => {
       <div class="flex items-center justify-between text-sm text-muted-foreground mb-3 py-2 border-y">
         <div class="flex items-center gap-1.5">
           <Clock class="w-4 h-4 shrink-0" />
-          <span>{{ productionTime }} мин</span>
+          <span>{{ productionTimeMinutes }} мин</span>
         </div>
         <div class="flex items-center gap-1.5">
           <Package class="w-4 h-4 shrink-0" />
@@ -104,9 +86,9 @@ const onCardClick = () => {
 
         <!-- "В корзину" -->
         <Button 
-          v-if="authStore.isAuthenticated && quantityRef === 0" 
+          v-if="authStore.isAuthenticated && quantityInCart === 0" 
           class="gap-2 shrink-0"
-          @click.stop="onCartClick(productId, productBatchId, (quantityRef  + 1))"
+          @click.stop="incrementCart()"
           :disabled="isLoading">
           <ShoppingCart class="w-4 h-4" />
           <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
@@ -116,21 +98,22 @@ const onCardClick = () => {
           </div>
         </Button>
 
-        <!-- - 1 + -->
         <div v-else-if="authStore.isAuthenticated" class="flex items-center gap-2 shrink-0">
+          <!-- + -->
           <Button 
             variant="outline" 
             size="icon" 
-            @click.stop="onCartClick(productId, productBatchId, (quantityRef  - 1))"
+            @click.stop="decrementCart()"
             :disabled="isLoading">
             <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
             <Minus v-else class="w-4 h-4 shrink-0" />
           </Button>
-          <span class="w-8 text-center font-medium">{{ quantityRef }}</span>
+          <span class="w-8 text-center font-medium">{{ quantityInCart }}</span>
+          <!-- - -->
           <Button 
             variant="outline" 
             size="icon" 
-            @click.stop="onCartClick(productId, productBatchId, (quantityRef  + 1))"
+            @click.stop="incrementCart()"
             :disabled="isLoading">
             <Loader2 v-if="isLoading" class="w-4 h-4 mr-2 animate-spin"/>
             <Plus v-else class="w-4 h-4 shrink-0" />

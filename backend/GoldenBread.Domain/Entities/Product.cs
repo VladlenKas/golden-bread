@@ -10,7 +10,10 @@ public class Product
     public string Description { get; set; } = null!;
     public decimal CostPrice { get; set; }
     public decimal Weight { get; set; }
-    public int ProductionTime { get; set; }
+    public int ProductionTimeMinutes { get; set; }
+    public int ShelfLifeDays { get; set; }
+    public decimal StorageTempMin { get; set; }
+    public decimal StorageTempMax { get; set; }
     public DateTime? DeletedAt { get; set; }
 
     public ProductCategory Category { get; set; } = null!;

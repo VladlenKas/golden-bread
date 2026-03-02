@@ -33,7 +33,7 @@ public static class DependencyInjection
                 options.Cookie.HttpOnly = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.SameSite = SameSiteMode.Strict;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                options.ExpireTimeSpan = TimeSpan.FromHours(24);
                 options.SlidingExpiration = true;
             });
         services.AddDataProtection()

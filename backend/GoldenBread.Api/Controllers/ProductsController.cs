@@ -33,7 +33,7 @@ public class ProductsController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [HttpPatch("{id}/cart")]
+    [HttpPatch("{id}/update-cart")]
     [Authorize]
     public async Task<IActionResult> UpdateCartItem(
         int id, 

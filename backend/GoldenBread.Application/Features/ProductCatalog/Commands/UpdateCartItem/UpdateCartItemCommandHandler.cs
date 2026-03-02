@@ -7,37 +7,58 @@ namespace GoldenBread.Application.Features.ProductCatalog.Commands.UpdateCartIte
 public sealed class UpdateCartItemCommandHandler(
     IGoldenBreadContext context,
     ICurrentAccountContext accountContext) : 
-    IRequestHandler<UpdateCartItemCommand, int>
+    IRequestHandler<UpdateCartItemCommand, CartSummary>
 {
-    public async Task<int> Handle(
+    public async Task<CartSummary> Handle(
         UpdateCartItemCommand command, 
         CancellationToken cancellationToken)
     {
         var account = await accountContext.GetAccountAsync(cancellationToken);
         int companyId = account.Company.CompanyId;
 
-        var productBatchInCart = await context.CartItems
+        var cartItem = await context.CartItems
+            .AsTracking()
+            .Include(ci => ci.Batch)  
+                .ThenInclude(ci => ci.Product)  
             .FirstOrDefaultAsync(ci =>
                 ci.CompanyId == companyId &&
-                ci.BatchId == command.ProductBatchId,
+                ci.Batch.ProductId == command.ProductId, 
                 cancellationToken);
 
-        if (command.Quantity <= 0 && productBatchInCart != null)
+        if (command.Quantity <= 0 && cartItem != null)
         {
-            context.CartItems.Remove(productBatchInCart);
+            context.CartItems.Remove(cartItem);
+            return new CartSummary(0, 0, 0);
         }
-        else if (command.Quantity > 0)
+        else if (cartItem == null)
         {
-            if (productBatchInCart == null)
-                await context.CartItems.AddAsync(CartItem.Create(
+            await context.CartItems.AddAsync(
+                CartItem.Create(
                     companyId, 
                     command.ProductBatchId, 
                     command.Quantity),
-                    cancellationToken);
-            else
-                productBatchInCart.Quantity = command.Quantity;
+                cancellationToken);
+        }
+        else
+        {
+            cartItem.Update(
+                command.ProductBatchId, 
+                command.Quantity);
         }
 
-        return command.Quantity <= 0 ? 0 : command.Quantity;
+        await context.SaveChangesAsync(cancellationToken);
+
+        var upd = await context.CartItems
+            .Include(ci => ci.Batch)
+               .ThenInclude(ci => ci.Product)
+            .FirstAsync(ci =>
+                ci.CompanyId == companyId &&
+                ci.Batch.ProductId == command.ProductId,
+                cancellationToken);
+
+        return new CartSummary(
+            upd.Quantity,
+            upd.TotalPrice,
+            upd.BatchId);
     }
 }

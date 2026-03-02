@@ -34,12 +34,23 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(100)
             .HasColumnName("name");
 
-        builder.Property(e => e.ProductionTime)
-            .HasColumnName("production_time");
+        builder.Property(e => e.ProductionTimeMinutes)
+            .HasColumnName("production_time_minutes");
 
         builder.Property(e => e.Weight)
             .HasPrecision(5, 3)
             .HasColumnName("weight");
+
+        builder.Property(e => e.ShelfLifeDays)
+            .HasColumnName("shelf_life_days");
+
+        builder.Property(e => e.StorageTempMin)
+            .HasPrecision(4, 1)
+            .HasColumnName("storage_temp_min");
+
+        builder.Property(e => e.StorageTempMax)
+            .HasPrecision(4, 1)
+            .HasColumnName("storage_temp_max");
 
         builder.HasOne(d => d.Category)
             .WithMany(p => p.Products)

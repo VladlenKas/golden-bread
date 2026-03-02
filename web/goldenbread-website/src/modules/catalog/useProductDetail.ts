@@ -1,132 +1,134 @@
 import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getProductDetail, updateCartItem, toggleFavorite } from './api';
+import { getProductDetail, updateCartItem, toggleFavorite as toggleFavoriteApi } from './api';
 import { ErrorKind } from '@/shared/api';
 import { useNotifications } from '@/shared/composables';
-import type { ProductDetail, UpdateCartItemRequest, AvailableBatch } from './types';
+import type { ProductDetail, UpdateCartItemRequest, AvailableBatch, CartSummary } from './types';
 
 export function useProductDetail() {
   const route = useRoute();
   const router = useRouter();
-  const { unhandledErrorToast, successToast } = useNotifications();
-  
-  const product = ref<ProductDetail | null>(null);
-  const isLoading = ref(false);
-  const isActionLoading = ref(false);
-  const selectedBatch = ref<AvailableBatch | null>(null);
-  const currentImageIndex = ref(0);
+  const { successToast, errorToast } = useNotifications();
 
   const productId = computed(() => Number(route.params.id));
 
+  // Состояние
+  const isLoading = ref(false);
+  const isUpdating = ref(false);
+  const product = ref<ProductDetail | null>(null);
+  const selectedBatchId = ref<number | null>(null);
+  const currentImageIndex = ref(0);
+
+  // Вычисляемые свойства
   const currentBatch = computed(() => {
-    return selectedBatch.value || product.value?.availableBatches[0] || null;
+    if (!product.value?.availableBatches.length) return null;
+    const targetId = selectedBatchId.value ?? product.value.currentBatchId;
+    return product.value.availableBatches.find(b => b.productBatchId === targetId) 
+        || product.value.availableBatches[0];
   });
 
-  const totalPrice = computed(() => {
-    if (!currentBatch.value) return 0;
-    return currentBatch.value.salePrice * currentBatch.value.quantityPerBatch;
-  });
+  const quantity = computed(() => product.value?.quantityInCart ?? 0);
+  const totalCost = computed(() => product.value?.totalCostInCart ?? 0);
+  const hasInCart = computed(() => quantity.value > 0);
 
-  const unitPrice = computed(() => {
-    return currentBatch.value?.salePrice || 0;
-  });
+  const hasMultipleImages = computed(() => 
+    (product.value?.imageUrls.length ?? 0) > 1
+  );
 
-  const hasMultipleImages = computed(() => {
-    return (product.value?.imageUrls.length ?? 0) > 1;
-  });
-
-  const isFavorite = computed(() => product.value?.isFavorite ?? false);
-  
-  const quantityInCart = computed(() => product.value?.quantityInCart ?? 0);
+  // Методы
+  function changeImage(direction: 'next' | 'prev' | number) {
+    const urls = product.value?.imageUrls;
+    if (!urls?.length) return;
+    const length = urls.length;
+    if (typeof direction === 'number') {
+      currentImageIndex.value = Math.max(0, Math.min(direction, length - 1));
+    } else {
+      const delta = direction === 'next' ? 1 : -1;
+      currentImageIndex.value = (currentImageIndex.value + delta + length) % length;
+    }
+  }
 
   async function loadProduct() {
     try {
       isLoading.value = true;
-       window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
       const data = await getProductDetail(productId.value);
       product.value = data;
-      const defaultBatch = data.availableBatches.find(b => b.productBatchId === data.productBatchId) 
-        || data.availableBatches[0];
-      selectedBatch.value = defaultBatch || null;
+      selectedBatchId.value = data.currentBatchId || data.availableBatches[0]?.productBatchId || null;
+      currentImageIndex.value = 0;
+      
     } catch (error: any) {
-      if (error.kind === ErrorKind.Unknown) {
-        unhandledErrorToast(error.message, error.status);
-      }
-      if (error.status === 404) {
-        router.push('/catalog');
-      }
+      handleError(error);
+      if (error.status === 404) router.push('/catalog');
     } finally {
       isLoading.value = false;
     }
   }
 
-  async function updateCart(quantity: number) {
+  function handleError(error: any) {
+    if (error.kind === ErrorKind.Unknown || error.kind === ErrorKind.Network) {
+      errorToast(error.message || 'Произошла ошибка');
+    }
+  }
+
+  function updateLocalState(summary: CartSummary) {
+    if (!product.value) return;
+    product.value.quantityInCart = summary.totalQuantity;
+    product.value.totalCostInCart = summary.totalCost;
+    product.value.currentBatchId = summary.currentBatchId;
+  }
+
+  // Корзина: установить количество для выбранной партии
+  async function setQuantity(newQuantity: number) {
     if (!product.value || !currentBatch.value) return;
-    
+    if (newQuantity < 0) return;
+
     try {
-      isActionLoading.value = true;
+      isUpdating.value = true;
+
       const request: UpdateCartItemRequest = {
         productId: product.value.productId,
         productBatchId: currentBatch.value.productBatchId,
-        quantity: quantity,
+        quantity: newQuantity,
       };
-      const newQuantity = await updateCartItem(request);
-      if (product.value) {
-        product.value.quantityInCart = newQuantity;
-      }
-      
+
+      const summary = await updateCartItem(request); // Теперь возвращает CartSummary
+      updateLocalState(summary);
+
     } catch (error: any) {
-      if (error.kind === ErrorKind.Unknown) {
-        unhandledErrorToast(error.message, error.status);
-      }
+      handleError(error);
+      throw error;
     } finally {
-      isActionLoading.value = false;
+      isUpdating.value = false;
     }
   }
 
-  async function addToCart() {
-    await updateCart(quantityInCart.value + 1);
+  const increment = () => setQuantity(quantity.value + 1);
+  const decrement = () => setQuantity(quantity.value - 1);
+
+  async function selectBatch(batch: AvailableBatch) {
+    if (!product.value || batch.productBatchId === currentBatch.value?.productBatchId) return;
+
+    selectedBatchId.value = batch.productBatchId;
+
+    // Если в корзине уже есть товар — переносим на новую партию
+    if (quantity.value > 0) {
+      await setQuantity(quantity.value);
+    }
   }
 
-  async function removeFromCart() {
-    const newQty = Math.max(0, quantityInCart.value - 1);
-    await updateCart(newQty);
-  }
-
-  async function toggleFavoriteStatus() {
+  async function toggleFavorite() {
     if (!product.value) return;
-    
     try {
-      isActionLoading.value = true;
-      await toggleFavorite(product.value.productId);
+      isUpdating.value = true;
+      await toggleFavoriteApi(product.value.productId);
       product.value.isFavorite = !product.value.isFavorite;
     } catch (error: any) {
-      if (error.kind === ErrorKind.Unknown) {
-        unhandledErrorToast(error.message, error.status);
-      }
+      handleError(error);
     } finally {
-      isActionLoading.value = false;
+      isUpdating.value = false;
     }
-  }
-
-  function selectBatch(batch: AvailableBatch) {
-    selectedBatch.value = batch;
-  }
-
-  function nextImage() {
-    if (!product.value?.imageUrls.length) return;
-    currentImageIndex.value = (currentImageIndex.value + 1) % product.value.imageUrls.length;
-  }
-
-  function prevImage() {
-    if (!product.value?.imageUrls.length) return;
-    currentImageIndex.value = currentImageIndex.value === 0 
-      ? product.value.imageUrls.length - 1 
-      : currentImageIndex.value - 1;
-  }
-
-  function goToImage(index: number) {
-    currentImageIndex.value = index;
   }
 
   function goBack() {
@@ -134,25 +136,27 @@ export function useProductDetail() {
   }
 
   return {
+    // State
     product,
     isLoading,
-    isActionLoading,
+    isUpdating,
     currentImageIndex,
+    
+    // Computed
     currentBatch,
-    totalPrice,
-    unitPrice,
+    quantity,
+    totalCost,
+    hasInCart,
     hasMultipleImages,
-    isFavorite,
-    quantityInCart,
+    
+    // Methods
     loadProduct,
-    addToCart,
-    removeFromCart,
-    updateCartQuantity: updateCart,
-    toggleFavoriteStatus,
+    changeImage,
+    setQuantity,
+    increment,
+    decrement,
     selectBatch,
-    nextImage,
-    prevImage,
-    goToImage,
+    toggleFavorite,
     goBack,
   };
 }

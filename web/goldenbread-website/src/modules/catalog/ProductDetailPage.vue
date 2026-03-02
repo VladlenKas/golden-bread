@@ -45,26 +45,28 @@ const authStore = useAuthStore();
 const showAllIngredients = ref(false);
 
 const {
-  product,
-  isLoading,
-  isActionLoading,
-  currentImageIndex,
-  currentBatch,
-  totalPrice,
-  unitPrice,
-  hasMultipleImages,
-  isFavorite,
-  quantityInCart,
-  loadProduct,
-  addToCart,
-  removeFromCart,
-  updateCartQuantity,
-  toggleFavoriteStatus,
-  selectBatch,
-  nextImage,
-  prevImage,
-  goToImage,
-  goBack,
+  // State
+    product,
+    isLoading,
+    isUpdating,
+    currentImageIndex,
+    
+    // Computed
+    currentBatch,
+    quantity,
+    totalCost,
+    hasInCart,
+    hasMultipleImages,
+    
+    // Methods
+    loadProduct,
+    changeImage,
+    setQuantity,
+    increment,
+    decrement,
+    selectBatch,
+    toggleFavorite,
+    goBack,
 } = useProductDetail();
 
 onMounted(() => {
@@ -119,12 +121,12 @@ function formatUnit(unit: string): string {
               <template v-if="hasMultipleImages">
                 <Button variant="secondary" size="icon"
                   class="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-md"
-                  @click.stop="prevImage">
+                  @click.stop="changeImage('prev')">
                   <ChevronLeft class="h-5 w-5" />
                 </Button>
                 <Button variant="secondary" size="icon"
                   class="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-md"
-                  @click.stop="nextImage">
+                  @click.stop="changeImage('next')">
                   <ChevronRight class="h-5 w-5" />
                 </Button>
               </template>
@@ -134,7 +136,7 @@ function formatUnit(unit: string): string {
                 <button v-for="(_, index) in product.imageUrls" :key="index"
                   class="h-1.5 rounded-full transition-all duration-300"
                   :class="currentImageIndex === index ? 'bg-white w-6' : 'bg-white/40 w-1.5 hover:bg-white/60'"
-                  @click.stop="goToImage(index)" />
+                  @click.stop="changeImage(index)" />
               </div>
             </div>
 
@@ -143,7 +145,7 @@ function formatUnit(unit: string): string {
               <button v-for="(url, index) in product.imageUrls" :key="index"
                 class="w-16 h-16 rounded-lg overflow-hidden border-2 transition-all bg-muted hover:opacity-100"
                 :class="currentImageIndex === index ? 'border-primary ring-2 ring-primary/20' : 'border-transparent opacity-60'"
-                @click="goToImage(index)">
+                @click="changeImage(index)">
                 <img :src="`${API_DB_UPLOAD_URL}/${url}`" class="w-full h-full object-cover" />
               </button>
             </div>
@@ -209,9 +211,9 @@ function formatUnit(unit: string): string {
                 </Badge>
 
                 <Button v-if="authStore.isAuthenticated" variant="outline" size="icon" class="shrink-0"
-                  :class="{ 'text-red-500 border-red-200 bg-red-50 hover:bg-red-100 hover:text-red-600': isFavorite }"
-                  @click="toggleFavoriteStatus" :disabled="isActionLoading">
-                  <Heart class="h-5 w-5" :class="{ 'fill-current': isFavorite }" />
+                  :class="{ 'text-red-500 border-red-200 bg-red-50 hover:bg-red-100 hover:text-red-600': product?.isFavorite }"
+                  @click="toggleFavorite" :disabled="isUpdating">
+                  <Heart class="h-5 w-5" :class="{ 'fill-current': product?.isFavorite }" />
                 </Button>
               </div>
 
@@ -222,19 +224,19 @@ function formatUnit(unit: string): string {
               <div class="flex items-center gap-x-2 pt-1 text-sm text-muted-foreground">
                 <TooltipBase>
                   <template #icon><Clock class="w-4 h-4" /> </template>
-                  <template #trigger>{{ product.productionTime }} мин</template>
-                  <template #content>Время приготовления</template>
+                  <template #trigger>{{ product.productionTimeMinutes }} мин</template>
+                  <template #content>Время производства</template>
                 </TooltipBase>
                 <span class="w-1 h-1 rounded-full bg-muted-foreground/40" />
                 <TooltipBase>
                   <template #icon><Calendar class="w-4 h-4" /> </template>
-                  <template #trigger>{{ product.productionTime }} дней</template>
+                  <template #trigger>{{ product.shelfLifeDays }} дней</template>
                   <template #content>Срок годности при соблюдении условий хранения</template>
                 </TooltipBase>
                 <span class="w-1 h-1 rounded-full bg-muted-foreground/40" />
                 <TooltipBase>
                   <template #icon><Thermometer class="w-4 h-4" /> </template>
-                  <template #trigger>{{ product.productionTime }} дней</template>
+                  <template #trigger>{{ `${product.storageTempMin}...${product.storageTempMax}°C` }} </template>
                   <template #content>Нормы температуры хранения</template>
                 </TooltipBase>
                 <span class="w-1 h-1 rounded-full bg-muted-foreground/40" />
@@ -272,7 +274,7 @@ function formatUnit(unit: string): string {
                       <span class="text-2xl font-bold text-foreground">{{ batch.quantityPerBatch }}</span>
                       <span class="text-sm text-muted-foreground">шт</span>
                     </div>
-                    <div class="text-sm font-medium text-primary">{{ batch.salePrice.toFixed(2) }} ₽/шт</div>
+                    <div class="text-sm font-medium text-primary">{{ batch.unitPrice.toFixed(2) }} ₽/шт</div>
                   </div>
                 </button>
               </div>
@@ -289,11 +291,11 @@ function formatUnit(unit: string): string {
                       Партия из {{ currentBatch?.quantityPerBatch }} шт
                     </div>
                     <div class="flex items-baseline gap-2">
-                      <span class="text-4xl font-bold tracking-tight text-foreground">{{ totalPrice.toFixed(2) }}</span>
+                      <span class="text-4xl font-bold tracking-tight text-foreground">{{ currentBatch?.totalPrice.toFixed(2) }}</span>
                       <span class="text-xl text-muted-foreground">₽</span>
                     </div>
                     <div class="text-sm text-muted-foreground">
-                      {{ unitPrice.toFixed(2) }} ₽ за штуку
+                      {{ currentBatch?.unitPrice.toFixed(2) }} ₽ за штуку
                     </div>
                   </div>
 
@@ -309,31 +311,31 @@ function formatUnit(unit: string): string {
 
                 <!-- Кнопки корзины -->
                 <div v-if="authStore.isAuthenticated">
-                  <Button v-if="quantityInCart === 0"
+                  <Button v-if="!hasInCart"
                     class="w-full gap-2 h-12 text-base font-semibold shadow-md hover:shadow-lg transition-shadow"
-                    size="lg" @click="addToCart" :disabled="isActionLoading">
+                    size="lg" @click="increment" :disabled="isUpdating">
                     <ShoppingCart class="w-5 h-5" />
-                    <Loader2 v-if="isActionLoading" class="w-5 h-5 animate-spin" />
+                    <Loader2 v-if="isUpdating" class="w-5 h-5 animate-spin" />
                     <span v-else>Добавить в корзину</span>
                   </Button>
 
                   <div v-else class="flex items-center justify-between gap-4 bg-background rounded-lg p-2 border">
                     <div class="flex items-center gap-1">
-                      <Button variant="ghost" size="icon" class="h-10 w-10 rounded-md" @click="removeFromCart"
-                        :disabled="isActionLoading">
-                        <Loader2 v-if="isActionLoading" class="w-4 h-4 animate-spin" />
+                      <Button variant="ghost" size="icon" class="h-10 w-10 rounded-md" @click="decrement"
+                        :disabled="isUpdating">
+                        <Loader2 v-if="isUpdating" class="w-4 h-4 animate-spin" />
                         <Minus v-else class="w-4 h-4" />
                       </Button>
-                      <span class="w-12 text-center font-bold text-lg">{{ quantityInCart }}</span>
-                      <Button variant="ghost" size="icon" class="h-10 w-10 rounded-md" @click="addToCart"
-                        :disabled="isActionLoading">
-                        <Loader2 v-if="isActionLoading" class="w-4 h-4 animate-spin" />
+                      <span class="w-12 text-center font-bold text-lg">{{ quantity }}</span>
+                      <Button variant="ghost" size="icon" class="h-10 w-10 rounded-md" @click="increment"
+                        :disabled="isUpdating">
+                        <Loader2 v-if="isUpdating" class="w-4 h-4 animate-spin" />
                         <Plus v-else class="w-4 h-4" />
                       </Button>
                     </div>
                     <div class="pr-3 text-sm">
                       <span class="text-muted-foreground">в корзине</span>
-                      <div class="font-semibold">{{ (quantityInCart * totalPrice).toFixed(2) }} ₽</div>
+                      <div class="font-semibold">{{ totalCost.toFixed(2) }} ₽</div>
                     </div>
                   </div>
                 </div>

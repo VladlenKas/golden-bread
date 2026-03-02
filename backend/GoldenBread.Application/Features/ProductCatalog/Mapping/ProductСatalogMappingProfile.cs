@@ -1,4 +1,6 @@
-﻿using GoldenBread.Application.Features.ProductCatalog.Dtos;
+﻿using GoldenBread.Application.Common.Mapping;
+using GoldenBread.Application.Features.ProductCatalog.Dtos;
+using GoldenBread.Domain.Extensions;
 
 namespace GoldenBread.Application.Features.ProductCatalog.Mapping;
 
@@ -16,13 +18,11 @@ public class ProductCatalogMappingProfile : Profile
                 opt => opt.MapFrom(src => src.Category.Color))
 
             .ForMember(dest => dest.ProductBatchId,
-                opt => opt.MapFrom((src, dest, _, context) =>
+                opt => opt.MapFrom((src, _, _, ctx) =>
                 {
-                    var companyId = (int)context.Items["CompanyId"];
-
                     var cartBatch = src.ProductBatches
                         .FirstOrDefault(pb => pb.CartItems
-                            .Any(ci => ci.CompanyId == companyId));
+                            .Any(ci => ci.CompanyId == ctx.GetCompanyId()));
 
                     return cartBatch?.ProductBatchId
                         ?? src.ProductBatches
@@ -32,13 +32,11 @@ public class ProductCatalogMappingProfile : Profile
                 }))
 
             .ForMember(dest => dest.QuantityPerBatch,
-                opt => opt.MapFrom((src, dest, _, context) =>
+                opt => opt.MapFrom((src, _, _, ctx) =>
                 {
-                    var companyId = (int)context.Items["CompanyId"];
-
                     var cartBatch = src.ProductBatches
                         .FirstOrDefault(pb => pb.CartItems
-                            .Any(ci => ci.CompanyId == companyId));
+                            .Any(ci => ci.CompanyId == ctx.GetCompanyId()));
 
                     return cartBatch?.QuantityPerBatch
                         ?? src.ProductBatches
@@ -48,18 +46,16 @@ public class ProductCatalogMappingProfile : Profile
                 }))
 
             .ForMember(dest => dest.SalePrice,
-                opt => opt.MapFrom((src, dest, _, context) =>
+                opt => opt.MapFrom((src, _, _, ctx) =>
                 {
-                    var companyId = (int)context.Items["CompanyId"];
-
                     var cartBatch = src.ProductBatches
                         .FirstOrDefault(pb => pb.CartItems
-                            .Any(ci => ci.CompanyId == companyId));
+                            .Any(ci => ci.CompanyId == ctx.GetCompanyId()));
 
-                    return cartBatch?.SalePrice
+                    return cartBatch?.UnitPrice
                         ?? src.ProductBatches
                             .OrderBy(pb => pb.QuantityPerBatch)
-                            .Select(pb => pb.SalePrice)
+                            .Select(pb => pb.UnitPrice)
                             .FirstOrDefault();
                 }))
 
@@ -69,20 +65,16 @@ public class ProductCatalogMappingProfile : Profile
                     .FirstOrDefault()))
 
             .ForMember(dest => dest.IsFavorite,
-                opt => opt.MapFrom((src, dest, _, context) =>
+                opt => opt.MapFrom((src, _, _, ctx) =>
                     src.Favourites.Any(f =>
-                        f.CompanyId == (int)context.Items["CompanyId"])))
+                        f.CompanyId == ctx.GetCompanyId())))
 
             .ForMember(dest => dest.QuantityInCart,
-                opt => opt.MapFrom((src, dest, _, context) =>
-                {
-                    var companyId = (int)context.Items["CompanyId"];
-
-                    return src.ProductBatches
+                opt => opt.MapFrom((src, _, _, ctx) =>
+                    src.ProductBatches
                         .SelectMany(pb => pb.CartItems)
-                        .Where(ci => ci.CompanyId == companyId)
-                        .Sum(ci => ci.Quantity);
-                }));
+                        .Where(ci => ci.CompanyId == ctx.GetCompanyId())
+                        .Sum(ci => ci.Quantity)));
 
         // ProductDetailResponse
         CreateMap<Entities.Product, ProductDetailResponse>()
@@ -91,55 +83,7 @@ public class ProductCatalogMappingProfile : Profile
                 opt => opt.MapFrom(src => src.Category.Name))
 
             .ForMember(dest => dest.CategoryColor,
-                opt => opt.MapFrom(src => src.Category.Color))  
-
-            .ForMember(dest => dest.ProductBatchId,
-                opt => opt.MapFrom((src, dest, _, context) =>
-                {
-                    var companyId = (int)context.Items["CompanyId"];
-
-                    var cartBatch = src.ProductBatches
-                        .FirstOrDefault(pb => pb.CartItems
-                            .Any(ci => ci.CompanyId == companyId));
-
-                    return cartBatch?.ProductBatchId
-                        ?? src.ProductBatches
-                            .OrderBy(pb => pb.QuantityPerBatch)
-                            .Select(pb => pb.ProductBatchId)
-                            .FirstOrDefault();
-                }))
-
-            .ForMember(dest => dest.QuantityPerBatch,
-                opt => opt.MapFrom((src, dest, _, context) =>
-                {
-                    var companyId = (int)context.Items["CompanyId"];
-
-                    var cartBatch = src.ProductBatches
-                        .FirstOrDefault(pb => pb.CartItems
-                            .Any(ci => ci.CompanyId == companyId));
-
-                    return cartBatch?.QuantityPerBatch
-                        ?? src.ProductBatches
-                            .OrderBy(pb => pb.QuantityPerBatch)
-                            .Select(pb => pb.QuantityPerBatch)
-                            .FirstOrDefault();
-                }))
-
-            .ForMember(dest => dest.SalePrice,
-                opt => opt.MapFrom((src, dest, _, context) =>
-                {
-                    var companyId = (int)context.Items["CompanyId"];
-
-                    var cartBatch = src.ProductBatches
-                        .FirstOrDefault(pb => pb.CartItems
-                            .Any(ci => ci.CompanyId == companyId));
-
-                    return cartBatch?.SalePrice
-                        ?? src.ProductBatches
-                            .OrderBy(pb => pb.QuantityPerBatch)
-                            .Select(pb => pb.SalePrice)
-                            .FirstOrDefault();
-                }))
+                opt => opt.MapFrom(src => src.Category.Color))
 
             .ForMember(dest => dest.AvailableBatches,
                 opt => opt.MapFrom(src => src.ProductBatches
@@ -148,7 +92,8 @@ public class ProductCatalogMappingProfile : Profile
                     {
                         ProductBatchId = pb.ProductBatchId,
                         QuantityPerBatch = pb.QuantityPerBatch,
-                        SalePrice = pb.SalePrice
+                        UnitPrice = pb.UnitPrice,
+                        TotalPrice = pb.TotalPrice,
                     })))
 
             .ForMember(dest => dest.ImageUrls,
@@ -157,20 +102,16 @@ public class ProductCatalogMappingProfile : Profile
                     .ToList()))
 
             .ForMember(dest => dest.IsFavorite,
-                opt => opt.MapFrom((src, dest, _, context) =>
+                opt => opt.MapFrom((src, _, _, ctx) =>
                     src.Favourites.Any(f =>
-                        f.CompanyId == (int)context.Items["CompanyId"])))
+                        f.CompanyId == ctx.GetCompanyId())))
 
-            .ForMember(dest => dest.QuantityInCart,
-                opt => opt.MapFrom((src, dest, _, context) =>
-                {
-                    var companyId = (int)context.Items["CompanyId"];
-
-                    return src.ProductBatches
+            .ForMember(dest => dest.CurrentBatchId,
+                opt => opt.MapFrom((src, _, _, ctx) =>
+                    src.ProductBatches
                         .SelectMany(pb => pb.CartItems)
-                        .Where(ci => ci.CompanyId == companyId)
-                        .Sum(ci => ci.Quantity);
-                }))
+                        .FirstOrDefault(ci => ci.CompanyId == ctx.GetCompanyId())?
+                        .BatchId ?? 0))
 
             .ForMember(dest => dest.Ingredients,
                 opt => opt.MapFrom(src => src.Recipes
@@ -180,13 +121,20 @@ public class ProductCatalogMappingProfile : Profile
                         Name = r.Ingredient.Name,
                         Quantity = r.Quantity,
                         Unit = r.Ingredient.Unit.ToString(),
-                    })));
+                    })))
+
+            .ForMember(dest => dest.QuantityInCart,
+                opt => opt.MapFrom((src, _, _, ctx) =>
+                    src.GetQuantityInCart(ctx.GetCompanyId())))
+
+            .ForMember(dest => dest.TotalCostInCart,
+                opt => opt.MapFrom((src, _, _, ctx) =>
+                    src.GetTotalCostInCart(ctx.GetCompanyId())));
 
         // ProductCategoryResponse
         CreateMap<Entities.ProductCategory, ProductCategoryResponse>()
 
             .ForMember(dest => dest.ProductCount,
-                opt => opt.MapFrom(src => src.Products
-                    .Count()));
+                opt => opt.MapFrom(src => src.Products.Count()));
     }
 }

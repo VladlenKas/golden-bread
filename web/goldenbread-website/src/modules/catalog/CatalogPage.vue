@@ -58,7 +58,6 @@ const {
   selectedProductionTime,
   sortBy,
   activeFiltersCount,
-  restoreScrollPosition,
   resetFilters,
   toggleTimeFilter,
 } = useCatalog();
