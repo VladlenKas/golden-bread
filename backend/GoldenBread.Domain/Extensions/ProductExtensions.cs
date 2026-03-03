@@ -11,7 +11,7 @@ public static class ProductExtensions
         return product.ProductBatches
             .SelectMany(pb => pb.CartItems)
             .Where(ci => ci.CompanyId == companyId)
-            .Sum(ci => ci.TotalPrice);
+            .Sum(ci => ci.TotalCost);
     }
 
     public static int GetQuantityInCart(this Product product, int companyId)

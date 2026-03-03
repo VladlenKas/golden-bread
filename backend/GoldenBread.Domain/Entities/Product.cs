@@ -24,4 +24,24 @@ public class Product
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
 
     public Product() { }
+
+    public static Product Create(
+    int productId,
+    string name,
+    int productionTimeMinutes,
+    decimal costPrice = 0)
+    {
+        return new Product
+        {
+            ProductId = productId,
+            Name = name,
+            ProductionTimeMinutes = productionTimeMinutes,
+            CostPrice = costPrice,
+            Description = string.Empty,
+            Weight = 0,
+            ShelfLifeDays = 0,
+            StorageTempMin = 0,
+            StorageTempMax = 0
+        };
+    }
 }

@@ -14,15 +14,20 @@ public sealed class UpdateCartItemCommandHandler(
         CancellationToken cancellationToken)
     {
         var account = await accountContext.GetAccountAsync(cancellationToken);
-        int companyId = account.Company.CompanyId;
+        var company = account.Company;
 
         var cartItem = await context.CartItems
             .AsTracking()
             .Include(ci => ci.Batch)  
                 .ThenInclude(ci => ci.Product)  
             .FirstOrDefaultAsync(ci =>
-                ci.CompanyId == companyId &&
+                ci.CompanyId == company.CompanyId &&
                 ci.Batch.ProductId == command.ProductId, 
+                cancellationToken);
+
+        var productBatch = await context.ProductBatches
+            .FirstAsync(pb => 
+                pb.ProductBatchId == command.ProductBatchId, 
                 cancellationToken);
 
         if (command.Quantity <= 0 && cartItem != null)
@@ -34,15 +39,15 @@ public sealed class UpdateCartItemCommandHandler(
         {
             await context.CartItems.AddAsync(
                 CartItem.Create(
-                    companyId, 
-                    command.ProductBatchId, 
+                    company,
+                    productBatch, 
                     command.Quantity),
                 cancellationToken);
         }
         else
         {
             cartItem.Update(
-                command.ProductBatchId, 
+                productBatch, 
                 command.Quantity);
         }
 
@@ -52,13 +57,13 @@ public sealed class UpdateCartItemCommandHandler(
             .Include(ci => ci.Batch)
                .ThenInclude(ci => ci.Product)
             .FirstAsync(ci =>
-                ci.CompanyId == companyId &&
+                ci.CompanyId == company.CompanyId &&
                 ci.Batch.ProductId == command.ProductId,
                 cancellationToken);
 
         return new CartSummary(
             upd.Quantity,
-            upd.TotalPrice,
+            upd.TotalCost,
             upd.BatchId);
     }
 }

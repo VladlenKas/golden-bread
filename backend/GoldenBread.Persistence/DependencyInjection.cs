@@ -35,6 +35,7 @@ public static class DependencyInjection
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUniquenessChecker, UniquenessChecker>();
+        services.AddScoped<IDeliveryDateCalculator, DeliveryDateCalculator>();
 
         return services;
     }

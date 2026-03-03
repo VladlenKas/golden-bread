@@ -12,28 +12,28 @@ public class CartItem
     public ProductBatch Batch { get; set; } = null!;
     public Company Company { get; set; } = null!;
 
-    public decimal TotalPrice => Batch.TotalPrice * Quantity;
+    public decimal TotalCost => Batch.TotalPrice * Quantity;
 
     public CartItem() { }
 
     public static CartItem Create(
-        int companyId,
-        int batchId,
+        Company company,
+        ProductBatch batch,
         int quantity)
     {
         return new CartItem()
         {
-            CompanyId = companyId,
-            BatchId = batchId,
+            Company = company,
+            Batch = batch,
             Quantity = quantity
         };
     }
 
     public void Update(
-        int batchId,
+        ProductBatch batch,
         int quantity)
     {
-        BatchId = batchId;
+        Batch = batch;
         Quantity = quantity;
     }
 }

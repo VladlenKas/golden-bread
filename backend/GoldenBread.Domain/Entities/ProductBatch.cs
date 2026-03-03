@@ -18,4 +18,20 @@ public class ProductBatch
 
     public decimal UnitPrice => Product.CostPrice * (1 + MarkupPercent / 100m);
     public decimal TotalPrice => UnitPrice * QuantityPerBatch;
+
+    public static ProductBatch Create(
+    int productBatchId,
+    Product product,
+    int quantityPerBatch,
+    int markupPercent)
+    {
+        return new ProductBatch
+        {
+            ProductBatchId = productBatchId,
+            Product = product,
+            ProductId = product.ProductId,
+            QuantityPerBatch = quantityPerBatch,
+            MarkupPercent = markupPercent
+        };
+    }
 }

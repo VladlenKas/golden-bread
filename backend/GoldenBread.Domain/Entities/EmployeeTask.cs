@@ -2,10 +2,10 @@
 
 public class EmployeeTask
 {
-    public int EmployeeTaskId { get; set; }
+    public int EmployeeTaskId { get; private set; }
 
-    public int EmployeeId { get; set; }
-    public int OrderItemId { get; set; }
+    public int EmployeeId { get; private set; }
+    public int OrderItemId { get; private set; }
 
     public int AssignedQuantity { get; set; }
     public int CompletedQuantity { get; set; }
@@ -15,4 +15,27 @@ public class EmployeeTask
 
     public Employee Employee { get; set; } = null!;
     public OrderItem OrderItem { get; set; } = null!;
+
+    public EmployeeTask() { }
+
+    public static EmployeeTask Create(
+        int employeeTaskId,
+        Employee employee,
+        OrderItem? orderItem,
+        DateTime? startTime,
+        DateTime? endTime,
+        int assignedQuantity,
+        int completedQuantity)
+    {
+        return new EmployeeTask
+        {
+            EmployeeTaskId = employeeTaskId,
+            Employee = employee,
+            OrderItem = orderItem ?? new OrderItem { },
+            StartTime = startTime,
+            EndTime = endTime,
+            AssignedQuantity = assignedQuantity,
+            CompletedQuantity = completedQuantity
+        };
+    }
 }
