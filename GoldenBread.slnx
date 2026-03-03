@@ -4,4 +4,5 @@
   <Project Path="backend/GoldenBread.Domain/GoldenBread.Domain.csproj" />
   <Project Path="backend/GoldenBread.Persistence/GoldenBread.Infrastructure.csproj" Id="5d17f648-35e2-4b6e-8870-c7ebfa986224" />
   <Project Path="desktop/GoldenBread.Desktop/GoldenBread.Desktop.csproj" />
+  <Project Path="tests/GoldenBread.Infrastructure.Tests/GoldenBread.Infrastructure.Tests.csproj" Id="3919ff0c-b125-42c5-951c-44936db9c060" />
 </Solution>
