@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Behaviors.Validation.Rules;
+﻿using GoldenBread.Application.Abstractions.Behaviors.Validation.Rules;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 

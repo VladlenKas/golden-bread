@@ -12,6 +12,7 @@ public interface IGoldenBreadContext
     DbSet<Favorite> Favourites { get; set; }
     DbSet<Ingredient> Ingredients { get; set; }
     DbSet<IngredientBatch> IngredientBatches { get; set; }
+    DbSet<IngredientReservation> IngredientReservations { get; set; }
     DbSet<Order> Orders { get; set; }
     DbSet<OrderItem> OrderItems { get; set; }
     DbSet<OrderTariff> OrderTariffs { get; set; }

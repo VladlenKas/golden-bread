@@ -1,5 +1,5 @@
-﻿using GoldenBread.Application.Features.CompanyProfile.Dtos;
-using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Features.CompanyProfile.Dtos;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Queries.GetProfile;
 

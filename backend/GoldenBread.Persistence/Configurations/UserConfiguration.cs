@@ -12,6 +12,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         entity.HasIndex(e => e.AccountId).IsUnique();
 
+        entity.HasOne(e => e.Account)
+            .WithOne(a => a.User)
+            .HasForeignKey<User>(e => e.AccountId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         entity.Property(e => e.UserId)
             .HasColumnName("user_id")
             .IsRequired();
@@ -34,10 +39,5 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         entity.Property(e => e.Patronymic)
             .HasColumnName("patronymic")
             .HasMaxLength(50);
-
-        entity.HasOne(e => e.Account)
-            .WithOne(a => a.User)
-            .HasForeignKey<User>(e => e.AccountId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

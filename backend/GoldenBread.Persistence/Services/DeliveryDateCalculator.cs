@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Features.CompanyCart.Services;
 using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Infrastructure.Services;

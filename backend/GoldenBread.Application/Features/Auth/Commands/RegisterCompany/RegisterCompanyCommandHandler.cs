@@ -1,6 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.Auth.Dtos;
-using GoldenBread.Application.Services;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
 
@@ -43,6 +43,7 @@ public sealed class RegisterCompanyCommandHandler(
         await context.Companies.AddAsync(company, cancellationToken);
 
         await cookieService.SignInAsync(account.Session!);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new AuthResponse(
             account.AccountId,

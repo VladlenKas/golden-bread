@@ -8,8 +8,8 @@ public class OrderItem
     public int? BatchId { get; private set; }
 
     public int Quantity { get; set; }
-    public int? TotalUnits { get; set; }
-    public decimal? UnitPriceAtOrder { get; set; }
+    public int UnitsInBatch { get; set; } // Старое количество продукций в партии. Просто для информации 
+    public decimal UnitPriceAtOrder { get; set; }  // Старая цена продукции. Просто для информации 
 
     public ProductBatch Batch { get; set; } = null!;
     public Order Order { get; set; } = null!;
@@ -17,4 +17,22 @@ public class OrderItem
     public ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
 
     public OrderItem() { }
+
+    public static OrderItem Create(
+        int orderId,
+        int? batchId,
+        int quantity,
+        int unitsInBatch,
+        decimal unitPriceAtOrder)
+    {
+        return new OrderItem
+        {
+            OrderId = orderId,
+            BatchId = batchId,
+            Quantity = quantity,
+            UnitsInBatch = unitsInBatch,
+            UnitPriceAtOrder = unitPriceAtOrder
+        };
+    }
+
 }

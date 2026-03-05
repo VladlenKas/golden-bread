@@ -47,3 +47,10 @@ public class IngredientResponse
     public decimal Quantity { get; set; }
     public string Unit { get; set; } = null!;
 }
+
+public class ProductProjectionDto
+{
+    public ProductDetailResponse Detail { get; set; } = null!;
+    public List<ProductBatchResponse> Batches { get; set; } = new();
+    public List<IngredientResponse> Ingredients { get; set; } = new();
+}

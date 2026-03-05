@@ -1,5 +1,5 @@
-﻿using GoldenBread.Application.Features.Auth.Dtos;
-using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Features.Auth.Dtos;
 
 namespace GoldenBread.Application.Features.Auth.Queries.GetAccountBySession;
 

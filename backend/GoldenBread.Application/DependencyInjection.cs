@@ -1,5 +1,4 @@
-﻿using GoldenBread.Application.Behaviors;
-using GoldenBread.Application.Behaviors.Validation;
+﻿using GoldenBread.Application.Abstractions.Behaviors.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -16,7 +15,6 @@ public static class DependencyInjection
         {
             cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
-            cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
         });
 
         // AutoMapper

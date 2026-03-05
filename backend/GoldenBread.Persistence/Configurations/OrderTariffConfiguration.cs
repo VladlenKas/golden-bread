@@ -10,6 +10,8 @@ public class OrderTariffConfiguration : IEntityTypeConfiguration<OrderTariff>
         builder.HasKey(e => e.OrderTariffId).HasName("order_tariffs_pkey");
         builder.ToTable("order_tariffs");
 
+        builder.HasQueryFilter(t => t.DeletedAt == null);
+
         builder.Property(e => e.OrderTariffId)
             .HasColumnName("order_tariff_id");
 

@@ -3,7 +3,7 @@
 public sealed class Company
 {
     public int CompanyId { get; private set; }
-    public int AccountId { get; private set; }
+    public int? AccountId { get; private set; }
 
     public string Name { get; set; } = null!;
     public string Inn { get; set; } = null!;
@@ -15,7 +15,7 @@ public sealed class Company
     public ICollection<Favorite> Favourites { get; set; } = new List<Favorite>();
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 
-    public Account Account { get; set; } = null!;
+    public Account? Account { get; set; }
 
     private Company() { }
 

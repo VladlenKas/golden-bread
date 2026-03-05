@@ -14,6 +14,12 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasDefaultValueSql("now()")
             .HasColumnName("created_at");
 
+        builder.Property(e => e.CanceledAt)
+            .HasColumnName("canceled_at");
+
+        builder.Property(e => e.CancelReason)
+            .HasColumnName("cancel_reason");
+
         builder.Property(e => e.EndDate)
             .HasColumnName("end_date");
 

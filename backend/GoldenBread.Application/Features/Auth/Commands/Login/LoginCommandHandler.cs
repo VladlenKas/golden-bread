@@ -1,8 +1,8 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Abstractions.Enums;
-using GoldenBread.Application.Exceptions;
+using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Common.Exceptions.Auth;
+using GoldenBread.Application.Contracts;
 using GoldenBread.Application.Features.Auth.Dtos;
-using GoldenBread.Application.Services;
 using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
@@ -25,11 +25,12 @@ public sealed class LoginCompanyCommandHandler(
         if (account == null ||
             !passwordHasher.Verify(command.Password, account.PasswordHash) ||
             !HasAccess(account.AccountType, command.PortalType))
-            throw new AccountNotFoundException();
+            throw new InvalidCredentialsException();
 
         account.SetSession();
 
         await cookieService.SignInAsync(account.Session!);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new AuthResponse(
             account.AccountId,

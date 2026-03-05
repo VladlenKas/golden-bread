@@ -1,9 +1,11 @@
-﻿using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Logout;
 
 public sealed class LogoutCommandHandler(
+    IGoldenBreadContext context,
     ICookieService cookieService,
     ICurrentAccountContext accountContext) : 
     IRequestHandler<LogoutCommand, Unit>
@@ -17,6 +19,7 @@ public sealed class LogoutCommandHandler(
 
         account.ClearSession();
         await cookieService.SignOutAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

@@ -3,8 +3,9 @@ using GoldenBread.Infrastructure.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using GoldenBread.Infrastructure.Services;
-using GoldenBread.Application.Services;
 using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Features.CompanyCart.Services;
 
 namespace GoldenBread.Infrastructure;
 
@@ -30,13 +31,23 @@ public static class DependencyInjection
         });
         services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
 
-        // Servises
-        services.AddScoped<ICurrentAccountContext, CurrentAccountContext>();
-        services.AddScoped<ICookieService, CookieService>();
-        services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IUniquenessChecker, UniquenessChecker>();
-        services.AddScoped<IDeliveryDateCalculator, DeliveryDateCalculator>();
+        services.AddCommonServices();
+        services.AddWebServices();
 
         return services;
+    }
+
+    private static void AddWebServices(this IServiceCollection services)
+    {
+        services.AddScoped<ICurrentAccountContext, CurrentAccountContext>();
+        services.AddScoped<ICookieService, CookieService>();
+        services.AddScoped<IDeliveryDateCalculator, DeliveryDateCalculator>();
+    }
+
+    private static void AddCommonServices(this IServiceCollection services)
+    {
+        services.AddScoped<IFileStorage, FileStorage>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IUniquenessChecker, UniquenessChecker>();
     }
 }

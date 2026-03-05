@@ -1,40 +1,83 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.ProductCatalog.Dtos;
-using GoldenBread.Application.Services;
+using GoldenBread.Domain.Extensions;
 
 namespace GoldenBread.Application.Features.ProductCatalog.Queires.GetProductDetail;
 
 public sealed class GetProductDetailQueryHandler(
     IGoldenBreadContext context,
-    ICurrentAccountContext accountContext,
-    IMapper mapper) :
+    ICurrentAccountContext accountContext) :
     IRequestHandler<GetProductDetailQuery, ProductDetailResponse>
 {
     public async Task<ProductDetailResponse> Handle(
         GetProductDetailQuery query, 
         CancellationToken cancellationToken)
     {
-        int companyId = 0;
-        var session = accountContext.GetSessionToken();
+        int companyId = await accountContext.GetCompanyIdAsync(cancellationToken);
 
-        if (!string.IsNullOrEmpty(session))
-        {
-            var account = await accountContext.GetAccountAsync(cancellationToken);
-            companyId = account.Company.CompanyId;
-        }
-
-        var product = await context.Products
+        var productBatches = await context.ProductBatches
+            .AsNoTracking()
             .Where(p => p.ProductId == query.ProductId)
-            .Include(p => p.Favourites)
-            .Include(p => p.Category)
-            .Include(p => p.ProductImages)
-            .Include(p => p.Recipes)
-                .ThenInclude(p => p.Ingredient)
-            .Include(p => p.ProductBatches)
-                .ThenInclude(p => p.CartItems)
-            .FirstOrDefaultAsync(cancellationToken);
+            .Include(pb => pb.Product)
+            .Select(pb => new ProductBatchResponse
+            {
+                ProductBatchId = pb.ProductBatchId,
+                QuantityPerBatch = pb.QuantityPerBatch,
+                UnitPrice = pb.UnitPrice,
+                TotalPrice = pb.TotalPrice
+            }).ToListAsync(cancellationToken);
 
-        return mapper.Map<ProductDetailResponse>(product,
-            opts => opts.Items["CompanyId"] = companyId);
+        var productDetail = await context.Products
+            .AsNoTracking()
+            .Where(p => p.ProductId == query.ProductId)
+            .Select(p => new ProductDetailResponse
+            {
+                ProductId = p.ProductId,
+                Name = p.Name,
+                Description = p.Description,
+                Weight = p.Weight,
+                ProductionTimeMinutes = p.ProductionTimeMinutes,
+                ShelfLifeDays = p.ShelfLifeDays,
+                StorageTempMin = p.StorageTempMin,
+                StorageTempMax = p.StorageTempMax,
+
+                // Категория
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category.Name,
+                CategoryColor = p.Category.Color,
+
+                // Изображения
+                ImageUrls = p.ProductImages
+                    .Select(i => i.ImagePath).ToList(),
+
+                // Доступные партии
+                CurrentBatchId = p.ProductBatches
+                    .SelectMany(pb => pb.CartItems
+                        .Where(ci => ci.CompanyId == companyId))
+                    .Select(ci => ci.BatchId)
+                    .FirstOrDefault(),
+
+                // Флаги / Вычисляемые свойства
+                QuantityInCart = p.GetQuantityInCart(companyId),
+                TotalCostInCart = p.GetTotalCostInCart(companyId),
+                IsFavorite = p.Favourites
+                    .Any(f => f.CompanyId == companyId),
+
+                AvailableBatches = productBatches,
+
+                // Рецепт
+                Ingredients = p.Recipes
+                    .Select(r => new IngredientResponse
+                {
+                    IngredientId = r.Ingredient.IngredientId,
+                    Name = r.Ingredient.Name,
+                    Quantity = r.Quantity,
+                    Unit = r.Ingredient.Unit.ToString()
+                }).ToList()
+            })
+            .FirstAsync(cancellationToken);
+
+        return productDetail;
     }
 }

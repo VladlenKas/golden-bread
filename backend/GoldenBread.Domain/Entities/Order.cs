@@ -12,10 +12,42 @@ public class Order
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? CanceledAt { get; private set; }
+    public string? CancelReason { get; private set; }
 
     public OrderStatus Status { get; set; }
 
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public ICollection<IngredientReservation> IngredientReservations { get; set; } = new List<IngredientReservation>();
     public OrderTariff Tariff { get; set; } = null!;
     public Company Company { get; set; } = null!;
+
+    public static Order Create(
+        int companyId,
+        int tariffId,
+        OrderStatus status,
+        DateOnly desiredDeliveryDate)
+    {
+        return new Order
+        {
+            CompanyId = companyId,
+            TariffId = tariffId,
+            Status = status,
+            EndDate = desiredDeliveryDate,
+            CreatedAt = DateTime.UtcNow
+        };
+    }
+
+    public void UpdateStatus(OrderStatus status)
+    {
+        Status = status;
+    }
+
+    public void Cancel(string? reason = null)
+    {
+        Status = OrderStatus.Canceled;
+        CanceledAt = DateTime.UtcNow;
+        CancelReason = reason;
+    }
+
 }

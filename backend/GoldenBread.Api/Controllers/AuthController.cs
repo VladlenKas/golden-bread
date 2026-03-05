@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Abstractions.Enums;
+﻿using GoldenBread.Application.Contracts;
 using GoldenBread.Application.Features.Auth.Commands.Login;
 using GoldenBread.Application.Features.Auth.Commands.Logout;
 using GoldenBread.Application.Features.Auth.Commands.RegisterCompany;

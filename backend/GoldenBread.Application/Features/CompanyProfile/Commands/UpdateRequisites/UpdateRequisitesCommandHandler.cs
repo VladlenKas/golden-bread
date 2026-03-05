@@ -1,8 +1,10 @@
-﻿using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Commands.UpdateRequisites;
 
 public sealed class UpdateCompanyRequisitesCommandHandler(
+    IGoldenBreadContext context,
     ICurrentAccountContext accountContext,
     ICookieService cookieService,
     IUniquenessChecker checker) :
@@ -23,6 +25,8 @@ public sealed class UpdateCompanyRequisitesCommandHandler(
         account.SetPendingVerification();
 
         await cookieService.SignOutAsync();
+
+        await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Abstractions.Services;
 
 namespace GoldenBread.Infrastructure.Services;
 

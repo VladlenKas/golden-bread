@@ -1,6 +1,6 @@
 using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Exceptions;
-using GoldenBread.Application.Services;
+using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Common.Exceptions.Domain;
 
 namespace GoldenBread.Infrastructure.Services;
 

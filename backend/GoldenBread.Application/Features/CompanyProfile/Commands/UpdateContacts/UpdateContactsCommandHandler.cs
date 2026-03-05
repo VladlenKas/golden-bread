@@ -1,8 +1,10 @@
-﻿using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Commands.UpdateContacts;
 
 public sealed class UpdateCompanyContactsCommandHandler(
+    IGoldenBreadContext context,
     ICurrentAccountContext accountContext,
     IUniquenessChecker checker) :   
     IRequestHandler<UpdateContactsCommand, Unit>    
@@ -18,6 +20,8 @@ public sealed class UpdateCompanyContactsCommandHandler(
         await checker.CompanyAddressMustBeUniqueAsync(company.Address, company.CompanyId, cancellationToken);
 
         company.UpdateContacts(command.Phone, command.Address);
+
+        await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

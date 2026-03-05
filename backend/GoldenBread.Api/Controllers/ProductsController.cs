@@ -1,8 +1,8 @@
-﻿using GoldenBread.Application.Features.ProductCatalog.Commands.UpdateCartItem;
-using GoldenBread.Application.Features.ProductCatalog.Commands.ToggleFavorite;
-using GoldenBread.Application.Features.ProductCatalog.Queires.GetCatalog;
+﻿using GoldenBread.Application.Features.ProductCatalog.Queires.GetCatalog;
 using GoldenBread.Application.Features.ProductCatalog.Queires.GetProductDetail;
 using Microsoft.AspNetCore.Authorization;
+using GoldenBread.Application.Features.CompanyCart.Commands.UpdateCartItem;
+using GoldenBread.Application.Features.ProductFavorites.Commands.ToggleFavorite;
 
 namespace GoldenBread.Api.Controllers;
 

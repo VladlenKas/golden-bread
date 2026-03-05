@@ -15,6 +15,11 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         entity.HasIndex(e => e.Inn).IsUnique();
         entity.HasIndex(e => e.Ogrn).IsUnique();
 
+        entity.HasOne(e => e.Account)
+            .WithOne(a => a.Company)
+            .HasForeignKey<Company>(e => e.AccountId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         entity.Property(e => e.AccountId)
             .HasColumnName("account_id")
             .IsRequired();
@@ -40,10 +45,5 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 
         entity.Property(e => e.Address)
             .HasColumnName("address");
-
-        entity.HasOne(e => e.Account)
-            .WithOne(a => a.Company)
-            .HasForeignKey<Company>(e => e.AccountId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

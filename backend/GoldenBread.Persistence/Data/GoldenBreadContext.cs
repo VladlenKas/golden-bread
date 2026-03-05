@@ -19,6 +19,7 @@ public class GoldenBreadContext : DbContext, IGoldenBreadContext
     public DbSet<Favorite> Favourites { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
     public DbSet<IngredientBatch> IngredientBatches { get; set; }
+    public DbSet<IngredientReservation> IngredientReservations { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<OrderTariff> OrderTariffs { get; set; }
@@ -30,8 +31,9 @@ public class GoldenBreadContext : DbContext, IGoldenBreadContext
     public DbSet<Supplier> Suppliers { get; set; }
     public DbSet<User> Users { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(builder);
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

@@ -1,9 +1,11 @@
-﻿using GoldenBread.Application.Exceptions;
-using GoldenBread.Application.Services;
+﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Common.Exceptions.Auth;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Commands.ChangeEmail;
 
 public sealed class ChangeEmailCommandHandler(
+    IGoldenBreadContext context,
     ICurrentAccountContext accountContext,
     IUniquenessChecker checker,
     IPasswordHasher hasher) :
@@ -21,6 +23,8 @@ public sealed class ChangeEmailCommandHandler(
 
         account.UpdateEmail(command.NewEmail);
         account.ClearSession();
+
+        await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }
