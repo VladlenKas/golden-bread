@@ -9,6 +9,6 @@ public class CompanyProfileMappingProfile : Profile
         CreateMap<Entities.Company, ProfileResponse>()
 
             .ForMember(dest => dest.Email, 
-                opt => opt.MapFrom(src => src.Account.Email));
+                opt => opt.MapFrom(src => src.Account!.Email));
     }
 }

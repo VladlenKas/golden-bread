@@ -1,11 +1,13 @@
-﻿using GoldenBread.Domain.Enums;
-using GoldenBread.Infrastructure.Data;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using GoldenBread.Infrastructure.Services;
-using GoldenBread.Application.Abstractions.Data;
+﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.CompanyCart.Services;
+using GoldenBread.Domain.Enums;
+using GoldenBread.Infrastructure.Data;
+using GoldenBread.Infrastructure.Repositories;
+using GoldenBread.Infrastructure.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GoldenBread.Infrastructure;
 
@@ -49,5 +51,14 @@ public static class DependencyInjection
         services.AddScoped<IFileStorage, FileStorage>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IUniquenessChecker, UniquenessChecker>();
+
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+        services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
+        services.AddScoped<IIngredientBatchRepository, IngredientBatchRepository>();
+        services.AddScoped<IIngredientReservationRepository, IngredientReservationRepository>();
+        services.AddScoped<IOrderTariffRepository, OrderTariffRepository>();
     }
 }

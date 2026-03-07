@@ -20,8 +20,8 @@ public class EmployeeTask
 
     public static EmployeeTask Create(
         int employeeTaskId,
-        Employee employee,
-        OrderItem? orderItem,
+        int employeeId,
+        int orderItemId,
         DateTime? startTime,
         DateTime? endTime,
         int assignedQuantity,
@@ -30,8 +30,8 @@ public class EmployeeTask
         return new EmployeeTask
         {
             EmployeeTaskId = employeeTaskId,
-            Employee = employee,
-            OrderItem = orderItem ?? new OrderItem { },
+            EmployeeId = employeeId,
+            OrderItemId = orderItemId,
             StartTime = startTime,
             EndTime = endTime,
             AssignedQuantity = assignedQuantity,

@@ -18,8 +18,8 @@ public class Employee
         int employeeId,
         string firstname,
         string lastname,
-        DateOnly birthday,
         string? patronymic,
+        DateOnly birthday,
         ICollection<EmployeeTask>? employeeTasks = null)
     {
         return new Employee
@@ -27,8 +27,8 @@ public class Employee
             EmployeeId = employeeId,
             Firstname = firstname,
             Lastname = lastname,
-            Birthday = birthday,
             Patronymic = patronymic,
+            Birthday = birthday,
             EmployeeTasks = employeeTasks ?? new List<EmployeeTask>()
         };
     }

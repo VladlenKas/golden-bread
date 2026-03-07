@@ -14,7 +14,6 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.HasIndex(e => e.BatchId, "fk_order_items_product_batch_id_idx");
 
         builder.Property(e => e.OrderItemId)
-            .HasDefaultValueSql("nextval('order_items_new_order_item_id_seq'::regclass)")
             .HasColumnName("order_item_id");
 
         builder.Property(e => e.BatchId)
@@ -23,14 +22,11 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(e => e.OrderId)
             .HasColumnName("order_id");
 
-        builder.Property(e => e.Quantity)
-            .HasColumnName("quantity");
+        builder.Property(e => e.QuantityPerBatch)
+            .HasColumnName("quantity_per_batches");
 
         builder.Property(e => e.UnitPriceAtOrder)
             .HasColumnName("unit_price_at_order ");
-
-        builder.Property(e => e.TotalUnits)
-            .HasColumnName("total_units");
 
         builder.HasOne(d => d.Batch)
             .WithMany(p => p.OrderItems)

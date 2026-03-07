@@ -323,8 +323,8 @@ public class DeliveryDateCalculatorTests : IDisposable
                 i,
                 $"Employee{i}",
                 "Test",
-                new DateOnly(1990, 1, 1),
                 $"Patronymic{i}",
+                new DateOnly(1990, 1, 1),
                 new List<EmployeeTask>()))
             .ToList();
     }
@@ -335,8 +335,8 @@ public class DeliveryDateCalculatorTests : IDisposable
             id,
             $"Employee{id}",
             "Test",
-            new DateOnly(1990, 1, 1),
             $"Patronymic{id}",
+            new DateOnly(1990, 1, 1),
             new List<EmployeeTask>());
     }
 
@@ -348,8 +348,8 @@ public class DeliveryDateCalculatorTests : IDisposable
         {
             employee.EmployeeTasks.Add(EmployeeTask.Create(
                 taskId++,
-                employee,
-                null,
+                employee.EmployeeId,
+                0,
                 start,
                 end,
                 1, 0));

@@ -7,7 +7,7 @@ public class OrderItem
     public int OrderId { get; private set; }
     public int? BatchId { get; private set; }
 
-    public int Quantity { get; set; }
+    public int QuantityPerBatch { get; set; }
     public int UnitsInBatch { get; set; } // Старое количество продукций в партии. Просто для информации 
     public decimal UnitPriceAtOrder { get; set; }  // Старая цена продукции. Просто для информации 
 
@@ -19,20 +19,41 @@ public class OrderItem
     public OrderItem() { }
 
     public static OrderItem Create(
+        int orderItemId,
         int orderId,
-        int? batchId,
+        int batchId,
         int quantity,
         int unitsInBatch,
         decimal unitPriceAtOrder)
     {
         return new OrderItem
         {
+            OrderItemId = orderItemId,
             OrderId = orderId,
             BatchId = batchId,
-            Quantity = quantity,
+            QuantityPerBatch = quantity,
             UnitsInBatch = unitsInBatch,
             UnitPriceAtOrder = unitPriceAtOrder
         };
     }
 
+    public static OrderItem Create(
+        int orderItemId,
+        int orderId,
+        ProductBatch batch,    
+        int quantity,
+        int unitsInBatch,
+        decimal unitPriceAtOrder)
+    {
+        var item = Create(
+            orderItemId, 
+            orderId, 
+            batch.ProductBatchId, 
+            quantity, 
+            unitsInBatch, 
+            unitPriceAtOrder);
+
+        item.Batch = batch;
+        return item;
+    }
 }
