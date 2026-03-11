@@ -18,7 +18,7 @@ public class Product
 
     public ProductCategory Category { get; set; } = null!;
 
-    public ICollection<Favorite> Favourites { get; set; } = new List<Favorite>();
+    public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
     public ICollection<ProductBatch> ProductBatches { get; set; } = new List<ProductBatch>();
     public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();

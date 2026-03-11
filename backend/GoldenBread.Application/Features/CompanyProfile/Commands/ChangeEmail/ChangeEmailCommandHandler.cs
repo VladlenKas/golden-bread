@@ -13,18 +13,18 @@ public sealed class ChangeEmailCommandHandler(
 {
     public async Task<Unit> Handle(
         ChangeEmailCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
 
         if (!hasher.Verify(command.Password, account.PasswordHash)) 
             throw new PasswordsMismatchException();
-        await checker.EmailMustBeUniqueAsync(command.NewEmail, account.AccountId, cancellationToken);
+        await checker.EmailMustBeUniqueAsync(command.NewEmail, account.AccountId, ct);
 
         account.UpdateEmail(command.NewEmail);
         account.ClearSession();
 
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return Unit.Value;
     }

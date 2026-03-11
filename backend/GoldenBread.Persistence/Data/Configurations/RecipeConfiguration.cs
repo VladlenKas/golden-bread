@@ -1,30 +1,18 @@
 ﻿using GoldenBread.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GoldenBread.Infrastructure.Configurations;
+namespace GoldenBread.Infrastructure.Data.Configurations;
 
 public class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
 {
     public void Configure(EntityTypeBuilder<Recipe> builder)
     {
         builder.HasKey(e => e.RecipeId).HasName("recipes_pkey");
-        builder.ToTable("recipes");
 
         builder.HasIndex(e => e.IngredientId, "fk_recipe_ingredient_id_idx");
         builder.HasIndex(e => e.ProductId, "fk_recipe_product_id_idx");
 
-        builder.Property(e => e.RecipeId)
-            .HasColumnName("recipe_id");
-
-        builder.Property(e => e.IngredientId)
-            .HasColumnName("ingredient_id");
-
-        builder.Property(e => e.ProductId)
-            .HasColumnName("product_id");
-
-        builder.Property(e => e.Quantity)
-            .HasPrecision(4, 3)
-            .HasColumnName("quantity");
+        builder.Property(e => e.Quantity).HasPrecision(4, 3);
 
         builder.HasOne(d => d.Ingredient)
             .WithMany(p => p.Recipes)

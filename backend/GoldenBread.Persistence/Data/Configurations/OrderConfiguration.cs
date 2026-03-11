@@ -1,36 +1,15 @@
 ﻿using GoldenBread.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GoldenBread.Infrastructure.Configurations;
+namespace GoldenBread.Infrastructure.Data.Configurations;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         builder.HasKey(e => e.OrderId).HasName("orders_pkey");
-        builder.ToTable("orders");
 
-        builder.Property(e => e.CreatedAt)
-            .HasDefaultValueSql("now()")
-            .HasColumnName("created_at");
-
-        builder.Property(e => e.CanceledAt)
-            .HasColumnName("canceled_at");
-
-        builder.Property(e => e.CancelReason)
-            .HasColumnName("cancel_reason");
-
-        builder.Property(e => e.EndDate)
-            .HasColumnName("end_date");
-
-        builder.Property(e => e.StartDate)
-            .HasColumnName("start_date");
-
-        builder.Property(e => e.TariffId)
-            .HasColumnName("tariff_id");
-
-        builder.Property(e => e.CompanyId)
-            .HasColumnName("company_id");
+        builder.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
 
         builder.HasOne(d => d.Tariff)
             .WithMany(p => p.Orders)

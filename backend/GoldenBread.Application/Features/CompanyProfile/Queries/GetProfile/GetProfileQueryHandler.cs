@@ -10,9 +10,9 @@ public sealed class GetProfileQueryHandler(
 {
     public async Task<ProfileResponse> Handle(
         GetProfileQuery query,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
         return mapper.Map<ProfileResponse>(account.Company);
     }
 }

@@ -2,13 +2,13 @@
 using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Infrastructure.Repositories;
+namespace GoldenBread.Infrastructure.Data.Repositories;
 
 public class OrderTariffRepository(IGoldenBreadContext context) : IOrderTariffRepository
 {
-    public async Task<OrderTariff?> GetByIdAsync(int tariffId, CancellationToken cancellationToken = default)
+    public async Task<OrderTariff?> GetByIdAsync(int tariffId, CancellationToken ct = default)
     {
         return await context.OrderTariffs
-            .FirstOrDefaultAsync(t => t.OrderTariffId == tariffId, cancellationToken);
+            .FirstOrDefaultAsync(t => t.OrderTariffId == tariffId, ct);
     }
 }

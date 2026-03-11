@@ -1,28 +1,15 @@
 ﻿using GoldenBread.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GoldenBread.Infrastructure.Configurations;
+namespace GoldenBread.Infrastructure.Data.Configurations;
 
 public class ProductBatchConfiguration : IEntityTypeConfiguration<ProductBatch>
 {
     public void Configure(EntityTypeBuilder<ProductBatch> builder)
     {
         builder.HasKey(e => e.ProductBatchId).HasName("product_batches_new_pkey");
-        builder.ToTable("product_batches");
 
         builder.HasIndex(e => e.ProductId, "fk_product_batches_product_id_idx");
-
-        builder.Property(e => e.ProductBatchId)
-            .HasColumnName("product_batch_id");
-
-        builder.Property(e => e.ProductId)
-            .HasColumnName("product_id");
-
-        builder.Property(e => e.MarkupPercent)
-            .HasColumnName("markup_percent");
-
-        builder.Property(e => e.QuantityPerBatch)
-            .HasColumnName("quantity_per_batch");
 
         builder.HasOne(d => d.Product)
             .WithMany(p => p.ProductBatches)

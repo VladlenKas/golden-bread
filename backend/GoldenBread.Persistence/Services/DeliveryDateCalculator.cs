@@ -1,11 +1,12 @@
 ﻿using GoldenBread.Application.Features.CompanyCart.Services;
 using GoldenBread.Domain.Entities;
+using GoldenBread.Domain.Interfaces.Services;
 
 namespace GoldenBread.Infrastructure.Services;
 
-public class DeliveryDateCalculator : IDeliveryDateCalculator
+public class DeliveryDateCalculator(IWorkScheduleCalculator workSchedule) : IDeliveryDateCalculator
 {
-    private const int WorkDayMinutes = 8 * 60; // 8 часов = 480 минут
+    private const int MaxPlanningDays = 60;
 
     public DateOnly CalculateMinimalDeliveryDate(
         List<CartItem> cartItems,
@@ -13,70 +14,144 @@ public class DeliveryDateCalculator : IDeliveryDateCalculator
         List<Employee> activeEmployees,
         DateTime now)
     {
-        if (cartItems.Count == 0)
-            return DateOnly.FromDateTime(now.AddDays(1));
+        if (!cartItems.Any())
+            return DateOnly.FromDateTime(workSchedule.AddWorkDays(now, 1));
 
-        // 1. Определяем количество доступных сотрудников по тарифу
-        int availableEmployeesCount = Math.Max(
-            1,
-            (int)Math.Ceiling(activeEmployees.Count * tariff.MarkupPercent / 100m)
-        );
+        // 1. Сколько сотрудников можем использовать
+        int maxEmployees = Math.Max(1,
+            (int)Math.Ceiling(activeEmployees.Count * tariff.FreeEmployeesPercent / 100m));
 
-        // 2. Рассчитываем общую трудоёмкость в минутах
-        int totalProductionMinutes = cartItems.Sum(ci =>
-            ci.Quantity * ci.Batch.Product.ProductionTimeMinutes * ci.Batch.QuantityPerBatch);
+        // 2. Общая работа
+        var batches = CreateBatchList(cartItems);
+        var totalWorkMinutes = batches.Sum(b => b.DurationMinutes);
 
-        // 3. Определяем период производства (предварительно)
-        // Сначала считаем "в вакууме" сколько дней нужно
-        int totalWorkDaysNeeded = (int)Math.Ceiling((double)totalProductionMinutes / WorkDayMinutes);
+        // 3. Подготавливаем таймлайны сотрудников
+        var productionStart = workSchedule.AddWorkDays(now, 1); // Первый рабочий день
 
-        // 4. Выбираем наиболее свободных сотрудников на этот период
-        DateTime productionStart = now.Date.AddDays(1); // Завтра
-        DateTime productionEnd = productionStart.AddDays(totalWorkDaysNeeded);
-
-        var selectedEmployees = activeEmployees
-            .Select(e => new
-            {
-                Employee = e,
-                BusyMinutes = e.EmployeeTasks
-                    .Where(et => et.EndTime > now && et.StartTime < productionEnd)
-                    .Sum(et => CalculateOverlapMinutes(et, productionStart, productionEnd))
-            })
-            .OrderBy(x => x.BusyMinutes)
-            .Take(availableEmployeesCount)
-            .Select(x => x.Employee)
+        var employeeTimelines = activeEmployees
+            .Select(e => CreateTimeline(e, productionStart))
+            .OrderBy(t => t.NextAvailable)
+            .Take(maxEmployees)
             .ToList();
 
-        // 5. Распределяем работу поровну между выбранными сотрудниками
-        int batchesCount = cartItems.Sum(ci => ci.Quantity);
-        int batchesPerEmployee = (int)Math.Ceiling((double)batchesCount / availableEmployeesCount);
+        if (!employeeTimelines.Any())
+            throw new InvalidOperationException("No available employees");
 
-        // Минуты на одного сотрудника
-        int minutesPerEmployee = batchesPerEmployee * cartItems
-            .Select(ci => ci.Batch.Product.ProductionTimeMinutes * ci.Batch.QuantityPerBatch)
-            .FirstOrDefault(); // Упрощение: берём среднее/первое, или пересчитываем точнее
+        // 4. Распределяем партии с учётом рабочего графика
+        foreach (var batch in batches)
+        {
+            var employee = employeeTimelines
+                .OrderBy(e => e.GetNextAvailableSlot(batch.DurationMinutes, workSchedule))
+                .First();
 
-        // Пересчитаем точнее: суммарные минуты / количество сотрудников
-        minutesPerEmployee = (int)Math.Ceiling((double)totalProductionMinutes / availableEmployeesCount);
+            var slotStart = employee.GetNextAvailableSlot(batch.DurationMinutes, workSchedule);
+            var slotEnd = workSchedule.AddWorkMinutes(slotStart, batch.DurationMinutes);
 
-        // 6. Считаем рабочие дни для каждого сотрудника
-        int daysPerEmployee = (int)Math.Ceiling((double)minutesPerEmployee / WorkDayMinutes);
+            employee.AddTask(slotStart, slotEnd, workSchedule);
+        }
 
-        // 7. Минимальная дата = завтра + максимальные дни среди сотрудников
-        // Так как распределение поровну, у всех одинаковые дни
-        DateOnly minimalDate = DateOnly.FromDateTime(productionStart.AddDays(daysPerEmployee - 1));
+        // 5. Когда освободится последний?
+        var completionTime = employeeTimelines.Max(e => e.NextAvailable);
 
-        return minimalDate;
+        // Доставка — в конец рабочего дня завершения (или следующий)
+        var deliveryDate = DateOnly.FromDateTime(completionTime);
+
+        // Если закончили после 15:00 — доставка на следующий рабочий день
+        var completionHour = completionTime.Hour;
+        if (completionHour >= 15 || !workSchedule.IsWorkDay(completionTime))
+            deliveryDate = DateOnly.FromDateTime(workSchedule.AddWorkDays(completionTime, 1));
+
+        return deliveryDate;
     }
 
-    private int CalculateOverlapMinutes(EmployeeTask task, DateTime periodStart, DateTime periodEnd)
+    private EmployeeTimeline CreateTimeline(
+        Employee employee, 
+        DateTime from)
     {
-        var overlapStart = task.StartTime > periodStart ? task.StartTime : periodStart;
-        var overlapEnd = task.EndTime < periodEnd ? task.EndTime : periodEnd;
+        // Загружаем задачи на период планирования
+        var existingTasks = employee.EmployeeTasks
+            .Where(t => t.EndTime.HasValue && t.EndTime.Value > from && t.StartTime < from.AddDays(MaxPlanningDays))
+            .Select(t => new WorkSlot(t.StartTime!.Value, t.EndTime!.Value))
+            .ToList();
 
-        if (overlapEnd <= overlapStart) return 0;
+        // Когда сотрудник освободится по рабочему графику
+        var nextAvailable = workSchedule.GetNextAvailableTime(employee, from);
 
-        return (int)(overlapEnd.Value - overlapStart.Value).TotalMinutes;
+        return new EmployeeTimeline(employee.EmployeeId, nextAvailable, existingTasks);
+    }
+
+    private List<BatchWork> CreateBatchList(List<CartItem> cartItems)
+    {
+        var batches = new List<BatchWork>();
+
+        foreach (var item in cartItems)
+        {
+            var duration = item.Batch.Product.ProductionTimeMinutes * item.Batch.QuantityPerBatch;
+
+            for (int i = 0; i < item.Quantity; i++)
+            {
+                batches.Add(new BatchWork(item.CartItemId, i + 1, duration, item.Batch.Product.Name));
+            }
+        }
+
+        return batches.OrderByDescending(b => b.DurationMinutes).ToList();
     }
 }
 
+public class EmployeeTimeline
+{
+    public int EmployeeId { get; }
+    public DateTime NextAvailable { get; private set; }
+    private readonly List<WorkSlot> _existingTasks;
+    private readonly List<WorkSlot> _newTasks = new();
+
+    public EmployeeTimeline(int id, DateTime available, List<WorkSlot> existing)
+    {
+        EmployeeId = id;
+        NextAvailable = available;
+        _existingTasks = existing.OrderBy(t => t.Start).ToList();
+    }
+
+    /// <summary>
+    /// Находит ближайший слот для задачи указанной длительности
+    /// </summary>
+    public DateTime GetNextAvailableSlot(int durationMinutes, IWorkScheduleCalculator workSchedule)
+    {
+        var pointer = NextAvailable;
+        var maxIterations = 100; // Защита от бесконечного цикла
+
+        for (int i = 0; i < maxIterations; i++)
+        {
+            // Проверяем, не пересекается ли с существующими задачами
+            var conflict = _existingTasks
+                .Concat(_newTasks)
+                .Where(t => t.Start < workSchedule.AddWorkMinutes(pointer, durationMinutes) && t.End > pointer)
+                .OrderBy(t => t.Start)
+                .FirstOrDefault();
+
+            if (conflict == null)
+                return pointer; // Нашли свободный слот
+
+            // Сдвигаемся за конфликт и "прилипаем" к рабочему времени
+            pointer = workSchedule.SnapToWorkTime(conflict.End);
+        }
+
+        throw new InvalidOperationException("Cannot find available slot within planning horizon");
+    }
+
+    public void AddTask(DateTime start, DateTime end, IWorkScheduleCalculator workSchedule)
+    {
+        _newTasks.Add(new WorkSlot(start, end));
+        NextAvailable = workSchedule.SnapToWorkTime(end);
+    }
+}
+
+public record WorkSlot(
+    DateTime Start, 
+    DateTime End);
+
+public record BatchWork(
+    int CartItemId, 
+    int BatchNumber, 
+    int DurationMinutes, 
+    string ProductName);

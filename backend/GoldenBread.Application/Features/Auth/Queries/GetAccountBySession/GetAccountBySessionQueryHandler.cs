@@ -8,14 +8,14 @@ public sealed class GetAccountBySessionQueryHandler(ICurrentAccountContext accou
 {
     public async Task<AuthResponse?> Handle(
         GetAccountBySessionQuery query, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var session = accountContext.GetSessionFromCookie(); 
 
         if (string.IsNullOrEmpty(session))
             return null;
 
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
 
         return new AuthResponse(
             account.AccountId,

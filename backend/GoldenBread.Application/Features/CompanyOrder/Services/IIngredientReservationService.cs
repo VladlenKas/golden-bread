@@ -4,28 +4,15 @@ namespace GoldenBread.Application.Features.CompanyOrder.Services;
 
 public interface IIngredientReservationService
 {
-    Task<IngredientCheckResult> CheckAsync(
+    Task<bool> CheckAsync(
        IReadOnlyList<OrderItem> orderItems,
-       CancellationToken cancellationToken = default);
+       CancellationToken ct = default);
 
     Task ReserveForOrderAsync(
         IReadOnlyList<OrderItem> orderItems,
         int orderId,
-        bool confirmed,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
-    Task ConfirmReservationsAsync(int orderId, CancellationToken cancellationToken = default);
-    Task CancelReservationsAsync(int orderId, CancellationToken cancellationToken = default);
+    Task ConfirmReservationsAsync(int orderId, CancellationToken ct = default);
+    Task CancelReservationsAsync(int orderId, CancellationToken ct = default);
 }
-
-public record IngredientRequirement(
-    int IngredientId,
-    string IngredientName,
-    decimal RequiredQuantity,
-    decimal AvailableQuantity,
-    decimal ReservedQuantity);
-
-public record IngredientCheckResult(
-    bool IsSufficient,
-    IReadOnlyList<IngredientRequirement> Requirements,
-    IReadOnlyList<IngredientRequirement> Deficits);

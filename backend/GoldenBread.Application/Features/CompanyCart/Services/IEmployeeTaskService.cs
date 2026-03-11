@@ -7,7 +7,7 @@ public interface IEmployeeTaskService
     Task CreateTasksForOrderAsync(
         Order order,
         List<CartItem> cartItems,
-        CancellationToken cancellationToken);
+        CancellationToken ct);
 
-    Task CancelTasksForOrderAsync(int orderId, CancellationToken cancellationToken);
+    Task CancelTasksForOrderAsync(int orderId, CancellationToken ct);
 }

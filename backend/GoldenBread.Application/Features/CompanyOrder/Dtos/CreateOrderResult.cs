@@ -9,6 +9,5 @@ public record CreateOrderResult
     public DateOnly DeliveryDate { get; init; }
     public bool IsDeferred { get; init; }
     public bool InsufficientIngredients { get; init; }
-    public IReadOnlyList<IngredientRequirement> Deficits { get; init; } = Array.Empty<IngredientRequirement>();
     public DateOnly? ProposedDeferredDate { get; init; }
 }

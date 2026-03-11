@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Domain.Entities;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace GoldenBread.Application.Abstractions.Data;
 
@@ -9,7 +10,7 @@ public interface IGoldenBreadContext
     DbSet<Company> Companies { get; set; }
     DbSet<Employee> Employees { get; set; }
     DbSet<EmployeeTask> EmployeeTasks { get; set; }
-    DbSet<Favorite> Favourites { get; set; }
+    DbSet<Favorite> Favorites { get; set; }
     DbSet<Ingredient> Ingredients { get; set; }
     DbSet<IngredientBatch> IngredientBatches { get; set; }
     DbSet<IngredientReservation> IngredientReservations { get; set; }
@@ -24,5 +25,6 @@ public interface IGoldenBreadContext
     DbSet<Supplier> Suppliers { get; set; }
     DbSet<User> Users { get; set; }
 
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+    Task<int> SaveChangesAsync(CancellationToken ct);
+    DatabaseFacade Database { get; }
 }

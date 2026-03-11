@@ -2,11 +2,11 @@
 using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Infrastructure.Repositories;
+namespace GoldenBread.Infrastructure.Data.Repositories;
 
 public class CartRepository(IGoldenBreadContext context) : ICartRepository
 {
-    public async Task<IReadOnlyList<CartItem>> GetByCompanyIdAsync(int companyId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<CartItem>> GetByCompanyIdAsync(int companyId, CancellationToken ct = default)
     {
         return await context.CartItems
             .Where(ci => ci.CompanyId == companyId)
@@ -16,17 +16,16 @@ public class CartRepository(IGoldenBreadContext context) : ICartRepository
                         .ThenInclude(r => r.Ingredient)
             .Include(ci => ci.Company)
             .AsNoTracking()
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
     }
 
-    public async Task ClearAsync(int companyId, CancellationToken cancellationToken = default)
+    public async Task ClearAsync(int companyId, CancellationToken ct = default)
     {
         var items = await context.CartItems
             .Where(ci => ci.CompanyId == companyId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         context.CartItems.RemoveRange(items);
-        await context.SaveChangesAsync(cancellationToken);
     }
 }
 

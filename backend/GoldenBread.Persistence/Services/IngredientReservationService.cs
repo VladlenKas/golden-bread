@@ -1,127 +1,110 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Repositories;
+using GoldenBread.Application.Common.Exceptions.Domain;
 using GoldenBread.Application.Features.CompanyOrder.Services;
+using GoldenBread.Domain.Constants;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Infrastructure.Services;
 
 public class IngredientReservationService(
-    IIngredientBatchRepository batchRepository,
     IIngredientReservationRepository reservationRepository,
     IGoldenBreadContext context) : IIngredientReservationService
 {
-    public async Task<IngredientCheckResult> CheckAsync(
+    /// <summary>
+    /// Проверка ингредиентов для формирования заказа
+    /// (без резервирования продукции)
+    /// </summary>
+    /// <returns>True, если ингредиентов для формирования заказа хватает, иначе False</returns>
+    public async Task<bool> CheckAsync(
         IReadOnlyList<OrderItem> orderItems,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct)
     {
-        // Собираем потребности по ингредиентам
-        var requirements = new Dictionary<int, (string Name, decimal Required)>();
+        // 1. Загружаем все необходимые игредиенты для заказа
+        var ingredientNeeds = await CalculateIngredientNeedsAsync(orderItems, ct);
 
-        foreach (var orderItem in orderItems)
-        {
-            // Загружаем рецепты для продукта
-            var recipes = context.Recipes
-                //.Where(r => r.ProductId == orderItem.Batch.ProductId)
-                //.Include(r => r.Ingredient)
-                .ToList();
+        if (ingredientNeeds.Count == 0)
+            return false;
 
-            foreach (var recipe in recipes)
+        // 2. Проверяем достаточность ингредиентов для заказа
+        var ingredientIds = ingredientNeeds.Select(n => n.IngredientId).ToList();
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        var stockByIngredient = await GetAvailableQuery(ingredientIds, today)
+            .GroupBy(ib => ib.IngredientId)
+            .Select(g => new
             {
-                // Количество ингредиента = рецепт * количество партий * количество в партии
-                var neededQuantity = recipe.Quantity * orderItem.QuantityPerBatch * orderItem.UnitsInBatch;
+                IngredientId = g.Key,
+                Total = g.Sum(ib => ib.RemainingQuantity)
+            })
+            .ToDictionaryAsync(x => x.IngredientId, x => x.Total, ct);
 
-                if (requirements.ContainsKey(recipe.IngredientId))
-                    requirements[recipe.IngredientId] = (
-                        recipe.Ingredient.Name,
-                        requirements[recipe.IngredientId].Required + neededQuantity);
-                else
-                    requirements[recipe.IngredientId] = (recipe.Ingredient.Name, neededQuantity);
-            }
-        }
-
-        // Проверяем наличие на складе
-        var resultRequirements = new List<IngredientRequirement>();
-        var deficits = new List<IngredientRequirement>();
-        bool isSufficient = true;
-
-        foreach (var req in requirements)
-        {
-            var batches = await batchRepository.GetAvailableForIngredientAsync(req.Key, cancellationToken);
-            var available = batches
-                .Where(b => b.Status == IngredientBatchStatus.Available && b.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow))
-                .Sum(b => b.RemainingQuantity);
-
-            var requirement = new IngredientRequirement(
-                req.Key,
-                req.Value.Name,
-                req.Value.Required,
-                available,
-                0); // Reserved пока 0
-
-            resultRequirements.Add(requirement);
-
-            if (available < req.Value.Required)
-            {
-                isSufficient = false;
-                deficits.Add(requirement with { ReservedQuantity = available });
-            }
-        }
-
-        return new IngredientCheckResult(isSufficient, resultRequirements, deficits);
+        return ingredientNeeds.All(need =>
+            stockByIngredient.GetValueOrDefault(need.IngredientId, 0) >= need.TotalNeeded);
     }
 
+    /// <summary>
+    /// Резервирует ингредиенты для заказа из доступных ингредиентов в партиях
+    /// и создает запись в БД для IngredientReservation
+    /// </summary>
+    /// <param name="orderItems"></param>
+    /// <param name="orderId"></param>
+    /// <param name="ct"></param>
+    /// <exception cref="InsufficientIngredientsException">Недостаточно ингредиентов в партиях</exception>
     public async Task ReserveForOrderAsync(
         IReadOnlyList<OrderItem> orderItems,
         int orderId,
-        bool confirmed,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
+        // 1. Загружаем все необходимые игредиенты для заказа
+        var ingredientNeeds = await CalculateIngredientNeedsAsync(orderItems, ct);
+
+        if (ingredientNeeds.Count == 0) 
+            return;
+
+        // 2. Получаем все доступные партии для резервирования ингредиентов
+        var ingredientIds = ingredientNeeds.Select(n => n.IngredientId).ToList();
+        var asOfDate = DateOnly.FromDateTime(DateTime.UtcNow + BakeryConstants.ReservationTimeout);
+
+        var allBatches = await GetAvailableQuery(ingredientIds, asOfDate)
+            .OrderBy(ib => ib.IngredientId)
+            .ThenBy(ib => ib.DeliveryDate)
+            .AsNoTracking()
+            .ToListAsync(ct);
+
+        // 3. Резервируем ингредиенты
         var reservations = new List<IngredientReservation>();
 
-        foreach (var orderItem in orderItems)
+        foreach (var need in ingredientNeeds)
         {
-            var recipes = context.Recipes
-                .Where(r => r.ProductId == orderItem.Batch.ProductId)
-                .ToList();
+            var batches = allBatches.Where(b => b.IngredientId == need.IngredientId);
+            var remaining = need.TotalNeeded;
 
-            foreach (var recipe in recipes)
+            foreach (var batch in batches)
             {
-                var neededQuantity = recipe.Quantity * orderItem.QuantityPerBatch * orderItem.UnitsInBatch;
+                if (remaining <= 0) 
+                    break;
 
-                // Берем самые старые партии (FIFO)
-                var batches = await batchRepository.GetAvailableForIngredientAsync(recipe.IngredientId, cancellationToken);
-                var availableBatches = batches
-                    .Where(b => b.Status == IngredientBatchStatus.Available && b.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow))
-                    .OrderBy(b => b.DeliveryDate)
-                    .ToList();
-
-                decimal remainingToReserve = neededQuantity;
-
-                foreach (var batch in availableBatches)
-                {
-                    if (remainingToReserve <= 0) break;
-
-                    var canReserve = Math.Min(remainingToReserve, batch.RemainingQuantity);
-                    if (canReserve <= 0) continue;
-
-                    reservations.Add(IngredientReservation.Create(
-                        orderId,
-                        batch.IngredientBatchId,
-                        canReserve));
-
-                    // Обновляем остаток (в реальности это должно быть в транзакции)
-                    remainingToReserve -= canReserve;
-                }
+                var take = Math.Min(remaining, batch.RemainingQuantity);
+                reservations.Add(
+                    IngredientReservation.Create(
+                        orderId, 
+                        batch.IngredientBatchId, 
+                        take));
+                remaining -= take;
             }
+
+            if (remaining > 0)
+                throw new InsufficientIngredientsException(need.IngredientId);
         }
 
-        await reservationRepository.CreateRangeAsync(reservations, cancellationToken);
+        await reservationRepository.CreateRangeAsync(reservations, ct);
     }
 
-    public async Task ConfirmReservationsAsync(int orderId, CancellationToken cancellationToken = default)
+    public async Task ConfirmReservationsAsync(int orderId, CancellationToken ct = default)
     {
-        var reservations = await reservationRepository.GetByOrderIdAsync(orderId, cancellationToken);
+        var reservations = await reservationRepository.GetByOrderIdAsync(orderId, ct);
 
         foreach (var reservation in reservations)
         {
@@ -129,19 +112,79 @@ public class IngredientReservationService(
                 reservation.Confirm();
         }
 
-        await reservationRepository.UpdateRangeAsync(reservations, cancellationToken);
+        if (reservations.Any())
+            await reservationRepository.UpdateRangeAsync(reservations, ct);
     }
 
-    public async Task CancelReservationsAsync(int orderId, CancellationToken cancellationToken = default)
+    public async Task CancelReservationsAsync(int orderId, CancellationToken ct = default)
     {
-        var reservations = await reservationRepository.GetByOrderIdAsync(orderId, cancellationToken);
+        var reservations = await reservationRepository.GetByOrderIdAsync(orderId, ct);
 
         foreach (var reservation in reservations)
         {
             if (reservation.IsActive && !reservation.IsConfirmed)
-                reservation.Deactivate(); // или Cancel()
+                reservation.Deactivate(); 
         }
 
-        await reservationRepository.UpdateRangeAsync(reservations, cancellationToken);
+        if (reservations.Any())
+            await reservationRepository.UpdateRangeAsync(reservations, ct);
+    }
+
+    private record IngredientNeed(int IngredientId, string Name, decimal TotalNeeded);
+
+    private async Task<List<IngredientNeed>> CalculateIngredientNeedsAsync(
+        IReadOnlyList<OrderItem> orderItems,
+        CancellationToken ct)
+    {
+        // 1. Загружаем продукции из заказа
+        var productIds = orderItems
+            .Select(oi => oi.Batch.ProductId)
+            .Distinct()
+            .ToList();
+
+        if (productIds.Count == 0)
+            return new List<IngredientNeed>();
+
+        // 2. Загружаем рецепты продукций по заказу
+        var allRecipes = await context.Recipes
+            .Where(r => productIds.Contains(r.ProductId))
+            .Select(r => new
+            {
+                r.ProductId,
+                r.IngredientId,
+                r.Ingredient.Name,
+                r.Quantity
+            })
+            .ToListAsync(ct);
+
+        // 3. Загружаем потребности по ингредиентам
+        var needs = orderItems
+            .SelectMany(oi => allRecipes
+                .Where(r => r.ProductId == oi.Batch.ProductId)
+                .Select(r => new
+                {
+                    r.IngredientId,
+                    r.Name,
+                    Needed = r.Quantity * oi.QuantityPerBatch * oi.UnitsInBatch
+                }))
+            .GroupBy(x => x.IngredientId)
+            .Select(g => new IngredientNeed(
+                g.Key,
+                g.First().Name,
+                g.Sum(x => x.Needed)))
+            .ToList();
+
+        return needs;
+    }
+
+    private IQueryable<IngredientBatch> GetAvailableQuery(
+        IReadOnlyList<int> ingredientIds,
+        DateOnly asOfDate)
+    {
+        return context.IngredientBatches
+            .Where(ib => ingredientIds.Contains(ib.IngredientId))
+            .Where(ib => ib.Status == IngredientBatchStatus.Available)
+            .Where(ib => ib.RemainingQuantity > 0)
+            .Where(ib => ib.ExpiryDate > asOfDate);
     }
 }

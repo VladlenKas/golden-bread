@@ -11,9 +11,9 @@ public sealed class UpdateCartItemCommandHandler(
 {
     public async Task<CartSummary> Handle(
         UpdateCartItemCommand command, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
         var company = account.Company;
 
         var cartItem = await context.CartItems
@@ -23,12 +23,12 @@ public sealed class UpdateCartItemCommandHandler(
             .FirstOrDefaultAsync(ci =>
                 ci.CompanyId == company.CompanyId &&
                 ci.Batch.ProductId == command.ProductId, 
-                cancellationToken);
+                ct);
 
         var productBatch = await context.ProductBatches
             .FirstAsync(pb => 
                 pb.ProductBatchId == command.ProductBatchId, 
-                cancellationToken);
+                ct);
 
         if (command.Quantity <= 0 && cartItem != null)
         {
@@ -42,7 +42,7 @@ public sealed class UpdateCartItemCommandHandler(
                     company,
                     productBatch, 
                     command.Quantity),
-                cancellationToken);
+                ct);
         }
         else
         {
@@ -51,7 +51,7 @@ public sealed class UpdateCartItemCommandHandler(
                 command.Quantity);
         }
 
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         var upd = await context.CartItems
             .Include(ci => ci.Batch)
@@ -59,7 +59,7 @@ public sealed class UpdateCartItemCommandHandler(
             .FirstAsync(ci =>
                 ci.CompanyId == company.CompanyId &&
                 ci.Batch.ProductId == command.ProductId,
-                cancellationToken);
+                ct);
 
         return new CartSummary(
             upd.Quantity,

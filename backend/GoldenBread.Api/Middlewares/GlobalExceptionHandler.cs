@@ -10,7 +10,7 @@ public sealed class GlobalExceptionHandler(
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var (statusCode, title) = MapException(exception);
 
@@ -38,6 +38,7 @@ public sealed class GlobalExceptionHandler(
         InvalidCredentialsException => (StatusCodes.Status401Unauthorized, "Account not found"),
         SessionExpiredException => (StatusCodes.Status401Unauthorized, "Session not found or expired"),
         DuplicateEntityException ex => (StatusCodes.Status409Conflict, $"Error duplicating the value for the \"{ex.PropertyName}\" parameter"),
+        InsufficientIngredientsException => (StatusCodes.Status409Conflict, $"Not enough ingredients"),
         BusinessValidationException => (StatusCodes.Status422UnprocessableEntity, "One validation error has occurred"),
         _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
     };
@@ -46,6 +47,7 @@ public sealed class GlobalExceptionHandler(
     {
         ValidationException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Errors },
         DuplicateEntityException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
+        InsufficientIngredientsException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
         BusinessValidationException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
         _ => new Dictionary<string, object?> { ["message"] = exception.Message }
     };

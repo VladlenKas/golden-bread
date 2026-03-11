@@ -12,9 +12,9 @@ public sealed class GetProductDetailQueryHandler(
 {
     public async Task<ProductDetailResponse> Handle(
         GetProductDetailQuery query, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        int companyId = await accountContext.GetCompanyIdAsync(cancellationToken);
+        int companyId = await accountContext.GetCompanyIdAsync(ct);
 
         var productBatches = await context.ProductBatches
             .AsNoTracking()
@@ -26,7 +26,7 @@ public sealed class GetProductDetailQueryHandler(
                 QuantityPerBatch = pb.QuantityPerBatch,
                 UnitPrice = pb.UnitPrice,
                 TotalPrice = pb.TotalPrice
-            }).ToListAsync(cancellationToken);
+            }).ToListAsync(ct);
 
         var productDetail = await context.Products
             .AsNoTracking()
@@ -61,7 +61,7 @@ public sealed class GetProductDetailQueryHandler(
                 // Флаги / Вычисляемые свойства
                 QuantityInCart = p.GetQuantityInCart(companyId),
                 TotalCostInCart = p.GetTotalCostInCart(companyId),
-                IsFavorite = p.Favourites
+                IsFavorite = p.Favorites
                     .Any(f => f.CompanyId == companyId),
 
                 AvailableBatches = productBatches,
@@ -76,7 +76,7 @@ public sealed class GetProductDetailQueryHandler(
                     Unit = r.Ingredient.Unit.ToString()
                 }).ToList()
             })
-            .FirstAsync(cancellationToken);
+            .FirstAsync(ct);
 
         return productDetail;
     }

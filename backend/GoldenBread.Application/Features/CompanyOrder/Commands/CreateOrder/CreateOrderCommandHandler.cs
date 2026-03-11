@@ -24,46 +24,42 @@ public class CreateOrderCommandHandler(
 {
     public async Task<CreateOrderResult> Handle(
         CreateOrderCommand command, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        int companyId = await accountContext.GetCompanyIdAsync(cancellationToken);
-
         // 1. Получить корзину
-        var cartItems = await cartRepository.GetByCompanyIdAsync(companyId, cancellationToken);
-        if (cartItems.Count == 0)
-            throw new InvalidOperationException("Cart is empty");
+        int companyId = await accountContext.GetCompanyIdAsync(ct);
+        var cartItems = await cartRepository.GetByCompanyIdAsync(companyId, ct);
 
-        // 2. Получить тариф
-        var tariff = await tariffRepository.GetByIdAsync(command.TariffId, cancellationToken)
-            ?? throw new InvalidOperationException("Tariff not found");
-
-        // 3. Получить активных сотрудников с задачами на период
-        var now = DateTime.UtcNow;
-        var activeEmployees = await employeeRepository.GetActiveWithTasksAsync(
-            now, now.AddDays(30), cancellationToken);
-
-        // 4. Рассчитать план производства
-        var plan = productionCalculator.CalculatePlan(
-            cartItems, tariff, now, command.DesiredDeliveryDate, activeEmployees);
-
-        // 5. Создать OrderItems (пока без OrderId)
+        // 2. Создать OrderItems для проверки ингредиентов
         var orderItems = cartItems.Select(ci => OrderItem
             .Create(0, 0, ci.BatchId, ci.Quantity, ci.Batch.QuantityPerBatch, ci.Batch.UnitPrice))
             .ToList();
 
-        // 6. Проверить ингредиенты (без резервирования)
-        var check = await ingredientService.CheckAsync(orderItems, cancellationToken);
+        // 3. Проверить ингредиенты (без резервирования)
+        var check = await ingredientService.CheckAsync(orderItems, ct);
 
-        if (!check.IsSufficient)
+        if (!check)
         {
             return new CreateOrderResult
             {
                 Success = false,
                 InsufficientIngredients = true,
-                Deficits = check.Deficits,
                 ProposedDeferredDate = command.DesiredDeliveryDate.AddDays(3)
             };
         }
+
+        // 2. Получить тариф
+        var tariff = await tariffRepository.GetByIdAsync(command.TariffId, ct)
+            ?? throw new InvalidOperationException("Tariff not found");
+
+        // 3. Получить активных сотрудников с задачами на период
+        var now = DateTime.UtcNow;
+        var activeEmployees = await employeeRepository.GetActiveWithTasksAsync(
+            now, now.AddDays(30), ct);
+
+        // 4. Рассчитать план производства
+        var plan = productionCalculator.CalculatePlan(
+            cartItems, tariff, now, command.DesiredDeliveryDate, activeEmployees);
 
         // 7. Создать заказ
         var order = Order.Create(
@@ -72,18 +68,18 @@ public class CreateOrderCommandHandler(
             OrderStatus.Awaiting,
             plan.ConfirmedDeliveryDate);
 
-        await orderRepository.CreateAsync(order, cancellationToken);
+        await orderRepository.CreateAsync(order, ct);
 
         // 8. Привязать OrderItems к заказу и сохранить
         orderItems = cartItems.Select(ci => OrderItem.Create(
             0, order.OrderId, ci.BatchId, ci.Quantity, ci.Batch.QuantityPerBatch, ci.Batch.UnitPrice))
             .ToList();
 
-        await orderItemRepository.CreateRangeAsync(orderItems, cancellationToken);
+        await orderItemRepository.CreateRangeAsync(orderItems, ct);
 
         // 9. Зарезервировать и подтвердить ингредиенты
         await ingredientService.ReserveForOrderAsync(
-            orderItems, order.OrderId, confirmed: true, cancellationToken);
+            orderItems, order.OrderId, ct);
 
         // 10. Подготовить занятость сотрудников
         var employeeAvailableFrom = activeEmployees.ToDictionary(
@@ -106,7 +102,6 @@ public class CreateOrderCommandHandler(
 
         // 12. Создать EmployeeTasks
         var tasks = allAssignments.Select(a => EmployeeTask.Create(
-            0,
             a.EmployeeId,
             a.OrderItemId,
             a.StartTime,
@@ -114,10 +109,10 @@ public class CreateOrderCommandHandler(
             a.AssignedQuantity,
             0)).ToList();
 
-        await employeeTaskRepository.BulkCreateAsync(tasks, cancellationToken);
+        await employeeTaskRepository.BulkCreateAsync(tasks, ct);
 
         // 13. Очистить корзину
-        await cartRepository.ClearAsync(companyId, cancellationToken);
+        await cartRepository.ClearAsync(companyId, ct);
 
         return new CreateOrderResult
         {

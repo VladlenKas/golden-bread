@@ -2,9 +2,13 @@
 using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.CompanyCart.Services;
+using GoldenBread.Application.Features.CompanyOrder.Services;
 using GoldenBread.Domain.Enums;
+using GoldenBread.Domain.Interfaces.Services;
+using GoldenBread.Domain.Services;
 using GoldenBread.Infrastructure.Data;
-using GoldenBread.Infrastructure.Repositories;
+using GoldenBread.Infrastructure.Data.Repositories;
+using GoldenBread.Infrastructure.Jobs;
 using GoldenBread.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +37,7 @@ public static class DependencyInjection
         });
         services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
 
+        // Infra services
         services.AddCommonServices();
         services.AddWebServices();
 
@@ -57,8 +62,12 @@ public static class DependencyInjection
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
-        services.AddScoped<IIngredientBatchRepository, IngredientBatchRepository>();
         services.AddScoped<IIngredientReservationRepository, IngredientReservationRepository>();
         services.AddScoped<IOrderTariffRepository, OrderTariffRepository>();
+
+        services.AddScoped<IIngredientReservationService, IngredientReservationService>();
+        services.AddScoped<IEmployeeTaskDistributor, EmployeeTaskDistributor>();
+        services.AddScoped<IProductionCalculator, ProductionCalculator>();
+        services.AddScoped<IWorkScheduleCalculator, WorkScheduleCalculator>();
     }
 }

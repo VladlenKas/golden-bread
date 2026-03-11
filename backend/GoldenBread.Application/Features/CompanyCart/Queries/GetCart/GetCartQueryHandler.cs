@@ -14,9 +14,9 @@ public class GetCartQueryHandler(
 {
     public async Task<CartDto> Handle(
         GetCartQuery request,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        int companyId = await accountContext.GetCompanyIdAsync(cancellationToken);
+        int companyId = await accountContext.GetCompanyIdAsync(ct);
         var now = DateTime.UtcNow;
 
         // Загружаем позиции корзины для CalculateMinimalDeliveryDate
@@ -25,7 +25,7 @@ public class GetCartQueryHandler(
             .Include(ci => ci.Batch)
                 .ThenInclude(b => b.Product)
             .Where(ci => ci.CompanyId == companyId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         // Загружаем позиции корзины для DTO
         var productCartItemsDto = await context.CartItems
@@ -43,20 +43,20 @@ public class GetCartQueryHandler(
                 ImageUrl = ci.Batch.Product.ProductImages
                     .Select(pi => pi.ImagePath)
                     .FirstOrDefault(),
-                IsFavorite = ci.Batch.Product.Favourites
+                IsFavorite = ci.Batch.Product.Favorites
                     .Any(f => f.CompanyId == companyId),
                 QuantityInCart = ci.Quantity,
                 TotalCostInCart = ci.TotalCost
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         // Загружаем все тарифы для отображения
         var tariffs = await context.OrderTariffs
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         // Загружаем выбранный тариф
         var selectedTariff = await context.OrderTariffs
-            .FirstOrDefaultAsync(t => t.OrderTariffId == request.TariffId, cancellationToken)
+            .FirstOrDefaultAsync(t => t.OrderTariffId == request.TariffId, ct)
             ?? tariffs.FirstOrDefault()
             ?? throw new InvalidOperationException("No active tariff found");
 
@@ -64,7 +64,7 @@ public class GetCartQueryHandler(
         var activeEmployees = await context.Employees
             .Where(e => e.DeletedAt == null)
             .Include(e => e.EmployeeTasks.Where(et => et.EndTime > now))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         // Рассчитываем минимальную дату доставки
         var minimalDeliveryDate = deliveryCalculator

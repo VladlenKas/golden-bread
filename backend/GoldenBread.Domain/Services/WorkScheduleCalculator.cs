@@ -1,24 +1,19 @@
-﻿using GoldenBread.Domain.Interfaces.Services;
+﻿using GoldenBread.Domain.Constants;
+using GoldenBread.Domain.Entities;
+using GoldenBread.Domain.Interfaces.Services;
 
 namespace GoldenBread.Domain.Services;
 
 public class WorkScheduleCalculator : IWorkScheduleCalculator
 {
-    private const int WorkStartHour = 9;
-    private const int LunchStartHour = 13;
-    private const int LunchEndHour = 14;
-    private const int WorkEndHour = 18;
-    private const int MorningWorkMinutes = (LunchStartHour - WorkStartHour) * 60; // 240
-    private const int AfternoonWorkMinutes = (WorkEndHour - LunchEndHour) * 60;   // 240
-    private const int TotalWorkDayMinutes = MorningWorkMinutes + AfternoonWorkMinutes; // 480
-
     public DateTime GetWorkStart(DateTime date) =>
-        new DateTime(date.Year, date.Month, date.Day, WorkStartHour, 0, 0, DateTimeKind.Utc);
+        new DateTime(date.Year, date.Month, date.Day, BakeryConstants.WorkStartHour, 0, 0, DateTimeKind.Utc);
 
     public DateTime GetWorkEnd(DateTime date) =>
-        new DateTime(date.Year, date.Month, date.Day, WorkEndHour, 0, 0, DateTimeKind.Utc);
+        new DateTime(date.Year, date.Month, date.Day, BakeryConstants.WorkEndHour, 0, 0, DateTimeKind.Utc);
 
-    public bool IsWorkDay(DateTime date) => date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday;
+    public bool IsWorkDay(DateTime date) =>
+        date.DayOfWeek is not DayOfWeek.Saturday and not DayOfWeek.Sunday;
 
     public DateTime AddWorkDays(DateTime start, int workDays)
     {
@@ -35,138 +30,123 @@ public class WorkScheduleCalculator : IWorkScheduleCalculator
         return GetWorkStart(current);
     }
 
+    /// <summary>
+    /// Добавляет рабочие минуты к дате, учитывая график 8-17 с обедом
+    /// </summary>
     public DateTime AddWorkMinutes(DateTime start, int minutes)
     {
         if (minutes <= 0) return start;
 
         var current = start;
-        int remainingMinutes = minutes;
+        var remaining = minutes;
 
-        while (remainingMinutes > 0)
+        while (remaining > 0)
         {
-            // Если не рабочий день, перейти на следующий рабочий
+            // Пропускаем выходные
             if (!IsWorkDay(current))
             {
                 current = GetWorkStart(current.AddDays(1));
                 continue;
             }
 
-            var workStart = GetWorkStart(current);
-            var workEnd = GetWorkEnd(current);
-            var lunchStart = new DateTime(current.Year, current.Month, current.Day, LunchStartHour, 0, 0, DateTimeKind.Utc);
-            var lunchEnd = new DateTime(current.Year, current.Month, current.Day, LunchEndHour, 0, 0, DateTimeKind.Utc);
+            var dayStart = GetWorkStart(current);
+            var dayEnd = GetWorkEnd(current);
+            var lunchStart = new DateTime(current.Year, current.Month, current.Day, BakeryConstants.LunchStartHour, 0, 0, DateTimeKind.Utc);
+            var lunchEnd = new DateTime(current.Year, current.Month, current.Day, BakeryConstants.LunchEndHour, 0, 0, DateTimeKind.Utc);
 
-            // Если текущее время до начала рабочего дня
-            if (current < workStart)
-                current = workStart;
+            // Если до начала рабочего дня
+            if (current < dayStart)
+                current = dayStart;
 
-            // Если текущее время в обед
+            // Если в обед — перепрыгиваем
             if (current >= lunchStart && current < lunchEnd)
                 current = lunchEnd;
 
-            // Если текущее время после рабочего дня
-            if (current >= workEnd)
+            // Если после работы — на следующий день
+            if (current >= dayEnd)
             {
                 current = GetWorkStart(current.AddDays(1));
                 continue;
             }
 
-            // Считаем доступные минуты до конца рабочего дня (с учетом обеда)
-            int availableMinutes;
+            // Сколько минут доступно с текущего момента до конца дня?
+            int availableToday;
             if (current < lunchStart)
             {
-                // Утро: до обеда или до конца дня если успеваем
-                var minutesToLunch = (int)(lunchStart - current).TotalMinutes;
-                var minutesAfterLunch = (int)(workEnd - lunchEnd).TotalMinutes;
-
-                if (remainingMinutes <= minutesToLunch)
-                {
-                    return current.AddMinutes(remainingMinutes);
-                }
-
-                availableMinutes = minutesToLunch + minutesAfterLunch;
+                // Утро: до обеда + после обеда
+                var toLunch = (int)(lunchStart - current).TotalMinutes;
+                var afterLunch = BakeryConstants.AfternoonWorkMinutes;
+                availableToday = toLunch + afterLunch;
             }
             else
             {
                 // После обеда
-                availableMinutes = (int)(workEnd - current).TotalMinutes;
+                availableToday = (int)(dayEnd - current).TotalMinutes;
             }
 
-            if (remainingMinutes <= availableMinutes)
+            if (remaining <= availableToday)
             {
-                // Все помещается в текущий день
-                if (current < lunchStart && current.AddMinutes(remainingMinutes) > lunchStart)
+                // Влезаем в сегодняшний день
+                if (current < lunchStart)
                 {
-                    // Переходим через обед
-                    var minutesBeforeLunch = (int)(lunchStart - current).TotalMinutes;
-                    var minutesAfterLunch = remainingMinutes - minutesBeforeLunch;
-                    return lunchEnd.AddMinutes(minutesAfterLunch);
+                    var toLunch = (int)(lunchStart - current).TotalMinutes;
+                    if (remaining <= toLunch)
+                        return current.AddMinutes(remaining); // Успеваем до обеда
+
+                    // Перепрыгиваем обед
+                    var afterLunch = remaining - toLunch;
+                    return lunchEnd.AddMinutes(afterLunch);
                 }
-                return current.AddMinutes(remainingMinutes);
+                return current.AddMinutes(remaining);
             }
 
-            // Не помещается, переходим на следующий день
-            remainingMinutes -= availableMinutes;
+            // Не влезаем — переносим на следующий день
+            remaining -= availableToday;
             current = GetWorkStart(current.AddDays(1));
         }
 
         return current;
     }
 
-    public int CalculateWorkMinutes(DateTime start, DateTime end)
+    /// <summary>
+    /// Когда освободится сотрудник, учитывая его текущие задачи и рабочий график
+    /// </summary>
+    public DateTime GetNextAvailableTime(Employee employee, DateTime from)
     {
-        if (end <= start) return 0;
+        var lastTask = employee.EmployeeTasks
+            .Where(t => t.EndTime.HasValue && t.EndTime.Value > from)
+            .OrderByDescending(t => t.EndTime)
+            .FirstOrDefault();
 
-        int totalMinutes = 0;
-        var current = start;
+        var candidate = lastTask?.EndTime ?? from;
 
-        while (current < end)
+        // Если попали на выходные/вечер — сдвигаем на начало следующего рабочего дня
+        return SnapToWorkTime(candidate);
+    }
+
+    /// <summary>
+    /// "Прилипает" к рабочему времени: если вне работы — возвращает начало следующего рабочего дня
+    /// </summary>
+    public DateTime SnapToWorkTime(DateTime date)
+    {
+        if (!IsWorkDay(date))
         {
-            if (!IsWorkDay(current))
-            {
-                current = GetWorkStart(current.AddDays(1));
-                continue;
-            }
-
-            var workStart = GetWorkStart(current);
-            var workEnd = GetWorkEnd(current);
-            var lunchStart = new DateTime(current.Year, current.Month, current.Day, LunchStartHour, 0, 0, DateTimeKind.Utc);
-            var lunchEnd = new DateTime(current.Year, current.Month, current.Day, LunchEndHour, 0, 0, DateTimeKind.Utc);
-
-            var dayStart = current > workStart ? current : workStart;
-            if (dayStart >= workEnd)
-            {
-                current = GetWorkStart(current.AddDays(1));
-                continue;
-            }
-
-            // Корректируем начало если в обед
-            if (dayStart >= lunchStart && dayStart < lunchEnd)
-                dayStart = lunchEnd;
-
-            var dayEnd = end < workEnd ? end : workEnd;
-            if (dayEnd <= dayStart)
-            {
-                current = GetWorkStart(current.AddDays(1));
-                continue;
-            }
-
-            // Вычитаем обед если диапазон его пересекает
-            if (dayStart < lunchStart && dayEnd > lunchStart)
-            {
-                totalMinutes += (int)(lunchStart - dayStart).TotalMinutes;
-                if (dayEnd > lunchEnd)
-                    totalMinutes += (int)(dayEnd - lunchEnd).TotalMinutes;
-            }
-            else
-            {
-                totalMinutes += (int)(dayEnd - dayStart).TotalMinutes;
-            }
-
-            current = GetWorkStart(current.AddDays(1));
+            var nextDay = date.AddDays(1);
+            while (!IsWorkDay(nextDay))
+                nextDay = nextDay.AddDays(1);
+            return GetWorkStart(nextDay);
         }
 
-        return totalMinutes;
+        var workStart = GetWorkStart(date);
+        var workEnd = GetWorkEnd(date);
+        var lunchStart = new DateTime(date.Year, date.Month, date.Day, BakeryConstants.LunchStartHour, 0, 0, DateTimeKind.Utc);
+        var lunchEnd = new DateTime(date.Year, date.Month, date.Day, BakeryConstants.LunchEndHour, 0, 0, DateTimeKind.Utc);
+
+        if (date < workStart) return workStart;
+        if (date >= lunchStart && date < lunchEnd) return lunchEnd;
+        if (date >= workEnd) return GetWorkStart(date.AddDays(1));
+
+        return date;
     }
 }
 

@@ -12,9 +12,9 @@ public sealed class ChangePasswordCommandHandler(
 {
     public async Task<Unit> Handle(
         ChangePasswordCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
 
         if (!hasher.Verify(command.OldPassword, account.PasswordHash))
             throw new PasswordsMismatchException();
@@ -24,7 +24,7 @@ public sealed class ChangePasswordCommandHandler(
 
         account.UpdatePassword(hasher.Create(command.NewPassword));
         
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return Unit.Value;
     }

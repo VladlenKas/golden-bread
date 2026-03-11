@@ -11,22 +11,22 @@ public sealed class ToggleFavouriteCommandHandle(
 {
     public async Task<Unit> Handle(
         ToggleFavoriteCommand command, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
         int companyId = account.Company.CompanyId;
 
-        var favourite = context.Favourites
+        var favourite = context.Favorites
             .FirstOrDefault(f =>
                 f.ProductId == command.ProductId &&
                 f.CompanyId == companyId);
 
         if (favourite == null)
-            context.Favourites.Add(Favorite.Create(companyId, command.ProductId));
+            context.Favorites.Add(Favorite.Create(companyId, command.ProductId));
         else
-            context.Favourites.Remove(favourite);
+            context.Favorites.Remove(favourite);
 
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return Unit.Value;  
     }

@@ -12,21 +12,21 @@ public sealed class UpdateCompanyRequisitesCommandHandler(
 {
     public async Task<Unit> Handle(
         UpdateRequisitesCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
         var company = account.Company;
 
-        await checker.CompanyNameMustBeUniqueAsync(command.Name, company.CompanyId, cancellationToken);
-        await checker.CompanyInnMustBeUniqueAsync(command.Inn, company.CompanyId, cancellationToken);
-        await checker.CompanyOgrnMustBeUniqueAsync(command.Ogrn, company.CompanyId, cancellationToken);
+        await checker.CompanyNameMustBeUniqueAsync(command.Name, company.CompanyId, ct);
+        await checker.CompanyInnMustBeUniqueAsync(command.Inn, company.CompanyId, ct);
+        await checker.CompanyOgrnMustBeUniqueAsync(command.Ogrn, company.CompanyId, ct);
 
         company.UpdateRequisites(command.Name, command.Inn, command.Ogrn);
         account.SetPendingVerification();
 
         await cookieService.SignOutAsync();
 
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return Unit.Value;
     }

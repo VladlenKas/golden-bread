@@ -11,17 +11,17 @@ public sealed class UpdateCompanyContactsCommandHandler(
 {
     public async Task<Unit> Handle(
         UpdateContactsCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(cancellationToken);
+        var account = await accountContext.GetAccountAsync(ct);
         var company = account.Company;
 
-        await checker.CompanyPhoneMustBeUniqueAsync(company.Phone, company.CompanyId, cancellationToken);
-        await checker.CompanyAddressMustBeUniqueAsync(company.Address, company.CompanyId, cancellationToken);
+        await checker.CompanyPhoneMustBeUniqueAsync(company.Phone, company.CompanyId, ct);
+        await checker.CompanyAddressMustBeUniqueAsync(company.Address, company.CompanyId, ct);
 
         company.UpdateContacts(command.Phone, command.Address);
 
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return Unit.Value;
     }

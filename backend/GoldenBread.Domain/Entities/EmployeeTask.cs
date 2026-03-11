@@ -19,7 +19,6 @@ public class EmployeeTask
     public EmployeeTask() { }
 
     public static EmployeeTask Create(
-        int employeeTaskId,
         int employeeId,
         int orderItemId,
         DateTime? startTime,
@@ -29,7 +28,6 @@ public class EmployeeTask
     {
         return new EmployeeTask
         {
-            EmployeeTaskId = employeeTaskId,
             EmployeeId = employeeId,
             OrderItemId = orderItemId,
             StartTime = startTime,

@@ -13,9 +13,9 @@ public sealed class GetCatalogQueryHandler(
 {
     public async Task<CatalogResponse> Handle(
         GetCatalogQuery query, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        int companyId = await accountContext.GetCompanyIdAsync(cancellationToken);
+        int companyId = await accountContext.GetCompanyIdAsync(ct);
 
         var productsList = await context.Products
             .AsNoTracking()
@@ -23,9 +23,9 @@ public sealed class GetCatalogQueryHandler(
             .Include(p => p.ProductImages)  
             .Include(p => p.ProductBatches) 
                 .ThenInclude(pb => pb.CartItems)  
-            .Include(p => p.Favourites)    
+            .Include(p => p.Favorites)    
             .Select(p => MapToResponse(p, companyId))
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         var categoriesList = await context.ProductCategories
             .AsNoTracking()
@@ -36,7 +36,7 @@ public sealed class GetCatalogQueryHandler(
                 Color = c.Color,
                 ProductCount = c.Products.Count
             })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
 
         return new CatalogResponse
         {
@@ -65,13 +65,16 @@ public sealed class GetCatalogQueryHandler(
         {
             ProductId = p.ProductId,
             Name = p.Name,
+            Description = p.Description,
+            ProductionTimeMinutes = p.ProductionTimeMinutes,
+            CategoryId = p.CategoryId,
             CategoryName = p.Category.Name,
             CategoryColor = p.Category.Color,
             ImageUrl = p.ProductImages.Select(i => i.ImagePath).FirstOrDefault(),
             ProductBatchId = batch?.ProductBatchId ?? 0,
             QuantityPerBatch = batch?.QuantityPerBatch ?? 0,
             SalePrice = batch?.UnitPrice ?? 0,
-            IsFavorite = p.Favourites.Any(f => f.CompanyId == companyId),
+            IsFavorite = p.Favorites.Any(f => f.CompanyId == companyId),
             QuantityInCart = p.GetQuantityInCart(companyId)
         };
     }

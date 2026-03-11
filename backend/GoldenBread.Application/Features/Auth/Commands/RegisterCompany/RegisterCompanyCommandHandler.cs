@@ -15,12 +15,12 @@ public sealed class RegisterCompanyCommandHandler(
 {
     public async Task<AuthResponse> Handle(
         RegisterCompanyCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        await checker.EmailMustBeUniqueAsync(command.Email, ct: cancellationToken);
-        await checker.CompanyNameMustBeUniqueAsync(command.Name, ct: cancellationToken);
-        await checker.CompanyInnMustBeUniqueAsync(command.Inn, ct: cancellationToken);
-        await checker.CompanyOgrnMustBeUniqueAsync(command.Ogrn, ct: cancellationToken);
+        await checker.EmailMustBeUniqueAsync(command.Email, ct: ct);
+        await checker.CompanyNameMustBeUniqueAsync(command.Name, ct: ct);
+        await checker.CompanyInnMustBeUniqueAsync(command.Inn, ct: ct);
+        await checker.CompanyOgrnMustBeUniqueAsync(command.Ogrn, ct: ct);
 
         string passwordHash = passwordHasher.Create(command.Password);
 
@@ -39,11 +39,11 @@ public sealed class RegisterCompanyCommandHandler(
             account
         );  
 
-        await context.Accounts.AddAsync(account, cancellationToken);
-        await context.Companies.AddAsync(company, cancellationToken);
+        await context.Accounts.AddAsync(account, ct);
+        await context.Companies.AddAsync(company, ct);
 
         await cookieService.SignInAsync(account.Session!);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return new AuthResponse(
             account.AccountId,

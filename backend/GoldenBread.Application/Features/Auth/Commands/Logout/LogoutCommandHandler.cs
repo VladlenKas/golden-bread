@@ -12,14 +12,14 @@ public sealed class LogoutCommandHandler(
 {
     public async Task<Unit> Handle(
         LogoutCommand command, 
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         Account account = await accountContext
-            .GetAccountAsync(cancellationToken);
+            .GetAccountAsync(ct);
 
         account.ClearSession();
         await cookieService.SignOutAsync();
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return Unit.Value;
     }

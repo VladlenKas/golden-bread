@@ -15,12 +15,12 @@ public sealed class LoginCompanyCommandHandler(
 {
     public async Task<AuthResponse> Handle(
         LoginCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var account = await context.Accounts
             .FirstOrDefaultAsync(c =>
                 c.Email == command.Email,
-                cancellationToken);
+                ct);
 
         if (account == null ||
             !passwordHasher.Verify(command.Password, account.PasswordHash) ||
@@ -30,7 +30,7 @@ public sealed class LoginCompanyCommandHandler(
         account.SetSession();
 
         await cookieService.SignInAsync(account.Session!);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
 
         return new AuthResponse(
             account.AccountId,

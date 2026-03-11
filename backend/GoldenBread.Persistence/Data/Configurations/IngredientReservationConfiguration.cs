@@ -1,7 +1,7 @@
 ﻿using GoldenBread.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace GoldenBread.Infrastructure.Configurations;
+namespace GoldenBread.Infrastructure.Data.Configurations;
 
 public class IngredientReservationConfiguration : IEntityTypeConfiguration<IngredientReservation>
 {
@@ -25,25 +25,11 @@ public class IngredientReservationConfiguration : IEntityTypeConfiguration<Ingre
             .HasForeignKey(ir => ir.IngredientBatchId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Property(ir => ir.OrderId)
-            .IsRequired();
-
-        builder.Property(ir => ir.IngredientBatchId)
-            .IsRequired();
-
-        builder.Property(ir => ir.ReservedQuantity)
-            .IsRequired()
-            .HasPrecision(18, 3); 
-
-        builder.Property(ir => ir.ReservedAt)
-            .IsRequired();
-
-        builder.Property(ir => ir.IsActive)
-            .IsRequired()
-            .HasDefaultValue(true);
-
-        builder.Property(ir => ir.IsConfirmed)
-            .IsRequired()
-            .HasDefaultValue(false);
+        builder.Property(ir => ir.OrderId).IsRequired();
+        builder.Property(ir => ir.IngredientBatchId).IsRequired();
+        builder.Property(ir => ir.ReservedQuantity).IsRequired().HasPrecision(18, 3); 
+        builder.Property(ir => ir.ReservedAt).IsRequired();
+        builder.Property(ir => ir.IsActive).IsRequired().HasDefaultValue(true);
+        builder.Property(ir => ir.IsConfirmed).IsRequired().HasDefaultValue(false);
     }
 }

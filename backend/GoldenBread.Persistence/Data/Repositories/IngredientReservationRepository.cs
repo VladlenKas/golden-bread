@@ -2,33 +2,31 @@
 using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Infrastructure.Repositories;
+namespace GoldenBread.Infrastructure.Data.Repositories;
 
 public class IngredientReservationRepository(IGoldenBreadContext context) : IIngredientReservationRepository
 {
-    public async Task CreateRangeAsync(
-        IEnumerable<IngredientReservation> reservations,
-        CancellationToken cancellationToken = default)
-    {
-        context.IngredientReservations.AddRange(reservations);
-        await context.SaveChangesAsync(cancellationToken);
-    }
-
     public async Task<IReadOnlyList<IngredientReservation>> GetByOrderIdAsync(
         int orderId,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         return await context.IngredientReservations
             .Where(ir => ir.OrderId == orderId)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(ct);
+    }
+
+    public async Task CreateRangeAsync(
+        IEnumerable<IngredientReservation> reservations,
+        CancellationToken ct = default)
+    {
+        context.IngredientReservations.AddRange(reservations);
     }
 
     public async Task UpdateRangeAsync(
         IEnumerable<IngredientReservation> reservations,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         context.IngredientReservations.UpdateRange(reservations);
-        await context.SaveChangesAsync(cancellationToken);
     }
 }
 

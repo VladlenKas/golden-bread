@@ -23,13 +23,13 @@ internal class CurrentAccountContext(
         .Request
         .Cookies["gb.session"]; 
 
-    public async Task<Account> GetAccountAsync(CancellationToken cancellationToken)
+    public async Task<Account> GetAccountAsync(CancellationToken ct)
     {
-        _accountCache ??= LoadAccountAsync(cancellationToken);
+        _accountCache ??= LoadAccountAsync(ct);
         return await _accountCache ?? throw new SessionExpiredException();
     }
 
-    private async Task<Account?> LoadAccountAsync(CancellationToken cancellationToken)
+    private async Task<Account?> LoadAccountAsync(CancellationToken ct)
     {
         var session = GetSessionToken();
         if (session == null)
@@ -39,15 +39,15 @@ internal class CurrentAccountContext(
             .FirstOrDefaultAsync(a => 
                 a.Session == session &&
                 a.SessionExpiresAt > DateTime.UtcNow,
-                cancellationToken);
+                ct);
     }
 
-    public async Task<int> GetCompanyIdAsync(CancellationToken cancellationToken)
+    public async Task<int> GetCompanyIdAsync(CancellationToken ct)
     {
         var session = GetSessionToken();
         if (string.IsNullOrEmpty(session)) return 0;
 
-        var account = await GetAccountAsync(cancellationToken);
+        var account = await GetAccountAsync(ct);
         return account.Company.CompanyId;
     }
 }
