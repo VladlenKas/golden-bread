@@ -1,13 +1,15 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Common.Exceptions.Auth;
+using GoldenBread.Application.Common.Exceptions.Domain;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Commands.ChangeEmail;
 
 public sealed class ChangeEmailCommandHandler(
-    IGoldenBreadContext context,
+    IUnitOfWork unitOfWork,
+    IAccountRepository accountRepository,
     ICurrentAccountContext accountContext,
-    IUniquenessChecker checker,
     IPasswordHasher hasher) :
     IRequestHandler<ChangeEmailCommand, Unit>
 {
@@ -19,12 +21,14 @@ public sealed class ChangeEmailCommandHandler(
 
         if (!hasher.Verify(command.Password, account.PasswordHash)) 
             throw new PasswordsMismatchException();
-        await checker.EmailMustBeUniqueAsync(command.NewEmail, account.AccountId, ct);
+
+        if (await accountRepository.ExistsByEmailAsync(command.NewEmail, account.AccountId, ct))
+            throw new EmailDuplicateException();
 
         account.UpdateEmail(command.NewEmail);
         account.ClearSession();
 
-        await context.SaveChangesAsync(ct);
+        await unitOfWork.SaveChangesAsync(ct);
 
         return Unit.Value;
     }

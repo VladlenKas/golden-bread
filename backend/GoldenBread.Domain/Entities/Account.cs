@@ -11,12 +11,13 @@ public sealed class Account
     public string? Session { get; set; }
     public DateTime? SessionExpiresAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public AccountType AccountType { get; set; }
     public VerificationStatus VerificationStatus { get; set; }
 
-    public User User { get; set; } = null!;
-    public Company Company { get; set; } = null!;
+    public User? User { get; set; }
+    public Company? Company { get; set; } 
 
     private Account() { }
 

@@ -6,4 +6,4 @@ namespace GoldenBread.Application.Features.Auth.Commands.Login;
 public sealed record class LoginCommand(
     string Email,
     string Password,
-    PortalType PortalType) : IRequest<AuthResponse>;
+    PortalType AccountType) : IRequest<AuthResponse>;

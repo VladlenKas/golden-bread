@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Features\CompanyOrder\Queries\" />
+    <Folder Include="Features\CompanyProfile\Mapping\" />
     <Folder Include="Features\ProductFavorites\Queries\" />
   </ItemGroup>
 

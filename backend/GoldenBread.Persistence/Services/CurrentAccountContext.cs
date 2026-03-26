@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Abstractions.Data;
+﻿using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Common.Exceptions.Auth;
 using GoldenBread.Domain.Entities;
@@ -8,46 +8,42 @@ namespace GoldenBread.Infrastructure.Services;
 
 internal class CurrentAccountContext(
     IHttpContextAccessor httpContextAccessor,
-    IGoldenBreadContext context) : 
+    IAccountRepository accountRepository) : 
     ICurrentAccountContext
 {
     private Task<Account?>? _accountCache;
 
-    public string? GetSessionToken() => httpContextAccessor
-        .HttpContext?
-        .User
-        .FindFirst("session")?.Value;
+    private string? Session =>
+        httpContextAccessor.HttpContext?.User.FindFirst("session")?.Value
+        ?? httpContextAccessor.HttpContext?.Request.Headers["Desktop-Session-Id"].FirstOrDefault();
 
-    public string? GetSessionFromCookie() => httpContextAccessor
-        .HttpContext?
-        .Request
-        .Cookies["gb.session"]; 
+    public bool HasCookie =>
+        httpContextAccessor.HttpContext?.Request.Cookies.ContainsKey("gb.session") == true;
 
     public async Task<Account> GetAccountAsync(CancellationToken ct)
     {
-        _accountCache ??= LoadAccountAsync(ct);
+        _accountCache ??= accountRepository.GetBySessionAsync(Session, ct);
         return await _accountCache ?? throw new SessionExpiredException();
     }
 
-    private async Task<Account?> LoadAccountAsync(CancellationToken ct)
+    /// <summary>
+    /// Только для защищённых маршрутов (с [Authorize]).
+    /// </summary>
+    public async Task<int> GetRequiredCompanyIdAsync(CancellationToken ct)
     {
-        var session = GetSessionToken();
-        if (session == null)
-            return null;
-
-        return await context.Accounts
-            .FirstOrDefaultAsync(a => 
-                a.Session == session &&
-                a.SessionExpiresAt > DateTime.UtcNow,
-                ct);
+        var account = await GetAccountAsync(ct);
+        return account.Company?.CompanyId ?? throw new InvalidOperationException();
     }
 
-    public async Task<int> GetCompanyIdAsync(CancellationToken ct)
+    /// <summary>
+    /// Для публичных маршрутов. Возвращает null, если пользователь не авторизован.
+    /// </summary>
+    public async Task<int?> GetCompanyIdAsync(CancellationToken ct)
     {
-        var session = GetSessionToken();
-        if (string.IsNullOrEmpty(session)) return 0;
+        if (Session == null)
+            return null;
 
         var account = await GetAccountAsync(ct);
-        return account.Company.CompanyId;
+        return account.Company?.CompanyId ?? throw new InvalidOperationException();
     }
 }

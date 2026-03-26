@@ -11,12 +11,12 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class AuthController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("login/{portalType}")]
-    public async Task<IActionResult> LoginUser(
-        PortalType portalType, 
+    [HttpPost("login/{accountType}")]
+    public async Task<IActionResult> Login(
+        PortalType accountType, 
         [FromBody] LoginCommand command)
     {
-        command = command with { PortalType = portalType };
+        command = command with { AccountType = accountType };
         return Ok(await mediator.Send(command));
     }
 
@@ -43,3 +43,4 @@ public class AuthController(IMediator mediator) : ControllerBase
         return result == null ? NoContent() : Ok(result);
     }
 }
+    

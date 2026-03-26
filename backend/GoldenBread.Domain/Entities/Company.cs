@@ -15,26 +15,26 @@ public sealed class Company
     public ICollection<Favorite> Favourites { get; set; } = new List<Favorite>();
     public ICollection<Order> Orders { get; set; } = new List<Order>();
 
-    public Account? Account { get; set; }
+    public Account Account { get; set; } = null!;
 
     private Company() { }
 
     public static Company Create(
+        int accountId,
         string name,
         string inn,
         string ogrn,
-        Account account,
         string? phone = null,
         string? address = null)
     {
         return new Company
         {       
+            AccountId = accountId,
             Name = name,
             Inn = inn,
             Ogrn = ogrn,
             Phone = phone,
             Address = address,
-            Account = account
         };
     }
 

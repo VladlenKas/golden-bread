@@ -7,9 +7,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.HasKey(e => e.OrderId).HasName("orders_pkey");
+        builder.HasKey(e => e.OrderId)
+            .HasName("orders_pkey");
 
-        builder.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
+        builder.Property(e => e.CreatedAt)
+            .HasDefaultValueSql("now()");
 
         builder.HasOne(d => d.Tariff)
             .WithMany(p => p.Orders)

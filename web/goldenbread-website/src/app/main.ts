@@ -1,5 +1,4 @@
 import '@/app/styles/index.css';
-import '@/app/styles/global.css';
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue';
 import { createApp } from 'vue';
 import { router } from './providers/router';

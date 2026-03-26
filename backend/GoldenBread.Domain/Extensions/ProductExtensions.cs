@@ -4,9 +4,10 @@ namespace GoldenBread.Domain.Extensions;
 
 public static class ProductExtensions
 {
-    public static decimal GetTotalCostInCart(this Product product, int companyId)
+    public static decimal GetTotalCostInCart(this Product product, int? companyId)
     {
-        if (companyId == 0) return 0m;
+        if (companyId == 0) 
+            return 0m;
 
         return product.ProductBatches
             .SelectMany(pb => pb.CartItems)
@@ -14,9 +15,10 @@ public static class ProductExtensions
             .Sum(ci => ci.TotalCost);
     }
 
-    public static int GetQuantityInCart(this Product product, int companyId)
+    public static int GetQuantityInCart(this Product product, int? companyId)
     {
-        if (companyId == 0) return 0;
+        if (companyId == null) 
+            return 0;
 
         return product.ProductBatches
             .SelectMany(pb => pb.CartItems)

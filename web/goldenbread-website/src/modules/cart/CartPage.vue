@@ -19,7 +19,8 @@ import {
   Truck,
   Banknote,
   Layers2,
-  Percent
+  Percent,
+  Info
 } from 'lucide-vue-next';
 import { useCart } from './useCart';
 import CartItemCard from './CartItemCard.vue';
@@ -134,37 +135,33 @@ function formatUnit(unit: number): string {
                     <SelectItem value="standard">
                       <div class="flex items-center justify-between w-full gap-2">
                         <span>Стандарт</span>
-                        <span class="text-muted-foreground">+1 000 ₽</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="express">
                       <div class="flex items-center justify-between w-full gap-2">
                         <span class="flex items-center gap-2">
-                          <Zap class="w-4 h-4 text-amber-500" />
                           Экспресс
                         </span>
-                        <span class="text-muted-foreground">+2 500 ₽</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="night">
                       <div class="flex items-center justify-between w-full gap-2">
                         <span class="flex items-center gap-2">
-                          <Moon class="w-4 h-4 text-indigo-500" />
                           Ночной
                         </span>
-                        <span class="text-muted-foreground">+1 800 ₽</span>
                       </div>
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <p class="text-xs text-muted-foreground">
-                  Срок доставки: 1–3 рабочих дня
+                <p class="flex items-center text-xs text-muted-foreground gap-1">
+                  <Info class="w-3 h-3" />
+                  Узнать подробнее
+                  <span class="text-amber-600 cursor-pointer">здесь</span>
                 </p>
               </div>
 
               <Separator class="bg-primary/10" />
 
-              <!-- Календарь -->
               <!-- Календарь -->
               <div class="space-y-2">
                 <Label class="text-sm font-medium">Дата поставки</Label>
@@ -174,7 +171,7 @@ function formatUnit(unit: number): string {
                       :class="{ 'text-muted-foreground': !selectedDate }">
                       {{ selectedDate ? format(selectedDate.toDate(getLocalTimeZone()), 'PPP', { locale: ru }) :
                       'Выберите дату' }}
-                      <CalendarIcon class="h-4 w-4 text-muted-foreground opacity-40" />
+                      <CalendarIcon class="h-4 w-4 text-muted-foreground opacity-60" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent class="w-auto p-0" align="start">
@@ -193,7 +190,7 @@ function formatUnit(unit: number): string {
               <!-- Детали заказа -->
               <div class="space-y-3">
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-muted-foreground flex items-center gap-2">
+                  <span class=" flex items-center gap-2">
                     <Layers2 class="w-4 h-4" />
                     {{ summary.selectedItems }} позиций, {{ formatUnit(summary.totalUnits) }}
                   </span>
@@ -201,11 +198,11 @@ function formatUnit(unit: number): string {
                 </div>
 
                 <div class="flex items-center justify-between text-sm">
-                  <span class="text-muted-foreground flex items-center gap-2">
+                  <span class=" flex items-center gap-2">
                     <Percent class="w-4 h-4" />
                     Наценка за тариф
                   </span>
-                  <span class="font-semibold text-amber-600">+1 000 ₽</span>
+                  <span class="font-semibold">1 000 ₽</span>
                 </div>
               </div>
 

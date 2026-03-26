@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { me as meApi } from './api'
-import { VerificationStatus, type AuthResponse } from './types';
+import { VerificationStatus } from './types';
 
 export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false);

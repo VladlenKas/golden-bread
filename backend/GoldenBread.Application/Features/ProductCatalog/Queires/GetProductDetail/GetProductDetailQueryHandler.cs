@@ -14,7 +14,7 @@ public sealed class GetProductDetailQueryHandler(
         GetProductDetailQuery query, 
         CancellationToken ct)
     {
-        int companyId = await accountContext.GetCompanyIdAsync(ct);
+        int? companyId = await accountContext.GetCompanyIdAsync(ct);
 
         var productBatches = await context.ProductBatches
             .AsNoTracking()
@@ -31,6 +31,8 @@ public sealed class GetProductDetailQueryHandler(
         var productDetail = await context.Products
             .AsNoTracking()
             .Where(p => p.ProductId == query.ProductId)
+            .Include(p => p.ProductBatches)
+                .ThenInclude(pb => pb.CartItems)
             .Select(p => new ProductDetailResponse
             {
                 ProductId = p.ProductId,

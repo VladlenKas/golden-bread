@@ -10,13 +10,14 @@ public sealed class GetAccountBySessionQueryHandler(ICurrentAccountContext accou
         GetAccountBySessionQuery query, 
         CancellationToken ct)
     {
-        var session = accountContext.GetSessionFromCookie(); 
-
-        if (string.IsNullOrEmpty(session))
+        // Если первый вход, возвращаем код 204
+        if (!accountContext.HasCookie)
             return null;
 
+        // Если нет и сессия истекла, выбрасываем исключение с кодом 401
         var account = await accountContext.GetAccountAsync(ct);
 
+        // Всё ок? Возвращем код 200
         return new AuthResponse(
             account.AccountId,
             account.VerificationStatus);

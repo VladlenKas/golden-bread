@@ -14,7 +14,7 @@ public sealed class ToggleFavouriteCommandHandle(
         CancellationToken ct)
     {
         var account = await accountContext.GetAccountAsync(ct);
-        int companyId = account.Company.CompanyId;
+        int companyId = await accountContext.GetRequiredCompanyIdAsync(ct);
 
         var favourite = context.Favorites
             .FirstOrDefault(f =>
@@ -22,9 +22,13 @@ public sealed class ToggleFavouriteCommandHandle(
                 f.CompanyId == companyId);
 
         if (favourite == null)
+        {
             context.Favorites.Add(Favorite.Create(companyId, command.ProductId));
+        }
         else
+        {
             context.Favorites.Remove(favourite);
+        }
 
         await context.SaveChangesAsync(ct);
 

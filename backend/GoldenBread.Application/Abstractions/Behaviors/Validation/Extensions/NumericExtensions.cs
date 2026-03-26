@@ -6,7 +6,7 @@ public static class NumericExtensions
         this IRuleBuilder<T, string> rule)
     {
         return rule
-            .Must(value => value.All(char.IsDigit))
+            .Must(x => x.All(char.IsDigit))
             .WithMessage("Поле может содержать только цифры");
     }
 }

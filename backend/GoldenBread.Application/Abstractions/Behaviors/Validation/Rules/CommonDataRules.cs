@@ -1,8 +1,8 @@
-﻿using GoldenBread.Application.Abstractions.Behaviors.Validation.Extensions;
+using GoldenBread.Application.Abstractions.Behaviors.Validation.Extensions;
 
 namespace GoldenBread.Application.Abstractions.Behaviors.Validation.Rules;
 
-public static class CredentialsDataRules
+public static class CommonDataRules
 {
     public static IRuleBuilderOptions<T, string> BeValidEmail<T>(
         this IRuleBuilder<T, string> rule)
@@ -64,6 +64,14 @@ public static class CredentialsDataRules
             .Must(x => x[0] == '8')
                 .WithMessage("Номер телефона должен начинаться с 8")
             .Length(11)
+            .When(x => x != null);
+    }
+
+    public static IRuleBuilderOptions<T, string> BeValidAddress<T>(
+        this IRuleBuilder<T, string> rule)
+    {
+        return rule
+            .MinimumLength(5)
             .When(x => x != null);
     }
 }

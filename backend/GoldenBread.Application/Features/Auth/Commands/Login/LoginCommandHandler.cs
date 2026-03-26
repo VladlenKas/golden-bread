@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Common.Exceptions.Auth;
 using GoldenBread.Application.Contracts;
@@ -8,7 +9,8 @@ using GoldenBread.Domain.Enums;
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
 
 public sealed class LoginCompanyCommandHandler(
-    IGoldenBreadContext context,
+    IUnitOfWork unitOfWork,
+    IAccountRepository accountRepository,
     ICookieService cookieService,
     IPasswordHasher passwordHasher) : 
     IRequestHandler<LoginCommand, AuthResponse>
@@ -17,29 +19,29 @@ public sealed class LoginCompanyCommandHandler(
         LoginCommand command,
         CancellationToken ct)
     {
-        var account = await context.Accounts
-            .FirstOrDefaultAsync(c =>
-                c.Email == command.Email,
-                ct);
+        var account = await accountRepository.GetByEmailAsync(command.Email, ct);
 
         if (account == null ||
-            !passwordHasher.Verify(command.Password, account.PasswordHash) ||
-            !HasAccess(account.AccountType, command.PortalType))
+            !HasAccess(account.AccountType, command.AccountType) ||
+            !passwordHasher.Verify(command.Password, account.PasswordHash)) 
             throw new InvalidCredentialsException();
 
         account.SetSession();
 
-        await cookieService.SignInAsync(account.Session!);
-        await context.SaveChangesAsync(ct);
+        // Храним сессию в HttpContextAccessor только web-пользователей
+        if (account.AccountType == AccountType.Company)
+            await cookieService.SignInAsync(account.Session!);
+
+        await unitOfWork.SaveChangesAsync(ct);
 
         return new AuthResponse(
             account.AccountId,
             account.VerificationStatus);
     }
 
-    private bool HasAccess(AccountType accountType, PortalType portal)
-        => (accountType, portal) switch
-        {
+    private bool HasAccess(AccountType accountType, PortalType portalType)
+        => (accountType, portalType) switch
+        { 
             (AccountType.Company, PortalType.Company) => true,
             (AccountType.User, PortalType.User) => true,
             _ => false,

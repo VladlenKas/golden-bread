@@ -31,7 +31,6 @@ public sealed class CookieService(
     public async Task SignOutAsync()
     {
         await httpContextAccessor.HttpContext!
-            .SignOutAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme);
+            .SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
 }

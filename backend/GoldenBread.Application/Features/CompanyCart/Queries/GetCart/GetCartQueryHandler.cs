@@ -16,7 +16,7 @@ public class GetCartQueryHandler(
         GetCartQuery request,
         CancellationToken ct)
     {
-        int companyId = await accountContext.GetCompanyIdAsync(ct);
+        int companyId = await accountContext.GetRequiredCompanyIdAsync(ct);
         var now = DateTime.UtcNow;
 
         // Загружаем позиции корзины для CalculateMinimalDeliveryDate

@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Domain.Entities;
@@ -7,46 +8,54 @@ using GoldenBread.Domain.Enums;
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
 public sealed class RegisterCompanyCommandHandler(
-    IGoldenBreadContext context,
-    IUniquenessChecker checker,
+    IUnitOfWork unitOfWork,
+    ICompanyRepository companyRepository,
+    IAccountRepository accountRepository,
     ICookieService cookieService,
-    IPasswordHasher passwordHasher) : 
+    IPasswordHasher passwordHasher) :
     IRequestHandler<RegisterCompanyCommand, AuthResponse>
 {
     public async Task<AuthResponse> Handle(
         RegisterCompanyCommand command,
         CancellationToken ct)
     {
-        await checker.EmailMustBeUniqueAsync(command.Email, ct: ct);
-        await checker.CompanyNameMustBeUniqueAsync(command.Name, ct: ct);
-        await checker.CompanyInnMustBeUniqueAsync(command.Inn, ct: ct);
-        await checker.CompanyOgrnMustBeUniqueAsync(command.Ogrn, ct: ct);
+        await unitOfWork.BeginTransactionAsync(ct);
 
-        string passwordHash = passwordHasher.Create(command.Password);
+        try
+        {
+            string passwordHash = passwordHasher.Create(command.Password);
 
-        var account = Account.Create(
-            command.Email,
-            passwordHash,
-            AccountType.Company
-        );
+            var account = Account.Create(
+                command.Email,
+                passwordHash,
+                AccountType.Company
+            );
 
-        account.SetSession();
+            account.SetSession();
 
-        var company = Entities.Company.Create(
-            command.Name,
-            command.Inn,
-            command.Ogrn,
-            account
-        );  
+            await accountRepository.AddAsync(account, ct);
+            await unitOfWork.SaveChangesAsync(ct);
 
-        await context.Accounts.AddAsync(account, ct);
-        await context.Companies.AddAsync(company, ct);
+            var company = Company.Create(
+                account.AccountId,
+                command.Name,
+                command.Inn,
+                command.Ogrn
+            );
 
-        await cookieService.SignInAsync(account.Session!);
-        await context.SaveChangesAsync(ct);
+            await companyRepository.AddAsync(company, ct);
+            await unitOfWork.CommitAsync(ct);
 
-        return new AuthResponse(
-            account.AccountId,
-            account.VerificationStatus);
+            await cookieService.SignInAsync(account.Session!);
+
+            return new AuthResponse(
+                account.AccountId,
+                account.VerificationStatus);
+        }
+        catch
+        {
+            await unitOfWork.RollbackAsync(ct);
+            throw;
+        }
     }
 }

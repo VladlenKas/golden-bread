@@ -15,4 +15,24 @@ public abstract class BusinessValidationException : Exception
     }
 }
 
+public class AccountHasNoCompanyException : BusinessValidationException
+{
+    public int AccountId { get; }
 
+    public AccountHasNoCompanyException(int accountId)
+        : base("Company", $"Account {accountId} has no associated company")
+    {
+        AccountId = accountId;
+    }
+}
+
+public class InsufficientIngredientsException : BusinessValidationException
+{
+    public int IngredientId { get; }
+
+    public InsufficientIngredientsException(int ingredientId)
+        : base(nameof(IngredientId), $"Недостаточно ингредиентов (ID: {ingredientId})")
+    {
+        IngredientId = ingredientId;
+    }
+}

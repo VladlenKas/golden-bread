@@ -1,29 +1,36 @@
 ﻿using GoldenBread.Application.Abstractions.Behaviors.Validation.Rules;
+using GoldenBread.Application.Abstractions.Repositories;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
 public sealed class RegisterCompanyCommandValidator : AbstractValidator<RegisterCompanyCommand>
 {
-    public RegisterCompanyCommandValidator()
+    public RegisterCompanyCommandValidator(
+        ICompanyRepository companyRepository,
+        IAccountRepository accountRepository)
     {
         RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
-            .BeValidEmail();
+            .BeValidEmail()
+            .MustBeUniqueEmail(accountRepository);
 
         RuleFor(x => x.Name)
             .Cascade(CascadeMode.Stop)
-            .BeValidName();
+            .BeValidName()
+            .MustBeUniqueName(companyRepository);
 
         RuleFor(x => x.Inn)
             .Cascade(CascadeMode.Stop)
-            .BeValidInn();
+            .BeValidInn()
+            .MustBeUniqueInn(companyRepository);
 
         RuleFor(x => x.Ogrn)
             .Cascade(CascadeMode.Stop)
-            .BeValidOgrn();
+            .BeValidOgrn()
+            .MustBeUniqueOgrn(companyRepository);
 
         RuleFor(x => x.Password)
             .Cascade(CascadeMode.Stop)
             .BeValidPassword();
-    }
+    }   
 }

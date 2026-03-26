@@ -27,7 +27,7 @@ public class CreateOrderCommandHandler(
         CancellationToken ct)
     {
         // 1. Получить корзину
-        int companyId = await accountContext.GetCompanyIdAsync(ct);
+        int companyId = await accountContext.GetRequiredCompanyIdAsync(ct);
         var cartItems = await cartRepository.GetByCompanyIdAsync(companyId, ct);
 
         // 2. Создать OrderItems для проверки ингредиентов

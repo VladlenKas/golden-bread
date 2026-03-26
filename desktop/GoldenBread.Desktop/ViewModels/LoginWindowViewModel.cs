@@ -25,25 +25,25 @@ public partial class LoginWindowViewModel(
 
         if (HasErrors)
         {
-            dialogService.ShowError(DialogManager, "Messages.Dialog.AllFieldsRequired");
+            dialogService.ShowError(DialogManager, "Заполните все поля");
             return;
         }
 
         IsLoading = true;
 
-        /*try
+        try
         {
-            var request = new { Email = Email, Password = Password };
+            var request = new LoginRequest(Email, Password);
             var response = await userApi.Login(request);
 
             if (response.IsSuccessStatusCode)
             {
                 var data = response.Content;
-                dialogService.ShowSuccess(DialogManager, data.Fullname);
+                dialogService.ShowSuccess(DialogManager, data!.Status.ToString());
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                dialogService.ShowError(DialogManager, "Не найдено");
+                dialogService.ShowError(DialogManager, "Пользователь не найден");
 
             }
             else if (response.StatusCode == HttpStatusCode.RequestTimeout)
@@ -57,7 +57,7 @@ public partial class LoginWindowViewModel(
         }
         finally
         {
-            IsLoading = false; 
-        }*/
+            IsLoading = false;
+        }
     }   
 }

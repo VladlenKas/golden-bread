@@ -35,9 +35,8 @@ public static class DependencyInjection
                 npgsql.MapEnum<VerificationStatus>("verification_status");
             }).UseSnakeCaseNamingConvention();
         });
-        services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
 
-        // Infra services
+        // All Services
         services.AddCommonServices();
         services.AddWebServices();
 
@@ -53,10 +52,14 @@ public static class DependencyInjection
 
     private static void AddCommonServices(this IServiceCollection services)
     {
+        services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
+        services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+
         services.AddScoped<IFileStorage, FileStorage>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IUniquenessChecker, UniquenessChecker>();
 
+        services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOrderItemRepository, OrderItemRepository>();
         services.AddScoped<ICartRepository, CartRepository>();

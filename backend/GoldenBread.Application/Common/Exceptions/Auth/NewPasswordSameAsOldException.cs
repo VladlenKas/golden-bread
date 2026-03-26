@@ -2,8 +2,8 @@
 
 namespace GoldenBread.Application.Common.Exceptions.Auth;
 
-public class PasswordSameAsCurrentException : DuplicateEntityException
+public class NewPasswordSameAsOldException : DuplicateEntityException
 {
-    public PasswordSameAsCurrentException()
+    public NewPasswordSameAsOldException()
         : base("NewPassword", "Новый пароль не должен совпадать со старым") { }
 }

@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using MediatR;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GoldenBread.Infrastructure.Data;

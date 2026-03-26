@@ -15,7 +15,7 @@ public sealed class GetCatalogQueryHandler(
         GetCatalogQuery query, 
         CancellationToken ct)
     {
-        int companyId = await accountContext.GetCompanyIdAsync(ct);
+        int? companyId = await accountContext.GetCompanyIdAsync(ct);
 
         var productsList = await context.Products
             .AsNoTracking()
@@ -45,7 +45,7 @@ public sealed class GetCatalogQueryHandler(
         };
     }
 
-    private static ProductListItemResponse MapToResponse(Product p, int companyId)
+    private static ProductListItemResponse MapToResponse(Product p, int? companyId)
     {
         // Активные партии
         var batches = p.ProductBatches
