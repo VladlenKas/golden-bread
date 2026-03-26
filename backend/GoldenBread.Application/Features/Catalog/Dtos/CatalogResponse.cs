@@ -6,14 +6,17 @@ public sealed record ProductListItemResponse(
     string Name,
     string Description,
     int ProductionTimeMinutes,
+
     // Категория
     int CategoryId,
     string CategoryName,
     string? CategoryColor,
+
     // Минимальная партия (либо выбранная)
     int ProductBatchId,
     int QuantityPerBatch,
-    // Остальное
+
+    // Доп. данные
     decimal SalePrice,
     string? ImageUrl,
     bool IsFavorite,

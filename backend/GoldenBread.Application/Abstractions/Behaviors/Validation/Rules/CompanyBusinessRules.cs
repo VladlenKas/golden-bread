@@ -1,4 +1,5 @@
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Constants;
 
 namespace GoldenBread.Application.Abstractions.Behaviors.Validation.Rules;
 
@@ -11,7 +12,7 @@ public static class CompanyBusinessRules
     {
         return rule.MustAsync(async (name, ct) =>
             !await repo.ExistsByNameAsync(name, excludeId, ct))
-            .WithMessage("Название уже занято")
+            .WithMessage(ValidationErrorConstants.Duplicate)
             .WithErrorCode("Name");
     }
 
@@ -22,7 +23,7 @@ public static class CompanyBusinessRules
     {
         return rule.MustAsync(async (inn, ct) =>
             !await repo.ExistsByInnAsync(inn, excludeId, ct))
-            .WithMessage("ИНН уже занят")
+            .WithMessage(ValidationErrorConstants.Duplicate)
             .WithErrorCode("Inn");
     }
 
@@ -33,7 +34,7 @@ public static class CompanyBusinessRules
     {
         return rule.MustAsync(async (ogrn, ct) =>
             !await repo.ExistsByOgrnAsync(ogrn, excludeId, ct))
-            .WithMessage("ОГРН уже занят")
+            .WithMessage(ValidationErrorConstants.Duplicate)
             .WithErrorCode("Ogrn");
     }
 
@@ -44,7 +45,7 @@ public static class CompanyBusinessRules
     {
         return rule.MustAsync(async (phone, ct) =>
             !await repo.ExistsByPhoneAsync(phone, excludeId, ct))
-            .WithMessage("Номер телефона уже занят")
+            .WithMessage(ValidationErrorConstants.Duplicate)
             .WithErrorCode("Phone");
     }
 
@@ -55,7 +56,7 @@ public static class CompanyBusinessRules
     {
         return rule.MustAsync(async (address, ct) =>
             !await repo.ExistsByAddressAsync(address, excludeId, ct))
-            .WithMessage("Адрес уже занят")
+            .WithMessage(ValidationErrorConstants.Duplicate)
             .WithErrorCode("Address");
     }
 }

@@ -1,5 +1,4 @@
-﻿using GoldenBread.Application.Common.Exceptions.Auth;
-using GoldenBread.Application.Common.Exceptions.Domain;
+﻿using GoldenBread.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace GoldenBread.Api.Middlewares;
@@ -35,11 +34,9 @@ public sealed class GlobalExceptionHandler(
     private static (int StatusCode, string Title) MapException(Exception exception) => exception switch
     {
         ValidationException => (StatusCodes.Status422UnprocessableEntity, "One or more validation errors has occurred"),
-        InvalidCredentialsException => (StatusCodes.Status401Unauthorized, "Account not found"),
-        SessionExpiredException => (StatusCodes.Status401Unauthorized, "Session not found or expired"),
         DuplicateEntityException ex => (StatusCodes.Status409Conflict, $"Error duplicating the value for the \"{ex.PropertyName}\" parameter"),
-        InsufficientIngredientsException => (StatusCodes.Status409Conflict, $"Not enough ingredients"),
         BusinessValidationException => (StatusCodes.Status422UnprocessableEntity, "One validation error has occurred"),
+        NotFoundException => (StatusCodes.Status404NotFound, "Not found resourse"),
         _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
     };
 
@@ -47,7 +44,6 @@ public sealed class GlobalExceptionHandler(
     {
         ValidationException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Errors },
         DuplicateEntityException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
-        InsufficientIngredientsException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
         BusinessValidationException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
         _ => new Dictionary<string, object?> { ["message"] = exception.Message }
     };

@@ -1,0 +1,43 @@
+namespace GoldenBread.Application.Features.Catalog.Dtos;
+
+public sealed record ProductDetailResponse(
+    // Основные данные
+    int ProductId,
+    int CategoryId,
+    string Name,
+    string Description,
+    decimal Weight,
+    int ProductionTimeMinutes,
+    int ShelfLifeDays,
+    decimal StorageTempMin,
+    decimal StorageTempMax,
+
+    // Категория
+    string CategoryName,
+    string CategoryColor,
+
+    // Доступные партии
+    int CurrentBatchId,
+    List<ProductBatchResponse> AvailableBatches,
+
+    // Доп. данные
+    List<string> ImageUrls,
+    bool IsFavorite,
+    int QuantityInCart,
+    decimal TotalCostInCart,
+
+    // Рецепт
+    List<IngredientResponse> Ingredients);
+
+public sealed record ProductBatchResponse(
+    int ProductBatchId,
+    int QuantityPerBatch,
+    decimal UnitPrice,
+    decimal TotalPrice);
+
+public record IngredientResponse(
+  int IngredientId,
+  string Name,
+  decimal Quantity,
+  string Unit
+);

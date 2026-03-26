@@ -1,5 +1,4 @@
-﻿using GoldenBread.Application.Common.Mapping;
-using GoldenBread.Application.Features.CompanyCart.Dtos;
+﻿using GoldenBread.Application.Features.CompanyCart.Dtos;
 using GoldenBread.Domain.Entities;
 using static GoldenBread.Application.Features.CompanyCart.Queries.GetCart.GetCartQueryHandler;
 

@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data.Services;
 using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Features.Catalog.Mapping;
 using GoldenBread.Application.Features.ProductCatalog.Dtos;
 
 namespace GoldenBread.Application.Features.Catalog.Queires.GetCatalog;
@@ -18,7 +19,7 @@ public sealed class GetCatalogQueryHandler(
         var data = await catalogQuery.GetCatalogAsync(companyId, ct);
 
         var productDtos = data.Products
-            .Select(p => GetCatalogMapper.MapToResponse(p, companyId))
+            .Select(p => CatalogMapper.ToListItems(p, companyId))
             .ToList();
 
         var categoryDtos = data.Categories

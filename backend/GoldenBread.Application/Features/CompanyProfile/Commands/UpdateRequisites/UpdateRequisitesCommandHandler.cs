@@ -1,7 +1,8 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Exceptions.Domain;
+using GoldenBread.Application.Common.Constants;
+using GoldenBread.Application.Common.Exceptions;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Commands.UpdateRequisites;
 
@@ -17,17 +18,16 @@ public sealed class UpdateCompanyRequisitesCommandHandler(
         CancellationToken ct)
     {
         var account = await accountContext.GetAccountAsync(ct);
-        var company = account.Company ?? 
-            throw new AccountHasNoCompanyException(account.AccountId);
+        var company = account.GetCompany();
 
-        if (await companyRepository.ExistsByNameAsync(command.Name, account.AccountId, ct))
-            throw new NameDuplicateException();
+        if (await companyRepository.ExistsByNameAsync(command.Name, company.CompanyId, ct))
+            throw new DuplicateEntityException(nameof(command.Name));
 
-        if (await companyRepository.ExistsByInnAsync(command.Inn, account.AccountId, ct))
-            throw new InnDuplicateException();
+        if (await companyRepository.ExistsByInnAsync(command.Inn, company.CompanyId, ct))
+            throw new DuplicateEntityException(nameof(command.Inn));
 
-        if (await companyRepository.ExistsByOgrnAsync(command.Ogrn, account.AccountId, ct))
-            throw new OgrnDuplicateException();
+        if (await companyRepository.ExistsByOgrnAsync(command.Ogrn, company.CompanyId, ct))
+            throw new DuplicateEntityException(nameof(command.Ogrn));
 
         company.UpdateRequisites(command.Name, command.Inn, command.Ogrn);
         account.SetPendingVerification();

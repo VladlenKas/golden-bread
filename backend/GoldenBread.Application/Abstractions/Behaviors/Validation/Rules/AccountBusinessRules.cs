@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Constants;
 
 namespace GoldenBread.Application.Abstractions.Behaviors.Validation.Rules;
 
@@ -11,7 +12,7 @@ public static class AccountBusinessRules
     {
         return rule.MustAsync(async (email, ct) =>
             !await repo.ExistsByEmailAsync(email, excludeId, ct))
-            .WithMessage("Email уже занят")
+            .WithMessage(ValidationErrorConstants.Duplicate)
             .WithErrorCode("Email");
     }
 }

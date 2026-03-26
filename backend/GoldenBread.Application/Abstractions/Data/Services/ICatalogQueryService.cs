@@ -5,6 +5,7 @@ namespace GoldenBread.Application.Abstractions.Data.Services;
 public interface ICatalogQueryService
 {
     Task<CatalogData> GetCatalogAsync(int? companyId, CancellationToken ct);
+    Task<Product?> GetProductDetailAsync(int productId, CancellationToken ct);
 }
 
 public sealed record CatalogData(

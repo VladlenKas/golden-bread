@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Services;
+using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Infrastructure.Data.Services;
 
@@ -27,6 +28,21 @@ public sealed class CatalogQueryService(IGoldenBreadContext context) : ICatalogQ
             .ToListAsync(ct);
 
         return new CatalogData(products, categories);
+    }
+
+    public async Task<Product?> GetProductDetailAsync(int productId, CancellationToken ct)
+    {
+        return await context.Products
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Include(p => p.Category)
+            .Include(p => p.ProductImages)
+            .Include(p => p.ProductBatches)
+                .ThenInclude(pb => pb.CartItems)
+            .Include(p => p.Favorites)
+            .Include(p => p.Recipes)
+                .ThenInclude(r => r.Ingredient)
+            .FirstOrDefaultAsync(p => p.ProductId == productId, ct);
     }
 }
 

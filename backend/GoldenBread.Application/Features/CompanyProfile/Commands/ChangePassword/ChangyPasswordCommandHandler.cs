@@ -1,6 +1,7 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Exceptions.Auth;
+using GoldenBread.Application.Common.Constants;
+using GoldenBread.Application.Common.Exceptions;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Commands.ChangePassword;
 
@@ -17,10 +18,10 @@ public sealed class ChangePasswordCommandHandler(
         var account = await accountContext.GetAccountAsync(ct);
 
         if (!hasher.Verify(command.OldPassword, account.PasswordHash))
-            throw new PasswordsMismatchException();
+            throw new BusinessValidationException(nameof(command.OldPassword), ValidationErrorConstants.PasswordsMismatch);
 
         if (command.NewPassword == command.OldPassword)
-            throw new NewPasswordSameAsOldException();
+            throw new BusinessValidationException(nameof(command.NewPassword), ValidationErrorConstants.NewPasswordSameAsOld);
 
         account.UpdatePassword(hasher.Create(command.NewPassword));
         

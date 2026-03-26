@@ -1,6 +1,7 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Exceptions.Domain;
+using GoldenBread.Application.Common.Constants;
+using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Application.Features.CompanyCart.Commands.UpdateCartItem;
@@ -15,8 +16,7 @@ public sealed class UpdateCartItemCommandHandler(
         CancellationToken ct)
     {
         var account = await accountContext.GetAccountAsync(ct);
-        var company = account.Company ?? 
-            throw new AccountHasNoCompanyException(account.AccountId);
+        var company = account.GetCompany();
 
         var cartItem = await context.CartItems
             .AsTracking()

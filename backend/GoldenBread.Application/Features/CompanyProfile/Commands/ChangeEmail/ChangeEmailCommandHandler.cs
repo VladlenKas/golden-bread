@@ -1,8 +1,8 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Exceptions.Auth;
-using GoldenBread.Application.Common.Exceptions.Domain;
+using GoldenBread.Application.Common.Constants;
+using GoldenBread.Application.Common.Exceptions;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Commands.ChangeEmail;
 
@@ -20,10 +20,10 @@ public sealed class ChangeEmailCommandHandler(
         var account = await accountContext.GetAccountAsync(ct);
 
         if (!hasher.Verify(command.Password, account.PasswordHash)) 
-            throw new PasswordsMismatchException();
+            throw new BusinessValidationException(nameof(command.Password), ValidationErrorConstants.InvalidPassword);
 
         if (await accountRepository.ExistsByEmailAsync(command.NewEmail, account.AccountId, ct))
-            throw new EmailDuplicateException();
+            throw new DuplicateEntityException(nameof(command.NewEmail));
 
         account.UpdateEmail(command.NewEmail);
         account.ClearSession();

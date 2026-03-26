@@ -1,8 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
-using GoldenBread.Application.Common.Exceptions.Domain;
 using GoldenBread.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace GoldenBread.Infrastructure.Data.Repositories;
 

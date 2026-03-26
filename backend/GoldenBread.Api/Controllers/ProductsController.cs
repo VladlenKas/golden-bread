@@ -2,7 +2,7 @@
 using GoldenBread.Application.Features.CompanyCart.Commands.UpdateCartItem;
 using GoldenBread.Application.Features.Product.Commands.ToggleFavorite;
 using GoldenBread.Application.Features.Catalog.Queires.GetCatalog;
-using GoldenBread.Application.Features.Product.Queries.GetProductDetail;
+using GoldenBread.Application.Features.Catalog.Queires.GetProductDetail;
 
 namespace GoldenBread.Api.Controllers;
 

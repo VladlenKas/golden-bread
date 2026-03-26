@@ -1,4 +1,6 @@
-﻿using GoldenBread.Domain.Enums;
+﻿using GoldenBread.Domain.Constants;
+using GoldenBread.Domain.Enums;
+using GoldenBread.Domain.Exceptions;
 
 namespace GoldenBread.Domain.Entities;
 
@@ -6,18 +8,18 @@ public sealed class Account
 {
     public int AccountId { get; private set; }
 
-    public string Email { get; set; } = null!;
-    public string PasswordHash { get; set; } = null!;
-    public string? Session { get; set; }
-    public DateTime? SessionExpiresAt { get; set; }
-    public DateTime? DeletedAt { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public string Email { get; private set; } = null!;
+    public string PasswordHash { get; private set; } = null!;
+    public string? Session { get; private set; }
+    public DateTime? SessionExpiresAt { get; private set; }
+    public DateTime? DeletedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
-    public AccountType AccountType { get; set; }
-    public VerificationStatus VerificationStatus { get; set; }
+    public AccountType AccountType { get; private set; }
+    public VerificationStatus VerificationStatus { get; private set; }
 
-    public User? User { get; set; }
-    public Company? Company { get; set; } 
+    public User? User { get; private set; }
+    public Company? Company { get; private set; } 
 
     private Account() { }
 
@@ -38,6 +40,12 @@ public sealed class Account
             SessionExpiresAt = sessionExpiresAt,
             DeletedAt = null
         };
+    }
+
+    public Company GetCompany()
+    {
+        return Company ?? 
+            throw new DomainException(nameof(Company), ValidationErrorConstants.AccountHasNoCompany);
     }
 
     public void UpdateEmail(string email)

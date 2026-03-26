@@ -1,7 +1,7 @@
 ﻿using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Exceptions.Auth;
-using GoldenBread.Application.Common.Exceptions.Domain;
+using GoldenBread.Application.Common.Constants;
+using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -24,7 +24,7 @@ internal class CurrentAccountContext(
     public async Task<Account> GetAccountAsync(CancellationToken ct)
     {
         _accountCache ??= accountRepository.GetBySessionAsync(Session, ct);
-        return await _accountCache ?? throw new SessionExpiredException();
+        return await _accountCache ?? throw new AuthException(ValidationErrorConstants.SessionExpired);
     }
 
     /// <summary>
@@ -33,8 +33,7 @@ internal class CurrentAccountContext(
     public async Task<int> GetRequiredCompanyIdAsync(CancellationToken ct)
     {
         var account = await GetAccountAsync(ct);
-        return account.Company?.CompanyId ?? 
-            throw new AccountHasNoCompanyException(account.AccountId);
+        return account.GetCompany().CompanyId;
     }
 
     /// <summary>
@@ -46,7 +45,6 @@ internal class CurrentAccountContext(
             return null;
 
         var account = await GetAccountAsync(ct);
-        return account.Company?.CompanyId ??
-            throw new AccountHasNoCompanyException(account.AccountId);
+        return account.GetCompany().CompanyId;
     }
 }

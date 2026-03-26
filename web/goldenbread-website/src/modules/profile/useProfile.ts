@@ -80,7 +80,7 @@ export function useProfile() {
       return true;
     } catch (error: any) {
       if (error.status === 422 || 409) {
-        const fieldMapping = { Password: 'oldPassword', NewPassword: 'newPassword' }
+        const fieldMapping = { OldPassword: 'oldPassword', NewPassword: 'newPassword' }
         setErrors(mapErrors(error, fieldMapping));
       } else if (error.kind === ErrorKind.Unknown) {
         unhandledErrorToast(error.message, error.status);
@@ -96,7 +96,7 @@ export function useProfile() {
       return true;
     } catch (error: any) {
       if (error.status === 422 || 409) {  
-        const fieldMapping = { Email: 'newEmail', Password: 'password' }
+        const fieldMapping = { NewEmail: 'newEmail', Password: 'password' }
         setErrors(mapErrors(error, fieldMapping));
       } else if (error.kind === ErrorKind.Unknown) {
         unhandledErrorToast(error.message, error.status);

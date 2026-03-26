@@ -1,6 +1,5 @@
 using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
-using GoldenBread.Application.Common.Exceptions.Domain;
 using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Infrastructure.Data.Repositories;
@@ -13,7 +12,7 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
         CancellationToken ct = default)
     {
         return await context.Companies.AnyAsync(c =>
-            c.Name == name &&
+            c.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase) &&
             (!excludeId.HasValue || c.CompanyId != excludeId.Value), ct);
     }
 
@@ -37,7 +36,7 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
         if (string.IsNullOrWhiteSpace(address)) return false;
 
         return await context.Companies.AnyAsync(c =>
-            c.Address == address &&
+            (c.Address ?? "").Equals(address, StringComparison.CurrentCultureIgnoreCase) &&
             (!excludeId.HasValue || c.CompanyId != excludeId.Value), ct);
     }
 

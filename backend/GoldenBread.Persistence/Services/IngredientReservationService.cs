@@ -1,6 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
-using GoldenBread.Application.Common.Exceptions.Domain;
+using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Application.Features.CompanyOrder.Services;
 using GoldenBread.Domain.Constants;
 using GoldenBread.Domain.Entities;
@@ -96,7 +96,7 @@ public class IngredientReservationService(
             }
 
             if (remaining > 0)
-                throw new InsufficientIngredientsException(need.IngredientId);
+                throw new InvalidOperationException();
         }
 
         await reservationRepository.CreateRangeAsync(reservations, ct);

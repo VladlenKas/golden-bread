@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Exceptions.Domain;
+using GoldenBread.Application.Common.Constants;
+using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Application.Features.CompanyProfile.Dtos;
 
 namespace GoldenBread.Application.Features.CompanyProfile.Queries.GetProfile;
@@ -14,8 +15,7 @@ public sealed class GetProfileQueryHandler(
     {
         var account = await accountContext.GetAccountAsync(ct);
 
-        var company = account.Company ??
-            throw new AccountHasNoCompanyException(account.AccountId);
+        var company = account.GetCompany();
 
         return new ProfileResponse(
             account.Email,

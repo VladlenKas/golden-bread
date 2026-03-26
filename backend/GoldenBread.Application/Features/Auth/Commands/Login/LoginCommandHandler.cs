@@ -1,7 +1,8 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Exceptions.Auth;
+using GoldenBread.Application.Common.Constants;
+using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Application.Contracts;
 using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Domain.Enums;
@@ -24,7 +25,7 @@ public sealed class LoginCompanyCommandHandler(
         if (account == null ||
             !HasAccess(account.AccountType, command.AccountType) ||
             !passwordHasher.Verify(command.Password, account.PasswordHash)) 
-            throw new InvalidCredentialsException();
+            throw new AuthException(ValidationErrorConstants.InvalidCredentials);
 
         account.SetSession();
 
