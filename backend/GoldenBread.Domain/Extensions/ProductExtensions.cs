@@ -6,23 +6,22 @@ public static class ProductExtensions
 {
     public static decimal GetTotalCostInCart(this Product product, int? companyId)
     {
-        if (companyId == 0) 
-            return 0m;
+        if (companyId is null or 0) return 0m;
 
-        return product.ProductBatches
-            .SelectMany(pb => pb.CartItems)
-            .Where(ci => ci.CompanyId == companyId)
-            .Sum(ci => ci.TotalCost);
+        return GetCartItems(product, companyId).Sum(ci => ci.TotalCost);
     }
 
     public static int GetQuantityInCart(this Product product, int? companyId)
     {
-        if (companyId == null) 
-            return 0;
+        if (companyId is null or 0) return 0;
 
-        return product.ProductBatches
-            .SelectMany(pb => pb.CartItems)
-            .Where(ci => ci.CompanyId == companyId)
-            .Sum(ci => ci.Quantity);
+        return GetCartItems(product, companyId).Sum(ci => ci.Quantity);
+    }
+
+    private static IEnumerable<CartItem> GetCartItems(Product product, int? companyId)
+    {
+        return product.ProductBatches?
+            .SelectMany(pb => pb.CartItems ?? Enumerable.Empty<CartItem>())
+            .Where(ci => ci.CompanyId == companyId) ?? Enumerable.Empty<CartItem>();
     }
 }

@@ -2,4 +2,4 @@
 global using FluentValidation;
 global using Microsoft.EntityFrameworkCore;
 global using AutoMapper;
-global using Entities = GoldenBread.Domain.Entities;
+global using DbEntities = GoldenBread.Domain.Entities;

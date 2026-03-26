@@ -1,6 +1,7 @@
-﻿using GoldenBread.Application.Abstractions.Repositories;
+﻿using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Common.Exceptions.Auth;
+using GoldenBread.Application.Common.Exceptions.Domain;
 using GoldenBread.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -15,7 +16,7 @@ internal class CurrentAccountContext(
 
     private string? Session =>
         httpContextAccessor.HttpContext?.User.FindFirst("session")?.Value
-        ?? httpContextAccessor.HttpContext?.Request.Headers["Desktop-Session-Id"].FirstOrDefault();
+        ?? httpContextAccessor.HttpContext?.Request.Headers["X-Desktop-Session"].FirstOrDefault();
 
     public bool HasCookie =>
         httpContextAccessor.HttpContext?.Request.Cookies.ContainsKey("gb.session") == true;
@@ -32,7 +33,8 @@ internal class CurrentAccountContext(
     public async Task<int> GetRequiredCompanyIdAsync(CancellationToken ct)
     {
         var account = await GetAccountAsync(ct);
-        return account.Company?.CompanyId ?? throw new InvalidOperationException();
+        return account.Company?.CompanyId ?? 
+            throw new AccountHasNoCompanyException(account.AccountId);
     }
 
     /// <summary>
@@ -44,6 +46,7 @@ internal class CurrentAccountContext(
             return null;
 
         var account = await GetAccountAsync(ct);
-        return account.Company?.CompanyId ?? throw new InvalidOperationException();
+        return account.Company?.CompanyId ??
+            throw new AccountHasNoCompanyException(account.AccountId);
     }
 }

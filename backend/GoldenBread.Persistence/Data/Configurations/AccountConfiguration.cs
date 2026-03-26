@@ -19,19 +19,11 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         builder.Navigation(e => e.User).AutoInclude();
         builder.Navigation(e => e.Company).AutoInclude();
 
-        builder.Property(e => e.Email)
-            .HasMaxLength(255)
-            .IsRequired();
-
-        builder.Property(e => e.PasswordHash)
-            .HasMaxLength(255)
-            .IsRequired();
-
-        builder.Property(e => e.Session)
-            .HasMaxLength(512);
-
+        builder.Property(e => e.Email).HasMaxLength(255).IsRequired();
+        builder.Property(e => e.PasswordHash).HasMaxLength(255).IsRequired();
+        builder.Property(e => e.Session).HasMaxLength(512);
         builder.Property(a => a.CreatedAt)
-            .HasDefaultValueSql("now()") 
-            .ValueGeneratedOnAdd(); ;
+            .HasDefaultValueSql("now()")
+            .ValueGeneratedOnAdd();
     }
 }

@@ -1,13 +1,9 @@
-﻿using GoldenBread.Domain.Enums;
+﻿namespace GoldenBread.Application.Features.CompanyProfile.Dtos;
 
-namespace GoldenBread.Application.Features.CompanyProfile.Dtos;
-
-public sealed class ProfileResponse
-{
-    public string Email { get; set; } = null!;
-    public string Name { get; set; } = null!;
-    public string Inn { get; set; } = null!;
-    public string Ogrn { get; set; } = null!;
-    public string? Phone { get; set; }
-    public string? Address { get; set; }
-}
+public sealed record ProfileResponse(
+    string Email,
+    string Name,
+    string Inn,
+    string Ogrn,
+    string? Phone,
+    string? Address);

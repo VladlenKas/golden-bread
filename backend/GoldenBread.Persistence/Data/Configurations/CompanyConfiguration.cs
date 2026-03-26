@@ -19,6 +19,8 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
             .HasForeignKey<Company>(e => e.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Navigation(e => e.Account).AutoInclude();
+
         builder.Property(e => e.AccountId).IsRequired();
         builder.Property(e => e.Name).HasMaxLength(150).IsRequired();
         builder.Property(e => e.Inn).HasMaxLength(10).IsRequired();

@@ -127,7 +127,7 @@ const {
                   @click="selectedCategory = category.productCategoryId">
                   <span class="w-3 h-3 rounded-full" :style="{ backgroundColor: '#' + category.color }" />
                   <span class="flex-1 text-left">{{ category.name }}</span>
-                  <Badge variant="secondary">{{ category.productCount }}</Badge>
+                  <Badge variant="secondary">{{ category.productsCount }}</Badge>
                 </Button>
               </div>
             </CardContent>

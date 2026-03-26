@@ -1,5 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Behaviors.Validation.Rules;
-using GoldenBread.Application.Abstractions.Repositories;
+using GoldenBread.Application.Abstractions.Data.Repositories;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 

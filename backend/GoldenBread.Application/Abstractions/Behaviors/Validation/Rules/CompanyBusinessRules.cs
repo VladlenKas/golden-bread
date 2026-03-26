@@ -1,4 +1,4 @@
-using GoldenBread.Application.Abstractions.Repositories;
+using GoldenBread.Application.Abstractions.Data.Repositories;
 
 namespace GoldenBread.Application.Abstractions.Behaviors.Validation.Rules;
 

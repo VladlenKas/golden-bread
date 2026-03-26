@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(mkdir -p \"backend/GoldenBread.Application/Features/Product/Queries/GetProductDetail\")",
+      "Bash(mkdir -p \"backend/GoldenBread.Application/Features/Product/Dtos\")"
     ]
   }
 }

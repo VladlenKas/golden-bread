@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Abstractions.Repositories;
+using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Abstractions.Data.Services;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.CompanyCart.Services;
 using GoldenBread.Application.Features.CompanyOrder.Services;
@@ -8,6 +9,7 @@ using GoldenBread.Domain.Interfaces.Services;
 using GoldenBread.Domain.Services;
 using GoldenBread.Infrastructure.Data;
 using GoldenBread.Infrastructure.Data.Repositories;
+using GoldenBread.Infrastructure.Data.Services;
 using GoldenBread.Infrastructure.Jobs;
 using GoldenBread.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
@@ -36,30 +38,21 @@ public static class DependencyInjection
             }).UseSnakeCaseNamingConvention();
         });
 
-        // All Services
-        services.AddCommonServices();
-        services.AddWebServices();
-
-        return services;
-    }
-
-    private static void AddWebServices(this IServiceCollection services)
-    {
-        services.AddScoped<ICurrentAccountContext, CurrentAccountContext>();
-        services.AddScoped<ICookieService, CookieService>();
-        services.AddScoped<IDeliveryDateCalculator, DeliveryDateCalculator>();
-    }
-
-    private static void AddCommonServices(this IServiceCollection services)
-    {
+        // EF
         services.AddScoped<IGoldenBreadContext, GoldenBreadContext>();
         services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 
+        // Infra
         services.AddScoped<IFileStorage, FileStorage>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ICurrentAccountContext, CurrentAccountContext>();
+        services.AddScoped<ICookieService, CookieService>();
 
+        // Repositories
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOrderItemRepository, OrderItemRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
@@ -68,9 +61,14 @@ public static class DependencyInjection
         services.AddScoped<IIngredientReservationRepository, IngredientReservationRepository>();
         services.AddScoped<IOrderTariffRepository, OrderTariffRepository>();
 
+        // Data Services
+        services.AddScoped<ICatalogQueryService, CatalogQueryService>();
         services.AddScoped<IIngredientReservationService, IngredientReservationService>();
         services.AddScoped<IEmployeeTaskDistributor, EmployeeTaskDistributor>();
         services.AddScoped<IProductionCalculator, ProductionCalculator>();
         services.AddScoped<IWorkScheduleCalculator, WorkScheduleCalculator>();
+        services.AddScoped<IDeliveryDateCalculator, DeliveryDateCalculator>();
+
+        return services;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using GoldenBread.Domain.Entities;
 
-namespace GoldenBread.Application.Abstractions.Repositories;
+namespace GoldenBread.Application.Abstractions.Data.Repositories;
 
 public interface IOrderRepository
 {

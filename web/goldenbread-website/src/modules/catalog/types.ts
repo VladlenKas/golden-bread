@@ -23,7 +23,7 @@ export interface Category {
   productCategoryId: number; 
   name: string;
   color: string;
-  productCount: number;
+  productsCount: number;
 }
 
 export interface ProductDetail {

@@ -1,9 +1,9 @@
-﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Features.ProductCatalog.Dtos;
+using GoldenBread.Application.Features.Product.Dtos;
 using GoldenBread.Domain.Extensions;
 
-namespace GoldenBread.Application.Features.ProductCatalog.Queires.GetProductDetail;
+namespace GoldenBread.Application.Features.Product.Queries.GetProductDetail;
 
 public sealed class GetProductDetailQueryHandler(
     IGoldenBreadContext context,
@@ -11,7 +11,7 @@ public sealed class GetProductDetailQueryHandler(
     IRequestHandler<GetProductDetailQuery, ProductDetailResponse>
 {
     public async Task<ProductDetailResponse> Handle(
-        GetProductDetailQuery query, 
+        GetProductDetailQuery query,
         CancellationToken ct)
     {
         int? companyId = await accountContext.GetCompanyIdAsync(ct);

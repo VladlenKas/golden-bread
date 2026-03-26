@@ -1,5 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Abstractions.Repositories;
+using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Common.Exceptions.Domain;
 using GoldenBread.Application.Features.CompanyOrder.Services;
 using GoldenBread.Domain.Constants;

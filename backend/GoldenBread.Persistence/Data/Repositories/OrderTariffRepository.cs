@@ -1,5 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Abstractions.Repositories;
+using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Infrastructure.Data.Repositories;

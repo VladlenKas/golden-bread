@@ -1,4 +1,4 @@
-﻿using GoldenBread.Application.Abstractions.Repositories;
+﻿using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.CompanyOrder.Dtos;
 using GoldenBread.Application.Features.CompanyOrder.Services;
