@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 
-public sealed record class RegisterCompanyCommand(
+public sealed record RegisterCompanyCommand(
     string Email,
     string Password,
     string Name,

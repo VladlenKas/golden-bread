@@ -1,4 +1,4 @@
-﻿namespace GoldenBread.Application.Features.ProductCatalog.Dtos;
+﻿namespace GoldenBread.Application.Features.Catalog.Dtos;
 
 public sealed record ProductListItemResponse(
     // Основные данные

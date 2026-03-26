@@ -1,6 +1,5 @@
-﻿using GoldenBread.Application.Features.ProductCatalog.Dtos;
+﻿using GoldenBread.Application.Features.Catalog.Dtos;
 
 namespace GoldenBread.Application.Features.Catalog.Queires.GetCatalog;
 
-public sealed record class GetCatalogQuery :
-    IRequest<CatalogResponse>;
+public sealed record GetCatalogQuery : IRequest<CatalogResponse>;

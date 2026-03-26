@@ -1,5 +1,5 @@
-﻿using GoldenBread.Application.Features.CompanyCart.Queries.GetCart;
-using GoldenBread.Application.Features.CompanyOrder.Commands.CreateOrder;
+﻿using GoldenBread.Application.Features.CompanyCart.Commands.UpdateCartItem;
+using GoldenBread.Application.Features.CompanyCart.Queries.GetCart;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GoldenBread.Api.Controllers;
@@ -8,37 +8,21 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class CartController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("get-cart")]
+    [HttpPost]
     [Authorize]
     public async Task<IActionResult> GetCart([FromBody] GetCartQuery query)
     {
         return Ok(await mediator.Send(query));
     }
 
-    [HttpPost("create-order")]
+    [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand request)
+    public async Task<IActionResult> UpdateItem(
+        int id,
+        [FromBody] UpdateCartItemCommand command)
     {
-        var command = new CreateOrderCommand(
-            request.DesiredDeliveryDate,
-            request.TariffId);
-
-        var result = await mediator.Send(command);
-
-        if (result.InsufficientIngredients)
-        {
-            return Ok(new
-            {
-                success = false,
-                insufficientIngredients = true,
-            });
-        }
-
-        return Ok(new
-        {
-            success = true,
-            orderId = result.OrderId
-        });
+        command = command with { ProductId = id };
+        return Ok(await mediator.Send(command));
     }
 }
     

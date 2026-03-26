@@ -2,5 +2,4 @@
 
 namespace GoldenBread.Application.Features.CompanyProfile.Queries.GetProfile;
 
-public sealed record class GetProfileQuery :
-    IRequest<ProfileResponse>;
+public sealed record GetProfileQuery : IRequest<ProfileResponse>;

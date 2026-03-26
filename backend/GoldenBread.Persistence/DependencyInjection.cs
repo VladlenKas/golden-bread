@@ -60,6 +60,7 @@ public static class DependencyInjection
         services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
         services.AddScoped<IIngredientReservationRepository, IngredientReservationRepository>();
         services.AddScoped<IOrderTariffRepository, OrderTariffRepository>();
+        services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 
         // Data Services
         services.AddScoped<ICatalogQueryService, CatalogQueryService>();

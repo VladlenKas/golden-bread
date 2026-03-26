@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Application.Features.Catalog.Dtos;
-using GoldenBread.Application.Features.ProductCatalog.Dtos;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Extensions;
 
@@ -72,8 +71,8 @@ public class CatalogMapper
     /// Возвращает партию продукта, выбранную для текущей компании,
     /// которая уже есть в корзине, либо (если нет) партию с наименьшим объёмом поставки.
     /// </summary>
-    /// <param name="batches">Партии товара</param>
-    /// <param name="companyId">Текущий пользователь (если авторизован)</param>
+    /// <param name="batches"></param>
+    /// <param name="companyId"></param>
     /// <returns>Null, если партий нет</returns>
     private static ProductBatch? SelectBatch(
         IEnumerable<ProductBatch> batches,

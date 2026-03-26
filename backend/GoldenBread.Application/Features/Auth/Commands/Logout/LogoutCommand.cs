@@ -1,3 +1,3 @@
 ﻿namespace GoldenBread.Application.Features.Auth.Commands.Logout;
 
-public sealed record class LogoutCommand : IRequest<Unit>;
+public sealed record LogoutCommand : IRequest<Unit>;

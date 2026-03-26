@@ -3,7 +3,7 @@ using GoldenBread.Application.Features.Auth.Dtos;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;
 
-public sealed record class LoginCommand(
+public sealed record LoginCommand(
     string Email,
     string Password,
     PortalType AccountType) : IRequest<AuthResponse>;
