@@ -25,15 +25,14 @@ public class Product
 
     public Product() { }
 
+    #warning Добавить параметры для создания
     public static Product Create(
-    int productId,
     string name,
     int productionTimeMinutes,
     decimal costPrice = 0)
     {
         return new Product
         {
-            ProductId = productId,
             Name = name,
             ProductionTimeMinutes = productionTimeMinutes,
             CostPrice = costPrice,

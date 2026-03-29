@@ -3,6 +3,7 @@
 public sealed class Company
 {
     public int CompanyId { get; private set; }
+
     public int? AccountId { get; private set; }
 
     public string Name { get; set; } = null!;

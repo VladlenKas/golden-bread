@@ -1,17 +1,18 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
-using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Application.Features.CompanyOrder.Services;
 using GoldenBread.Domain.Constants;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
 
-namespace GoldenBread.Infrastructure.Services;
+namespace GoldenBread.Infrastructure.Data.Services;
 
 public class IngredientReservationService(
-    IIngredientReservationRepository reservationRepository,
+    IIngredientReservationRepository ingredientReservationRepository,
     IGoldenBreadContext context) : IIngredientReservationService
 {
+    private record IngredientNeed(int IngredientId, string Name, decimal TotalNeeded);
+
     /// <summary>
     /// Проверка ингредиентов для формирования заказа
     /// (без резервирования продукции)
@@ -65,7 +66,7 @@ public class IngredientReservationService(
 
         // 2. Получаем все доступные партии для резервирования ингредиентов
         var ingredientIds = ingredientNeeds.Select(n => n.IngredientId).ToList();
-        var asOfDate = DateOnly.FromDateTime(DateTime.UtcNow + BakeryConstants.ReservationTimeout);
+        var asOfDate = DateOnly.FromDateTime(DateTime.UtcNow + WorkScheduleConstants.ReservationTimeout);
 
         var allBatches = await GetAvailableQuery(ingredientIds, asOfDate)
             .OrderBy(ib => ib.IngredientId)
@@ -99,12 +100,12 @@ public class IngredientReservationService(
                 throw new InvalidOperationException();
         }
 
-        await reservationRepository.CreateRangeAsync(reservations, ct);
+        await ingredientReservationRepository.CreateRangeAsync(reservations, ct);
     }
 
     public async Task ConfirmReservationsAsync(int orderId, CancellationToken ct = default)
     {
-        var reservations = await reservationRepository.GetByOrderIdAsync(orderId, ct);
+        var reservations = await ingredientReservationRepository.GetByOrderIdAsync(orderId, ct);
 
         foreach (var reservation in reservations)
         {
@@ -113,12 +114,12 @@ public class IngredientReservationService(
         }
 
         if (reservations.Any())
-            await reservationRepository.UpdateRangeAsync(reservations, ct);
+            await ingredientReservationRepository.UpdateRangeAsync(reservations, ct);
     }
 
     public async Task CancelReservationsAsync(int orderId, CancellationToken ct = default)
     {
-        var reservations = await reservationRepository.GetByOrderIdAsync(orderId, ct);
+        var reservations = await ingredientReservationRepository.GetByOrderIdAsync(orderId, ct);
 
         foreach (var reservation in reservations)
         {
@@ -127,10 +128,8 @@ public class IngredientReservationService(
         }
 
         if (reservations.Any())
-            await reservationRepository.UpdateRangeAsync(reservations, ct);
+            await ingredientReservationRepository.UpdateRangeAsync(reservations, ct);
     }
-
-    private record IngredientNeed(int IngredientId, string Name, decimal TotalNeeded);
 
     private async Task<List<IngredientNeed>> CalculateIngredientNeedsAsync(
         IReadOnlyList<OrderItem> orderItems,
@@ -165,7 +164,7 @@ public class IngredientReservationService(
                 {
                     r.IngredientId,
                     r.Name,
-                    Needed = r.Quantity * oi.QuantityPerBatch * oi.UnitsInBatch
+                    Needed = r.Quantity * oi.Quantity * oi.UnitsPerBatch
                 }))
             .GroupBy(x => x.IngredientId)
             .Select(g => new IngredientNeed(

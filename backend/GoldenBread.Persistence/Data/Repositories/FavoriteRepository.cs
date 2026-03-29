@@ -17,7 +17,5 @@ public sealed class FavoriteRepository(IGoldenBreadContext context) : IFavoriteR
             context.Favorites.Add(Favorite.Create(companyId, productId));
         else
             context.Favorites.Remove(favorite);
-
-        await context.SaveChangesAsync(ct);
     }
 }

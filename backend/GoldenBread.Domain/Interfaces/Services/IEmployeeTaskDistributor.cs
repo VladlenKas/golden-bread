@@ -8,7 +8,8 @@ public interface IEmployeeTaskDistributor
         OrderItem orderItem,
         IReadOnlyList<Employee> employees,
         Dictionary<int, DateTime> employeeAvailableFrom,
-        decimal freeEmployeesPercent);
+        decimal freeEmployeesPercent,
+        DateTime currentTime);
 }
 
 public record EmployeeTaskAssignment(

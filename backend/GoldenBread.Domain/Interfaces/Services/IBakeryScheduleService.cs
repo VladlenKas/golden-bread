@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Domain.Interfaces.Services;
 
-public interface IWorkScheduleCalculator
+public interface IBakeryScheduleService
 {
     DateTime GetWorkStart(DateTime date);
     DateTime GetWorkEnd(DateTime date);

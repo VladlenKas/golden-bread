@@ -39,7 +39,7 @@ public class GetCartQueryHandler(
                 Name = ci.Batch.Product.Name,
                 ProductionTimeMinutes = ci.Batch.Product.ProductionTimeMinutes,
                 ProductBatchId = ci.Batch.ProductBatchId,        
-                QuantityPerBatch = ci.Batch.QuantityPerBatch,    
+                QuantityPerBatch = ci.Batch.QuantityUnits,    
                 ImageUrl = ci.Batch.Product.ProductImages
                     .Select(pi => pi.ImagePath)
                     .FirstOrDefault(),

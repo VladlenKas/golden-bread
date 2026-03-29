@@ -31,7 +31,7 @@ public class ProductionCalculator : IProductionCalculator
 
         // 2. Рассчитываем общую трудоёмкость в минутах
         int totalProductionMinutes = cartItems.Sum(ci =>
-            ci.Quantity * ci.Batch.Product.ProductionTimeMinutes * ci.Batch.QuantityPerBatch);
+            ci.Quantity * ci.Batch.Product.ProductionTimeMinutes * ci.Batch.QuantityUnits);
 
         // 3. Определяем период производства
         int totalWorkDaysNeeded = (int)Math.Ceiling((double)totalProductionMinutes / WorkDayMinutes);

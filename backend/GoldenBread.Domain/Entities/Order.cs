@@ -49,5 +49,4 @@ public class Order
         CanceledAt = DateTime.UtcNow;
         CancelReason = reason;
     }
-
 }

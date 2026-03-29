@@ -1,4 +1,6 @@
-﻿namespace GoldenBread.Domain.Entities;
+﻿using GoldenBread.Domain.Enums;
+
+namespace GoldenBread.Domain.Entities;
 
 public class OrderItem
 {
@@ -7,53 +9,34 @@ public class OrderItem
     public int OrderId { get; private set; }
     public int? BatchId { get; private set; }
 
-    public int QuantityPerBatch { get; set; }
-    public int UnitsInBatch { get; set; } // Старое количество продукций в партии. Просто для информации 
-    public decimal UnitPriceAtOrder { get; set; }  // Старая цена продукции. Просто для информации 
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }  // Цена продукции для истории
+    public int UnitsPerBatch { get; set; } // Кол-во продукций в партии для истории
 
     public ProductBatch Batch { get; set; } = null!;
     public Order Order { get; set; } = null!;
+
+    public OrderStatus Status { get; set; }
 
     public ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
 
     public OrderItem() { }
 
+    #warning Удалить присваивание собственного id
     public static OrderItem Create(
-        int orderItemId,
         int orderId,
         int batchId,
         int quantity,
-        int unitsInBatch,
-        decimal unitPriceAtOrder)
+        int unitsPerBatch,
+        decimal unitPrice)
     {
         return new OrderItem
         {
-            OrderItemId = orderItemId,
             OrderId = orderId,
             BatchId = batchId,
-            QuantityPerBatch = quantity,
-            UnitsInBatch = unitsInBatch,
-            UnitPriceAtOrder = unitPriceAtOrder
+            Quantity = quantity,
+            UnitsPerBatch = unitsPerBatch,
+            UnitPrice = unitPrice
         };
-    }
-
-    public static OrderItem Create(
-        int orderItemId,
-        int orderId,
-        ProductBatch batch,    
-        int quantity,
-        int unitsInBatch,
-        decimal unitPriceAtOrder)
-    {
-        var item = Create(
-            orderItemId, 
-            orderId, 
-            batch.ProductBatchId, 
-            quantity, 
-            unitsInBatch, 
-            unitPriceAtOrder);
-
-        item.Batch = batch;
-        return item;
     }
 }

@@ -7,7 +7,7 @@ public class ProductBatch
     public int ProductId { get; private set; }
 
     public int MarkupPercent { get; set; }
-    public int QuantityPerBatch { get; set; }
+    public int QuantityUnits { get; set; }
 
     public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
@@ -17,20 +17,17 @@ public class ProductBatch
     public ProductBatch() { }
 
     public decimal UnitPrice => Product.CostPrice * (1 + MarkupPercent / 100m);
-    public decimal TotalPrice => UnitPrice * QuantityPerBatch;
+    public decimal TotalPrice => UnitPrice * QuantityUnits;
 
     public static ProductBatch Create(
-    int productBatchId, 
-    Product product,
-    int quantityPerBatch,
+    int productId,
+    int quantityUnits,
     int markupPercent)
     {
         return new ProductBatch
         {
-            ProductBatchId = productBatchId,
-            Product = product,
-            ProductId = product.ProductId,
-            QuantityPerBatch = quantityPerBatch,
+            ProductId = productId,
+            QuantityUnits = quantityUnits,
             MarkupPercent = markupPercent
         };
     }

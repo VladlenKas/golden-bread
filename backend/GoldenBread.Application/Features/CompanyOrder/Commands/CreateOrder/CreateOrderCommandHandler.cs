@@ -19,7 +19,7 @@ public class CreateOrderCommandHandler(
     IProductionCalculator productionCalculator,
     IIngredientReservationService ingredientService,
     IEmployeeTaskDistributor taskDistributor,
-    IWorkScheduleCalculator workScheduleCalculator) : 
+    IBakeryScheduleService workScheduleCalculator) : 
     IRequestHandler<CreateOrderCommand, CreateOrderResult>
 {
     public async Task<CreateOrderResult> Handle(
@@ -32,7 +32,7 @@ public class CreateOrderCommandHandler(
 
         // 2. Создать OrderItems для проверки ингредиентов
         var orderItems = cartItems.Select(ci => OrderItem
-            .Create(0, 0, ci.BatchId, ci.Quantity, ci.Batch.QuantityPerBatch, ci.Batch.UnitPrice))
+            .Create(0, ci.BatchId, ci.Quantity, ci.Batch.QuantityUnits, ci.Batch.UnitPrice))
             .ToList();
 
         // 3. Проверить ингредиенты (без резервирования)
@@ -72,7 +72,7 @@ public class CreateOrderCommandHandler(
 
         // 8. Привязать OrderItems к заказу и сохранить
         orderItems = cartItems.Select(ci => OrderItem.Create(
-            0, order.OrderId, ci.BatchId, ci.Quantity, ci.Batch.QuantityPerBatch, ci.Batch.UnitPrice))
+            order.OrderId, ci.BatchId, ci.Quantity, ci.Batch.QuantityUnits, ci.Batch.UnitPrice))
             .ToList();
 
         await orderItemRepository.CreateRangeAsync(orderItems, ct);
@@ -95,7 +95,8 @@ public class CreateOrderCommandHandler(
                 orderItem,
                 plan.SelectedEmployees,
                 employeeAvailableFrom,
-                tariff.FreeEmployeesPercent);
+                tariff.FreeEmployeesPercent,
+                DateTime.UtcNow);
 
             allAssignments.AddRange(assignments);
         }

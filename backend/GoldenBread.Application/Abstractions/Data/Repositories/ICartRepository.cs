@@ -5,10 +5,12 @@ namespace GoldenBread.Application.Abstractions.Data.Repositories;
 public interface ICartRepository
 {
     Task<IReadOnlyList<CartItem>> GetByCompanyIdAsync(
-        int companyId, 
+        int companyId,
         CancellationToken ct = default);
 
     Task ClearAsync(
-        int companyId, 
+        int companyId,
         CancellationToken ct = default);
+
+    Task Get(CancellationToken ct = default);
 }

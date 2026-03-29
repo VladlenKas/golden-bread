@@ -20,7 +20,6 @@ public class IngredientBatch
     public IngredientBatch() { }
 
     public static IngredientBatch Create(
-        int ingredientBatchId,
         int ingredientId,
         int purchasedQuantity,
         decimal remainingQuantity,
@@ -30,7 +29,6 @@ public class IngredientBatch
     {
         return new IngredientBatch
         {
-            IngredientBatchId = ingredientBatchId,
             IngredientId = ingredientId,
             PurchasedQuantity = purchasedQuantity,
             RemainingQuantity = remainingQuantity,
@@ -38,27 +36,5 @@ public class IngredientBatch
             ExpiryDate = expiryDate,
             Status = status
         };
-    }
-
-    public static IngredientBatch Create(
-        int ingredientBatchId,
-        Ingredient ingredient,
-        int purchasedQuantity,
-        decimal remainingQuantity,
-        DateOnly deliveryDate,
-        DateOnly expiryDate,
-        IngredientBatchStatus status)
-    {
-        var item = Create(
-            ingredientBatchId,
-            ingredient.IngredientId,
-            purchasedQuantity,
-            remainingQuantity,
-            deliveryDate,
-            expiryDate,
-            status);
-
-        item.Ingredient = ingredient;
-        return item;
     }
 }

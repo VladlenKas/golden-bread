@@ -1,4 +1,6 @@
-﻿namespace GoldenBread.Domain.Entities;
+﻿using GoldenBread.Domain.Enums;
+
+namespace GoldenBread.Domain.Entities;
 
 public class EmployeeTask
 {
@@ -15,6 +17,8 @@ public class EmployeeTask
 
     public Employee Employee { get; set; } = null!;
     public OrderItem OrderItem { get; set; } = null!;
+
+    public OrderStatus Status { get; set; }
 
     public EmployeeTask() { }
 

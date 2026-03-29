@@ -1,9 +1,11 @@
+using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Services;
 
 namespace GoldenBread.Application.Features.Favorites.Commands.ToggleFavorite;
 
 public sealed class ToggleFavoriteCommandHandler(
+    IUnitOfWork unitOfWork,
     IFavoriteRepository favoriteRepository,
     ICurrentAccountContext accountContext) :
     IRequestHandler<ToggleFavoriteCommand, Unit>
@@ -15,6 +17,7 @@ public sealed class ToggleFavoriteCommandHandler(
         int companyId = await accountContext.GetRequiredCompanyIdAsync(ct);
 
         await favoriteRepository.ToggleAsync(command.ProductId, companyId, ct);
+        await unitOfWork.SaveChangesAsync(ct);
 
         return Unit.Value;
     }

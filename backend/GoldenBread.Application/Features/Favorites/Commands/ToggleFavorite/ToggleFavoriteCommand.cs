@@ -1,4 +1,4 @@
 namespace GoldenBread.Application.Features.Favorites.Commands.ToggleFavorite;
 
-public sealed record class ToggleFavoriteCommand(int ProductId) 
+public sealed record ToggleFavoriteCommand(int ProductId) 
     : IRequest<Unit>;

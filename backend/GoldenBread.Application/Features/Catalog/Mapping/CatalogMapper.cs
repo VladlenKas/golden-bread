@@ -21,7 +21,7 @@ public class CatalogMapper
             CategoryColor: p.Category.Color,
 
             ProductBatchId: batch?.ProductBatchId ?? 0,
-            QuantityPerBatch: batch?.QuantityPerBatch ?? 0,
+            QuantityPerBatch: batch?.QuantityUnits ?? 0,
 
             SalePrice: batch?.UnitPrice ?? 0,
             ImageUrl: p.ProductImages.FirstOrDefault()?.ImagePath,
@@ -50,7 +50,7 @@ public class CatalogMapper
             CurrentBatchId: currentBatch?.ProductBatchId ?? 0,
             AvailableBatches: p.ProductBatches.Select(pb => new ProductBatchResponse(
                 ProductBatchId: pb.ProductBatchId,
-                QuantityPerBatch: pb.QuantityPerBatch,
+                QuantityPerBatch: pb.QuantityUnits,
                 UnitPrice: pb.UnitPrice,
                 TotalPrice: pb.TotalPrice)).ToList(),
 
@@ -85,7 +85,7 @@ public class CatalogMapper
                 .Any(ci => ci.CompanyId == companyId));
 
         return cartBatch ?? batchList
-            .OrderBy(pb => pb.QuantityPerBatch)
+            .OrderBy(pb => pb.QuantityUnits)
             .FirstOrDefault();
     }
 }
