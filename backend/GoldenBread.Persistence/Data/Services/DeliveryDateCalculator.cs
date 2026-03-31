@@ -8,7 +8,7 @@ using GoldenBread.Domain.Interfaces.Services;
 namespace GoldenBread.Infrastructure.Data.Services;
 
 public class DeliveryDateCalculator(
-    IBakeryScheduleService workSchedule,
+    IWorkScheduleService workSchedule,
     IGoldenBreadContext context) 
 {
     public DateOnly CalculateRealisticDate(

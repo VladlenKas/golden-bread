@@ -12,12 +12,12 @@ namespace GoldenBread.Infrastructure.Tests;
 
 public class EmployeeTaskDistributorTests
 {
-    private readonly Mock<IBakeryScheduleService> _scheduleMock;
+    private readonly Mock<IWorkScheduleService> _scheduleMock;
     private readonly EmployeeTaskDistributor _distributor;
 
     public EmployeeTaskDistributorTests()
     {
-        _scheduleMock = new Mock<IBakeryScheduleService>();
+        _scheduleMock = new Mock<IWorkScheduleService>();
         _distributor = new EmployeeTaskDistributor(_scheduleMock.Object);
     }
 

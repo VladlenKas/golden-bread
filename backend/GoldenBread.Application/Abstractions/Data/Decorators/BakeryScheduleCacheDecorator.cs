@@ -3,8 +3,8 @@ using GoldenBread.Domain.Interfaces.Services;
 
 namespace GoldenBread.Application.Abstractions.Data.Decorators;
 
-public class BakeryScheduleCacheDecorator(IBakeryScheduleService inner) : 
-    IBakeryScheduleService
+public class BakeryScheduleCacheDecorator(IWorkScheduleService inner) : 
+    IWorkScheduleService
 {
     private readonly Dictionary<DateTime, bool> _workDayCache = new();
     private readonly Dictionary<(DateTime, int), DateTime> _addWorkDaysCache = new();

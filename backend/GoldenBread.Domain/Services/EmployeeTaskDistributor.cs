@@ -4,7 +4,7 @@ using GoldenBread.Domain.Interfaces.Services;
 
 namespace GoldenBread.Domain.Services;
 
-public class EmployeeTaskDistributor(IBakeryScheduleService scheduleCalculator) : IEmployeeTaskDistributor
+public class EmployeeTaskDistributor(IWorkScheduleService scheduleCalculator) : IEmployeeTaskDistributor
 {
     public IReadOnlyList<EmployeeTaskAssignment> Distribute(
         OrderItem orderItem,

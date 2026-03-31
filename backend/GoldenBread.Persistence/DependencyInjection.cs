@@ -63,7 +63,7 @@ public static class DependencyInjection
         services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 
         // Data Services
-        services.AddScoped<IBakeryScheduleService, WorkScheduleService>();
+        services.AddScoped<IWorkScheduleService, WorkScheduleService>();
         services.AddScoped<ICatalogQueryService, CatalogQueryService>();
         services.AddScoped<IIngredientReservationService, IngredientReservationService>();
         services.AddScoped<IEmployeeTaskDistributor, EmployeeTaskDistributor>();
@@ -71,7 +71,7 @@ public static class DependencyInjection
         //services.AddScoped<IDeliveryDateCalculator, DeliveryDateCalculator>();
 
         // Decorators
-        services.Decorate<IBakeryScheduleService, BakeryScheduleCacheDecorator>(); ;
+        services.Decorate<IWorkScheduleService, BakeryScheduleCacheDecorator>(); ;
 
         return services;
     }

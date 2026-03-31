@@ -5,7 +5,7 @@ using GoldenBread.Domain.Interfaces.Services;
 
 namespace GoldenBread.Domain.Services;
 
-public class WorkScheduleService : IBakeryScheduleService
+public class WorkScheduleService : IWorkScheduleService
 {
     private record WorkDayInfo(bool IsWorkDay, DateTime Start, DateTime End);
 

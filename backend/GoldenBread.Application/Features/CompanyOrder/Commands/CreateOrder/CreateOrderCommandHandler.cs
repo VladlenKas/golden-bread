@@ -19,7 +19,7 @@ public class CreateOrderCommandHandler(
     IProductionCalculator productionCalculator,
     IIngredientReservationService ingredientService,
     IEmployeeTaskDistributor taskDistributor,
-    IBakeryScheduleService workScheduleCalculator) : 
+    IWorkScheduleService workScheduleCalculator) : 
     IRequestHandler<CreateOrderCommand, CreateOrderResult>
 {
     public async Task<CreateOrderResult> Handle(
