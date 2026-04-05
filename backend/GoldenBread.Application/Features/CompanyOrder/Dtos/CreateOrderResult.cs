@@ -1,6 +1,4 @@
-﻿using GoldenBread.Application.Features.CompanyOrder.Services;
-
-namespace GoldenBread.Application.Features.CompanyOrder.Dtos;
+﻿namespace GoldenBread.Application.Features.CompanyOrder.Dtos;
 
 public record CreateOrderResult
 {

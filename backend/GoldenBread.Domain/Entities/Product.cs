@@ -25,7 +25,7 @@ public class Product
 
     public Product() { }
 
-    #warning Добавить параметры для создания
+#warning Добавить параметры для создания. Задача для программиста, не для ИИ!
     public static Product Create(
     string name,
     int productionTimeMinutes,

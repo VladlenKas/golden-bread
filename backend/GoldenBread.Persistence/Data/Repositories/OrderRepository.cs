@@ -17,7 +17,6 @@ public class OrderRepository(IGoldenBreadContext context) : IOrderRepository
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Batch)
                     .ThenInclude(b => b.Product)
-            .Include(o => o.IngredientReservations)
             .FirstOrDefaultAsync(o => o.OrderId == orderId, ct);
     }
 

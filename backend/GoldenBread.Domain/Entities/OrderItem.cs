@@ -22,7 +22,7 @@ public class OrderItem
 
     public OrderItem() { }
 
-    #warning Удалить присваивание собственного id
+#warning Удалить присваивание собственного id. Задача для программиста, не для ИИ!
     public static OrderItem Create(
         int orderId,
         int batchId,

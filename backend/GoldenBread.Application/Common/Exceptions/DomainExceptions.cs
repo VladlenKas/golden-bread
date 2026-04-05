@@ -10,7 +10,7 @@ public class NotFoundException(string message)
     : Exception(message) { }
 
 public class BusinessValidationException(string propertyName, string message) 
-    : DomainException(propertyName, message) { }
+    : DomainExceptions(propertyName, message) { }
 
 public class DuplicateEntityException(string entityProperty) :
     BusinessValidationException(entityProperty, ValidationErrorConstants.Duplicate) { }

@@ -6,7 +6,7 @@ namespace GoldenBread.Application.Features.Catalog.Mapping;
 
 public class CatalogMapper
 {
-    public static ProductListItemResponse ToListItems(DbEntities.Product p, int? companyId)
+    public static ProductListItemResponse ToListItems(Product p, int? companyId)
     {
         var batch = SelectBatch(p.ProductBatches, companyId);
 
@@ -29,7 +29,7 @@ public class CatalogMapper
             QuantityInCart: p.GetQuantityInCart(companyId));
     }
 
-    public static ProductDetailResponse ToDetail(DbEntities.Product p, int? companyId)
+    public static ProductDetailResponse ToDetail(Product p, int? companyId)
     {
         var currentBatch = SelectBatch(p.ProductBatches, companyId);
 

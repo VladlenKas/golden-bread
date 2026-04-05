@@ -8,7 +8,6 @@ public class CartMappingProfile : Profile
 {
     public CartMappingProfile()
     {
-        CreateMap<OrderTariff, TariffDto>();
     }
 }
 

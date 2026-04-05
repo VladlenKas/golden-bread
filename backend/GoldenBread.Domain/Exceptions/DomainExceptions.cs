@@ -2,12 +2,12 @@
 
 public record class ValidationError(string PropertyName, string ErrorMessage);
 
-public class DomainException : Exception
+public class DomainExceptions : Exception
 {
     public string PropertyName { get; }
     public List<ValidationError> Error { get; } = [];
 
-    public DomainException(string propertyName, string message)
+    public DomainExceptions(string propertyName, string message)
         : base(message)
     {
         PropertyName = propertyName;

@@ -13,12 +13,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(e => e.CreatedAt)
             .HasDefaultValueSql("now()");
 
-        builder.HasOne(d => d.Tariff)
-            .WithMany(p => p.Orders)
-            .HasForeignKey(d => d.TariffId)
-            .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("fk_orders_tariff_id");
-
         builder.HasOne(d => d.Company)
             .WithMany(p => p.Orders)
             .HasForeignKey(d => d.CompanyId)

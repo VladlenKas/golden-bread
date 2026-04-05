@@ -45,7 +45,7 @@ public sealed class Account
     public Company GetCompany()
     {
         return Company ?? 
-            throw new DomainException(nameof(Company), ValidationErrorConstants.AccountHasNoCompany);
+            throw new DomainExceptions(nameof(Company), ValidationErrorConstants.AccountHasNoCompany);
     }
 
     public void UpdateEmail(string email)

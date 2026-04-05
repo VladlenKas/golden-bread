@@ -1,13 +1,8 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Abstractions.Data.Decorators;
 using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Data.Services;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Features.CompanyCart.Services;
-using GoldenBread.Application.Features.CompanyOrder.Services;
 using GoldenBread.Domain.Enums;
-using GoldenBread.Domain.Interfaces.Services;
-using GoldenBread.Domain.Services;
 using GoldenBread.Infrastructure.Data;
 using GoldenBread.Infrastructure.Data.Repositories;
 using GoldenBread.Infrastructure.Data.Services;
@@ -58,20 +53,10 @@ public static class DependencyInjection
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
-        services.AddScoped<IIngredientReservationRepository, IngredientReservationRepository>();
-        services.AddScoped<IOrderTariffRepository, OrderTariffRepository>();
         services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 
         // Data Services
-        services.AddScoped<IWorkScheduleService, WorkScheduleService>();
         services.AddScoped<ICatalogQueryService, CatalogQueryService>();
-        services.AddScoped<IIngredientReservationService, IngredientReservationService>();
-        services.AddScoped<IEmployeeTaskDistributor, EmployeeTaskDistributor>();
-        services.AddScoped<IProductionCalculator, ProductionCalculator>();
-        //services.AddScoped<IDeliveryDateCalculator, DeliveryDateCalculator>();
-
-        // Decorators
-        services.Decorate<IWorkScheduleService, BakeryScheduleCacheDecorator>(); ;
 
         return services;
     }

@@ -3,5 +3,4 @@
 namespace GoldenBread.Application.Features.CompanyCart.Queries.GetCart;
 
 public sealed record class GetCartQuery(
-    DateOnly? DesiredDeliveryDate,
-    int TariffId = 1) : IRequest<CartDto>;
+    DateOnly? DesiredDeliveryDate) : IRequest<CartDto>;

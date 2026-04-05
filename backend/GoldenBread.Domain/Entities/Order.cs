@@ -18,8 +18,6 @@ public class Order
     public OrderStatus Status { get; set; }
 
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-    public ICollection<IngredientReservation> IngredientReservations { get; set; } = new List<IngredientReservation>();
-    public OrderTariff Tariff { get; set; } = null!;
     public Company Company { get; set; } = null!;
 
     public static Order Create(
