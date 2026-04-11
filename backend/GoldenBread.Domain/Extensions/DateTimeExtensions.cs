@@ -1,9 +1,11 @@
-﻿namespace GoldenBread.Domain.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public static class DateTimeExtensions
+namespace GoldenBread.Domain.Extensions;
+
+internal class DateTimeExtensions
 {
-    public static DateTime ToUtc(this DateTime date) =>
-        date.Kind == DateTimeKind.Local
-            ? date.ToUniversalTime()
-            : date;
 }

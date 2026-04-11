@@ -9,24 +9,24 @@ public class EmployeeTask
     public int EmployeeId { get; private set; }
     public int OrderItemId { get; private set; }
 
-    public int AssignedQuantity { get; set; }
-    public int CompletedQuantity { get; set; }
+    public int AssignedQuantity { get; private set; }
+    public int CompletedQuantity { get; private set; }
 
-    public DateTime? StartTime { get; set; }
-    public DateTime? EndTime { get; set; }
+    public DateTimeOffset? StartTime { get; private set; }
+    public DateTimeOffset? EndTime { get; private set; }
 
-    public Employee Employee { get; set; } = null!;
-    public OrderItem OrderItem { get; set; } = null!;
+    public Employee Employee { get; private set; } = null!;
+    public OrderItem OrderItem { get; private set; } = null!;
 
-    public OrderStatus Status { get; set; }
+    public OrderStatus Status { get; private set; }
 
     public EmployeeTask() { }
 
     public static EmployeeTask Create(
         int employeeId,
         int orderItemId,
-        DateTime? startTime,
-        DateTime? endTime,
+        DateTimeOffset? startTime,
+        DateTimeOffset? endTime,
         int assignedQuantity,
         int completedQuantity)
     {
@@ -37,7 +37,7 @@ public class EmployeeTask
             StartTime = startTime,
             EndTime = endTime,
             AssignedQuantity = assignedQuantity,
-            CompletedQuantity = completedQuantity
+            CompletedQuantity = completedQuantity,
         };
     }
 }

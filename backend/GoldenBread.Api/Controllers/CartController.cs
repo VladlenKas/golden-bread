@@ -8,11 +8,11 @@ namespace GoldenBread.Api.Controllers;
 [ApiController]
 public class CartController(IMediator mediator) : ControllerBase
 {
-    [HttpPost]
+    [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetCart([FromBody] GetCartQuery query)
+    public async Task<IActionResult> GetCart()
     {
-        return Ok(await mediator.Send(query));
+        return Ok(await mediator.Send(new GetCartQuery()));
     }
 
     [HttpPut("{id}")]
@@ -23,6 +23,13 @@ public class CartController(IMediator mediator) : ControllerBase
     {
         command = command with { ProductId = id };
         return Ok(await mediator.Send(command));
+    }
+
+    [HttpPost("place-an-order")]
+    [Authorize]
+    public async Task<IActionResult> PlaceAnOrder()
+    {
+        return null;
     }
 }
     

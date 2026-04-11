@@ -2,7 +2,14 @@
 using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Application.Abstractions.Data.Services;
 using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Common.Services;
+using GoldenBread.Application.Common.Strategies.Employee;
+using GoldenBread.Application.Common.Strategies.Product;
 using GoldenBread.Domain.Enums;
+using GoldenBread.Domain.Interfaces.Services;
+using GoldenBread.Domain.Interfaces.Strategies;
+using GoldenBread.Domain.Services;
+using GoldenBread.Domain.ValueObjects;
 using GoldenBread.Infrastructure.Data;
 using GoldenBread.Infrastructure.Data.Repositories;
 using GoldenBread.Infrastructure.Data.Services;
@@ -57,6 +64,19 @@ public static class DependencyInjection
 
         // Data Services
         services.AddScoped<ICatalogQueryService, CatalogQueryService>();
+
+        // Scheduling Module
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time");
+        services.AddSingleton(timeZone);
+        services.AddSingleton(WorkSchedule.Default());
+        services.AddScoped<IWorkCalendar, WorkCalendar>();
+
+        services.AddScoped<IEmployeeSelectionStrategy, ProportionalGreedyStrategy>();
+
+        services.AddScoped<IOrderItemOrderingStrategy, FastestProductionStrategy>();
+        services.AddScoped<IOrderItemOrderingStrategy, ShortestShelfLifeStrategy>();
+
+        services.AddScoped<ScheduleTaskDistributor>();
 
         return services;
     }

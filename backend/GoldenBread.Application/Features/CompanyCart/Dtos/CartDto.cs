@@ -1,10 +1,11 @@
 ﻿namespace GoldenBread.Application.Features.CompanyCart.Dtos;
 
+#warning Переделать файл в record
 public class CartDto
 {
-    public List<ProductCartItemDto> CartItemsList { get; set; } = null!;
-    public DateOnly MinimalDeliveryDate { get; set; }
-    public DateOnly SelectedDeliveryDate { get; set; }
+    public List<ProductCartItemDto>? CartItemsList { get; set; }
+    public DateOnly? MinimalDeliveryDate { get; set; }
+    public DateOnly? MaximalDeliveryDate { get; set; }
 }
 
 public class ProductCartItemDto

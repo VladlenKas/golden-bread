@@ -11,24 +11,7 @@ public class ProductCategoryConfiguration : IEntityTypeConfiguration<ProductCate
 
         builder.HasQueryFilter(e => e.DeletedAt == null);
 
-        builder.Property(e => e.ProductCategoryId)
-            .HasColumnName("product_category_id");
-
-        builder.Property(e => e.Color)
-            .HasMaxLength(6)
-            .HasColumnName("color");
-
-        builder.Property(e => e.DeletedAt)
-            .HasColumnName("deleted_at");
-
-        builder.Property(e => e.Icon)
-            .HasColumnName("icon");
-
-        builder.Property(e => e.Image)
-            .HasColumnName("image");
-
-        builder.Property(e => e.Name)
-            .HasMaxLength(100)
-            .HasColumnName("name");
+        builder.Property(e => e.Color).HasMaxLength(6);
+        builder.Property(e => e.Name).HasMaxLength(100);
     }
 }

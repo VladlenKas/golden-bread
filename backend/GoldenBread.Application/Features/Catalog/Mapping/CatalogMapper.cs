@@ -63,7 +63,7 @@ public class CatalogMapper
                 IngredientId: r.Ingredient.IngredientId,
                 Name: r.Ingredient.Name,
                 Quantity: r.Quantity,
-                Unit: r.Ingredient.Unit.ToString())).ToList()
+                Unit: r.Ingredient.BaseUnit.ToString())).ToList()
         );
     }
 

@@ -10,5 +10,5 @@ public class Supplier
     public string? Address { get; set; }
     public DateTime? DeletedAt { get; set; }
 
-    public ICollection<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
+    public ICollection<SupplierIngredient> SupplierIngredients { get; set; } = new List<SupplierIngredient>();
 }

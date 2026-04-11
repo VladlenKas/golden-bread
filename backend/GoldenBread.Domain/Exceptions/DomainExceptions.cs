@@ -13,6 +13,4 @@ public class DomainExceptions : Exception
         PropertyName = propertyName;
         Error.Add(new ValidationError(propertyName, message));
     }
-
-
 }

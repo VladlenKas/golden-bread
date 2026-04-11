@@ -13,19 +13,20 @@ public class OrdersController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand request)
     {
         var command = new CreateOrderCommand(
-            request.DesiredDeliveryDate,
-            request.TariffId);
+            request.DesiredDeliveryDate);
 
         var result = await mediator.Send(command);
 
-        if (result.InsufficientIngredients)
-        {
-            return Ok(new
-            {
-                success = false,
-                insufficientIngredients = true,
-            });
-        }
+        // Сейчас эта функция не работает.
+        // Ответ всегда положительный, если не критическая ошибка
+        //if (result.InsufficientIngredients)
+        //{
+        //    return Ok(new
+        //    {
+        //        success = false,
+        //        insufficientIngredients = true,
+        //    });
+        //}
 
         return Ok(new
         {

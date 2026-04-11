@@ -4,6 +4,7 @@ using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Infrastructure.Data.Repositories;
 
+#warning Добавить default к ct (во всех репах)
 internal class AccountRepository
     (IGoldenBreadContext context) :
     IAccountRepository

@@ -9,14 +9,14 @@ public class IngredientBatchConfiguration : IEntityTypeConfiguration<IngredientB
     {
         builder.HasKey(e => e.IngredientBatchId).HasName("ingredient_batches_pkey");
 
-        builder.HasIndex(e => e.IngredientId, "fk_ingredient_batches_ingredient_id_idx");
+        builder.HasIndex(e => e.SupplierIngredientId, "idx_ingredient_batches_supplier_ingredient");
 
         builder.Property(e => e.RemainingQuantity).HasPrecision(10, 3);
 
-        builder.HasOne(d => d.Ingredient)
+        builder.HasOne(d => d.SupplierIngredient)
             .WithMany(p => p.IngredientBatches)
-            .HasForeignKey(d => d.IngredientId)
+            .HasForeignKey(d => d.SupplierIngredientId)
             .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("fk_ingredient_batches_ingredient_id");
+            .HasConstraintName("fk_ingredient_batches_supplier_ingredient");
     }
 }

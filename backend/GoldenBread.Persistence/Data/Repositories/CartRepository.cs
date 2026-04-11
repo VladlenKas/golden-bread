@@ -27,10 +27,5 @@ public class CartRepository(IGoldenBreadContext context) : ICartRepository
 
         context.CartItems.RemoveRange(items);
     }
-
-    public Task Get(CancellationToken ct = default)
-    {
-        throw new NotImplementedException();
-    }
 }
 

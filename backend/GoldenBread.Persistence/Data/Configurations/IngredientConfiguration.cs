@@ -11,16 +11,18 @@ public class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
 
         builder.HasQueryFilter(e => e.DeletedAt == null);
 
-        builder.HasIndex(e => e.SupplierId, "fk_ingredients_supplier_id_idx");
-
         builder.Property(e => e.Name).HasMaxLength(100);
-        builder.Property(e => e.Price).HasPrecision(10, 2);
-        builder.Property(e => e.Weight).HasPrecision(10, 3);
 
-        builder.HasOne(d => d.Supplier)
-            .WithMany(p => p.Ingredients)
-            .HasForeignKey(d => d.SupplierId)
-            .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("fk_ingredients_supplier_id");
+        builder.HasMany(e => e.Recipes)
+            .WithOne(r => r.Ingredient)
+            .HasForeignKey(r => r.IngredientId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("fk_recipe_ingredient_id");
+
+        builder.HasMany(e => e.SupplierIngredients)
+            .WithOne(si => si.Ingredient)
+            .HasForeignKey(si => si.IngredientId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .HasConstraintName("fk_supplier_ingredient_ingredient");
     }
 }

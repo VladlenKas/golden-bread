@@ -19,7 +19,7 @@ public sealed class Account
     public VerificationStatus VerificationStatus { get; private set; }
 
     public User? User { get; private set; }
-    public Company? Company { get; private set; } 
+    public Company? Company { get; private set; }
 
     private Account() { }
 

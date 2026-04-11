@@ -4,5 +4,4 @@ using GoldenBread.Application.Features.CompanyOrder.Dtos;
 namespace GoldenBread.Application.Features.CompanyOrder.Commands.CreateOrder;
 
 public sealed record CreateOrderCommand(
-    DateOnly DesiredDeliveryDate,
-    int TariffId) : IRequest<CreateOrderResult>;
+    DateOnly DesiredDeliveryDate) : IRequest<CreateOrderResult>;

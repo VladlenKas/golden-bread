@@ -7,7 +7,6 @@ public class Order
     public int OrderId { get; set; }
 
     public int CompanyId { get; set; }
-    public int TariffId { get; set; }
 
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
@@ -22,14 +21,12 @@ public class Order
 
     public static Order Create(
         int companyId,
-        int tariffId,
         OrderStatus status,
         DateOnly desiredDeliveryDate)
     {
         return new Order
         {
             CompanyId = companyId,
-            TariffId = tariffId,
             Status = status,
             EndDate = desiredDeliveryDate,
             CreatedAt = DateTime.UtcNow

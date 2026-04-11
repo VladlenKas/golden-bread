@@ -19,14 +19,15 @@ import type { CartItem } from './types';
 
 const props = defineProps<{
   item: CartItem;
+  isTogglingFavorite?: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: 'toggle-selection', cartItemId: string): void;
-  (e: 'increment', cartItemId: string): void;
-  (e: 'decrement', cartItemId: string): void;
-  (e: 'remove', cartItemId: string): void;
-  (e: 'toggle-favorite', productId: string): void; // добавь это
+  (e: 'toggle-selection', productBatchId: number): void;
+  (e: 'increment', productId: number, productBatchId: number): void;
+  (e: 'decrement', productId: number, productBatchId: number): void;
+  (e: 'remove', productId: number, productBatchId: number): void;
+  (e: 'toggle-favorite', productId: number): void;
 }>();
 </script>
 
@@ -41,20 +42,20 @@ const emit = defineEmits<{
         <div class="pt-1">
           <Checkbox 
             :checked="item.isSelected" 
-            @update:checked="emit('toggle-selection', item.cartItemId)"
+            @update:checked="emit('toggle-selection', item.productBatchId)"
             class="h-4 w-4" 
           />
         </div>
 
-        <!-- Изображение -->
+        <!-- Изображение (клик по картинке тогглит выбор) -->
         <div
           class="w-24 h-24 rounded-lg overflow-hidden bg-muted border cursor-pointer hover:opacity-90 transition-opacity shrink-0"
-          @click="emit('toggle-selection', item.cartItemId)"
+          @click="emit('toggle-selection', item.productBatchId)"
         >
           <img 
             v-if="item.imageUrl" 
             :src="`${API_DB_UPLOAD_URL}/${item.imageUrl}`" 
-            :alt="item.productName"
+            :alt="item.name"
             class="w-full h-full object-cover" 
           />
           <div v-else class="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -67,28 +68,28 @@ const emit = defineEmits<{
           <!-- Верх: Название + удаление -->
           <div class="flex items-start justify-between gap-2">
             <h3 class="font-medium text-base leading-tight line-clamp-2">
-              {{ item.productName }}
+              {{ item.name }} <!-- Изменено: productName -> name -->
             </h3>
 
             <div class="flex items-center gap-1">
-  <Button 
-    variant="ghost" 
-    size="icon"
-    class="h-7 w-7  text-muted-foreground group-hover:opacity-100 transition-opacity backdrop-blur-sm"
-    @click="emit('toggle-favorite', item.productId)"
-  >
-    <Heart class="h-4 w-4" :class="{ 'fill-current text-red-500': item.isFavorite }" />
-  </Button>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                class="h-7 w-7 text-muted-foreground group-hover:opacity-100 transition-opacity backdrop-blur-sm"
+                @click="emit('toggle-favorite', item.productId)"
+              >
+                <Heart class="h-4 w-4" :class="{ 'fill-current text-red-500': item.isFavorite }" />
+              </Button>
 
-  <Button 
-    variant="ghost" 
-    size="icon"
-    class="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-    @click="emit('remove', item.cartItemId)"
-  >
-    <Trash2 class="h-3.5 w-3.5" />
-  </Button>
-</div>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                class="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                @click="emit('remove', item.productId, item.productBatchId)"
+              >
+                <Trash2 class="h-3.5 w-3.5" />
+              </Button>
+            </div>
           </div>
 
           <!-- Мета-информация -->
@@ -116,7 +117,7 @@ const emit = defineEmits<{
           <div class="flex justify-between items-center">
             <!-- Цена -->
             <div class="flex items-baseline gap-1">
-              <span class="text-xl font-bold">{{ item.totalPrice.toFixed(2) }}</span>
+              <span class="text-xl font-bold">{{ item.totalCostInCart.toFixed(2) }}</span> <!-- Изменено: totalPrice -> totalCostInCart -->
               <span class="text-sm text-muted-foreground">₽</span>
             </div>
 
@@ -126,19 +127,19 @@ const emit = defineEmits<{
                 variant="ghost" 
                 size="icon" 
                 class="h-7 w-7 rounded-sm"
-                @click="emit('decrement', item.cartItemId)" 
-                :disabled="item.batchCount <= 1"
+                @click="emit('decrement', item.productId, item.productBatchId)" 
+                :disabled="item.quantityInCart <= 1" 
               >
                 <Minus class="h-3.5 w-3.5" />
               </Button>
 
-              <span class="w-10 text-center font-medium text-sm">{{ item.batchCount }}</span>
+              <span class="w-10 text-center font-medium text-sm">{{ item.quantityInCart }}</span> <!-- Изменено: batchCount -> quantityInCart -->
 
               <Button 
                 variant="ghost" 
                 size="icon" 
                 class="h-7 w-7 rounded-sm"
-                @click="emit('increment', item.cartItemId)"
+                @click="emit('increment', item.productId, item.productBatchId)"
               >
                 <Plus class="h-3.5 w-3.5" />
               </Button>

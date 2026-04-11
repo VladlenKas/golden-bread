@@ -11,6 +11,4 @@ public interface ICartRepository
     Task ClearAsync(
         int companyId,
         CancellationToken ct = default);
-
-    Task Get(CancellationToken ct = default);
 }

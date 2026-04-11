@@ -1,14 +1,18 @@
 using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Services;
+using GoldenBread.Application.Common.Services;
+using GoldenBread.Application.Common.Strategies.Schedule;
 using GoldenBread.Application.Features.CompanyCart.Dtos;
-using Microsoft.EntityFrameworkCore;
+using GoldenBread.Domain.Entities;
+using GoldenBread.Domain.Interfaces.Services;
 
 namespace GoldenBread.Application.Features.CompanyCart.Queries.GetCart;
 
+#warning Перенести проекцию в сервис Infra
 public class GetCartQueryHandler(
     IGoldenBreadContext context,
     ICurrentAccountContext accountContext,
-    IMapper mapper) :
+    ScheduleTaskDistributor scheduler) :
     IRequestHandler<GetCartQuery, CartDto>
 {
     public async Task<CartDto> Handle(
@@ -40,15 +44,64 @@ public class GetCartQueryHandler(
             })
             .ToListAsync(ct);
 
+        // Грузим корзину для определенныя даты доставки
+        var cartItems = await context.CartItems
+            .AsNoTracking()
+            .Include(ci => ci.Batch)
+                .ThenInclude(b => b.Product)
+            .Where(ci => ci.CompanyId == companyId)
+            .ToListAsync(ct);
+
+        // Грузим сотрудников
+        var employees = await context.Employees
+            .AsNoTracking()
+            .Include(e => e.EmployeeTasks)
+            .ToListAsync(ct);
+
+        // Создаем временный лист позиций заказа
+        List<OrderItem> orderItems = new();
+
+        // Преобразуем позиции корзниы в позиции заказа
+        foreach(var cartItem in cartItems)
+        {
+            var orderItem = OrderItem.Create(
+                orderId: 0, // временный
+                batchId: cartItem.BatchId,
+                quantity: cartItem.Quantity,
+                unitsPerBatch: cartItem.Batch.QuantityUnits,
+                unitPrice: cartItem.Batch.UnitPrice);
+
+            orderItem.Batch = cartItem.Batch;
+
+            orderItems.Add(orderItem);
+        }
+
+        // Задаем ASAP стратегию и объявляем планировщик
+        var asap = new AsapStrategy();
+        var scheduleResult = scheduler.Distribute(orderItems, employees, asap);
+
         // Определяем даты доставки
-        var minimalDate = request.DesiredDeliveryDate ?? DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
-        var selectedDate = request.DesiredDeliveryDate ?? minimalDate;
+        DateOnly? minimalDate;
+        DateOnly? maximalDate;
+
+        if (scheduleResult.IsFeasible)
+        {
+            // ASAP вернул план - берем дату окончания
+            minimalDate = DateOnly.FromDateTime(scheduleResult.PlanEnd);
+            maximalDate = minimalDate.Value.AddDays(30);
+        }
+        else
+        {
+            // Если не влезает - показываем "недоступно" или дату через неделю (бизнес-решение)
+            minimalDate = null;
+            maximalDate = null;
+        }
 
         return new CartDto
         {
-            CartItemsList = mapper.Map<List<ProductCartItemDto>>(productCartItemsDto),
+            CartItemsList = productCartItemsDto,
             MinimalDeliveryDate = minimalDate,
-            SelectedDeliveryDate = selectedDate
+            MaximalDeliveryDate = maximalDate
         };
     }
 }

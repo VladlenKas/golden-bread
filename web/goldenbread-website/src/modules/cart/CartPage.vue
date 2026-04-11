@@ -1,5 +1,8 @@
 <!-- modules/cart/pages/CartPage.vue -->
 <script setup lang="ts">
+import { Loader2 } from 'lucide-vue-next';
+
+import { parseDate, type DateValue, type CalendarDate } from '@internationalized/date';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { Button } from '@/shared/ui/button';
 import { Checkbox } from '@/shared/ui/checkbox';
@@ -24,7 +27,7 @@ import {
 } from 'lucide-vue-next';
 import { useCart } from './useCart';
 import CartItemCard from './CartItemCard.vue';
-import { computed, ref, type Ref } from 'vue';
+import { computed, ref, type Ref, onMounted, watch  } from 'vue';
 import {
   Select,
   SelectContent,
@@ -43,34 +46,56 @@ import { Calendar as CalendarIcon, Zap, Moon } from 'lucide-vue-next';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { getLocalTimeZone, today } from '@internationalized/date'
-import type { DateValue } from '@internationalized/date'
 
 const {
   items,
-  summary,
+  isLoading,
+  summary, // ✅ Это CartSummary (с selectedItems, totalPrice и т.д.)
+  minimalDeliveryDate,
+  maximalDeliveryDate,
+  loadCart,
   toggleSelection,
   removeItem,
   selectAll,
-  incrementBatch,
-  decrementBatch,
+  incrementQuantity, // ✅ Теперь есть
+  decrementQuantity, // ✅ Теперь есть
+  toggleFavorite, // ✅ Добавь сюда
+  isCreatingOrder,
+  submitOrder
 } = useCart();
 
-const selectedTariff = ref('');
-const selectedDate = ref(today(getLocalTimeZone())) as Ref<DateValue>
-const calendarOpen = ref(false);
+onMounted(() => {
+  loadCart();
+});
 
 const allSelected = computed(() => items.value.length > 0 && items.value.every(i => i.isSelected));
 const someSelected = computed(() => items.value.some(i => i.isSelected) && !allSelected.value);
 
-function formatUnit(unit: number): string {
-  const lastDigit = unit % 10;
-  const lastTwoDigits = unit % 100;
+const minDate = computed<DateValue | undefined>(() => {
+  if (!minimalDeliveryDate.value) return undefined;
+  return parseDate(minimalDeliveryDate.value) as DateValue; // <-- Приведение типа
+});
 
-  if (lastTwoDigits >= 11 && lastTwoDigits <= 19) return `${unit} штук`;
-  if (lastDigit === 1) return `${unit} штука`;
-  if (lastDigit >= 2 && lastDigit <= 4) return `${unit} штуки`;
-  return `${unit} штук`;
-}
+const maxDate = computed<DateValue | undefined>(() => {
+  if (!maximalDeliveryDate.value) return undefined;
+  return parseDate(maximalDeliveryDate.value) as DateValue; // <-- Приведение типа
+});
+
+const formattedDate = computed(() => {
+  if (!selectedDate.value) return 'Выберите дату';
+  return format(selectedDate.value.toDate(getLocalTimeZone()), 'PPP', { locale: ru });
+});
+
+const isCalendarDisabled = computed(() => !minDate.value || !maxDate.value);
+const selectedDate = ref<DateValue | undefined>(undefined);
+
+watch([minDate, maxDate], ([newMin, newMax]) => {
+  if (newMin && newMax && selectedDate.value) {
+    if (selectedDate.value.compare(newMin) < 0 || selectedDate.value.compare(newMax) > 0) {
+      selectedDate.value = undefined;
+    }
+  }
+});
 </script>
 
 <template>
@@ -107,7 +132,7 @@ function formatUnit(unit: number): string {
 
             <Button v-if="summary.selectedItems > 0" variant="ghost" size="sm"
               class="h-8 gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
-              @click="items.filter(i => i.isSelected).forEach(i => removeItem(i.cartItemId))">
+              @click="items.filter(i => i.isSelected).forEach(i => removeItem(i.productBatchId, i.productId))">
               <Trash2 class="h-4 w-4" />
               Удалить выбранные
             </Button>
@@ -115,8 +140,16 @@ function formatUnit(unit: number): string {
 
           <!-- Карточки товаров -->
           <TransitionGroup name="list" tag="div" class="space-y-4">
-            <CartItemCard v-for="item in items" :key="item.cartItemId" :item="item" @toggle-selection="toggleSelection"
-              @increment="incrementBatch" @decrement="decrementBatch" @remove="removeItem" />
+            <CartItemCard 
+              v-for="item in items" 
+              :key="item.productBatchId" 
+              :item="item" 
+              @toggle-selection="toggleSelection"
+              @increment="incrementQuantity" 
+              @decrement="decrementQuantity" 
+              @remove="removeItem"
+              @toggle-favorite="toggleFavorite"
+            />
           </TransitionGroup>
         </div>
 
@@ -124,62 +157,35 @@ function formatUnit(unit: number): string {
         <div class="space-y-6 lg:sticky lg:top-6 h-fit">
           <Card class="border-2 border-primary/10 bg-gradient-to-br from-primary/5 to-transparent shadow-lg">
             <CardContent class="p-6 space-y-5">
-              <!-- Выбор тарифа -->
-              <div class="space-y-2">
-                <Label class="text-sm font-medium">Тариф заказа</Label>
-                <Select v-model="selectedTariff">
-                  <SelectTrigger class="w-full">
-                    <SelectValue placeholder="Выберите тариф" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="standard">
-                      <div class="flex items-center justify-between w-full gap-2">
-                        <span>Стандарт</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="express">
-                      <div class="flex items-center justify-between w-full gap-2">
-                        <span class="flex items-center gap-2">
-                          Экспресс
-                        </span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="night">
-                      <div class="flex items-center justify-between w-full gap-2">
-                        <span class="flex items-center gap-2">
-                          Ночной
-                        </span>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <p class="flex items-center text-xs text-muted-foreground gap-1">
-                  <Info class="w-3 h-3" />
-                  Узнать подробнее
-                  <span class="text-amber-600 cursor-pointer">здесь</span>
-                </p>
-              </div>
-
-              <Separator class="bg-primary/10" />
-
               <!-- Календарь -->
               <div class="space-y-2">
                 <Label class="text-sm font-medium">Дата поставки</Label>
-                <Popover v-model:open="calendarOpen">
+                <Popover>
                   <PopoverTrigger as-child>
-                    <Button variant="outline" class="w-full justify-between text-left font-normal"
-                      :class="{ 'text-muted-foreground': !selectedDate }">
-                      {{ selectedDate ? format(selectedDate.toDate(getLocalTimeZone()), 'PPP', { locale: ru }) :
-                      'Выберите дату' }}
+                    <Button 
+                      variant="outline" 
+                      class="w-full justify-between text-left font-normal"
+                      :class="{ 'text-muted-foreground': !selectedDate }"
+                      :disabled="isCalendarDisabled">
+                      {{ formattedDate }}
                       <CalendarIcon class="h-4 w-4 text-muted-foreground opacity-60" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent class="w-auto p-0" align="start">
-                    <Calendar v-model="selectedDate" mode="single" :min-value="today(getLocalTimeZone())"
-                      initial-focus />
+                     <Calendar 
+                        v-model="selectedDate as DateValue"
+                        mode="single" 
+                        :min-value="minDate"
+                        :max-value="maxDate"
+                        :disabled="isCalendarDisabled"
+                        initial-focus />
                   </PopoverContent>
                 </Popover>
-                <p v-if="selectedDate" class="text-xs text-muted-foreground flex items-center gap-1">
+                <p v-if="isCalendarDisabled" class="text-xs text-destructive flex items-center gap-1">
+                  <AlertCircle class="w-3 h-3" />
+                  Выбор даты недоступен
+                </p>
+                <p v-else-if="selectedDate" class="text-xs text-muted-foreground flex items-center gap-1">
                   <Clock class="w-3 h-3" />
                   Доставка с 9:00 до 18:00
                 </p>
@@ -190,19 +196,11 @@ function formatUnit(unit: number): string {
               <!-- Детали заказа -->
               <div class="space-y-3">
                 <div class="flex items-center justify-between text-sm">
-                  <span class=" flex items-center gap-2">
+                  <span class="flex items-center gap-2">
                     <Layers2 class="w-4 h-4" />
-                    {{ summary.selectedItems }} позиций, {{ formatUnit(summary.totalUnits) }}
+                    {{ summary.selectedItems }} позиций, {{ summary.totalUnits }} единиц
                   </span>
                   <span class="font-semibold">{{ summary.totalPrice.toFixed(2) }} ₽</span>
-                </div>
-
-                <div class="flex items-center justify-between text-sm">
-                  <span class=" flex items-center gap-2">
-                    <Percent class="w-4 h-4" />
-                    Наценка за тариф
-                  </span>
-                  <span class="font-semibold">1 000 ₽</span>
                 </div>
               </div>
 
@@ -213,17 +211,21 @@ function formatUnit(unit: number): string {
                 <span class="text-base font-medium">К оплате:</span>
                 <div class="flex items-baseline gap-2">
                   <span class="text-4xl font-bold tracking-tight text-foreground">
-                    {{ (summary.totalPrice + 1000).toFixed(2) }}
+                    {{ (summary.totalPrice).toFixed(2) }}
                   </span>
                   <span class="text-xl text-muted-foreground">₽</span>
                 </div>
               </div>
 
               <!-- Кнопка оформления -->
-              <Button class="w-full gap-2 h-12 text-base font-semibold shadow-md hover:shadow-lg transition-shadow"
-                size="lg" :disabled="summary.selectedItems === 0 || !selectedTariff || !selectedDate">
+              <Button 
+                class="w-full gap-2 h-12 text-base font-semibold shadow-md hover:shadow-lg transition-shadow"
+                size="lg" 
+                @click="selectedDate && submitOrder(selectedDate as CalendarDate)"
+                :disabled="summary.selectedItems === 0 || !selectedDate || isCreatingOrder">
+                <Loader2 v-if="isCreatingOrder" class="w-5 h-5 animate-spin" />
                 <ShoppingBag class="w-5 h-5" />
-                Оформить заказ
+                {{ isCreatingOrder ? 'Производим оплату...' : 'Оформить заказ'}} 
               </Button>
             </CardContent>
           </Card>

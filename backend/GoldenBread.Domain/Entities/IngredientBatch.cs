@@ -6,7 +6,7 @@ public class IngredientBatch
 {
     public int IngredientBatchId { get; private set; }
 
-    public int IngredientId { get; private set; }
+    public int SupplierIngredientId { get; private set; }
 
     public int PurchasedQuantity { get; set; }
     public decimal RemainingQuantity { get; set; }
@@ -15,12 +15,12 @@ public class IngredientBatch
 
     public IngredientBatchStatus Status { get; set; }
 
-    public Ingredient Ingredient { get; set; } = null!;
+    public SupplierIngredient SupplierIngredient { get; set; } = null!;
 
     public IngredientBatch() { }
 
     public static IngredientBatch Create(
-        int ingredientId,
+        int supplierIngredientId,
         int purchasedQuantity,
         decimal remainingQuantity,
         DateOnly deliveryDate,
@@ -29,12 +29,23 @@ public class IngredientBatch
     {
         return new IngredientBatch
         {
-            IngredientId = ingredientId,
+            SupplierIngredientId = supplierIngredientId,
             PurchasedQuantity = purchasedQuantity,
             RemainingQuantity = remainingQuantity,
             DeliveryDate = deliveryDate,
             ExpiryDate = expiryDate,
             Status = status
         };
+    }
+
+    public decimal TryWriteOff(decimal amount)
+    {
+        var toWriteOff = Math.Min(RemainingQuantity, amount);
+        RemainingQuantity -= toWriteOff;
+
+        if (RemainingQuantity == 0)
+            Status = IngredientBatchStatus.OutOfStock;
+
+        return toWriteOff; // Возвращаем сколько реально списали
     }
 }

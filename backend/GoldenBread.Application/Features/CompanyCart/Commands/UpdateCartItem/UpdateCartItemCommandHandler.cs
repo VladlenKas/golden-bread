@@ -1,7 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Services;
-using GoldenBread.Application.Common.Constants;
-using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Domain.Entities;
 
 namespace GoldenBread.Application.Features.CompanyCart.Commands.UpdateCartItem;
@@ -35,6 +33,7 @@ public sealed class UpdateCartItemCommandHandler(
         if (command.Quantity <= 0 && cartItem != null)
         {
             context.CartItems.Remove(cartItem);
+            await context.SaveChangesAsync(ct);
             return new CartSummary(0, 0, 0);
         }
         else if (cartItem == null)

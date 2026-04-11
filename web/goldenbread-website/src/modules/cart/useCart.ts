@@ -1,127 +1,138 @@
-// modules/cart/composables/useCart.ts
 import { ref, computed } from 'vue';
-import type { CartItem, CartSummary } from './types';
-
-// Тестовые данные
-const mockCartItems: CartItem[] = [
-  {
-    cartItemId: '1',
-    productId: '101',
-    productName: 'Профитроли с ванильным кремом',
-    description: 'Нежные заварные пирожные с воздушным ванильным кремом и шоколадной глазурью',
-    imageUrl: 'profitroli.jpg',
-    categoryName: 'Десерты',
-    categoryColor: 'f472b6',
-    
-    batchId: 'b1',
-    quantityPerBatch: 8,
-    unitPrice: 45.50,
-    totalBatchPrice: 364.00,
-    
-    batchCount: 2,
-    totalUnits: 16,
-    totalPrice: 728.00,
-    
-    productionTimeMinutes: 120,
-    isSelected: true,
-  },
-  {
-    cartItemId: '2',
-    productId: '102',
-    productName: 'Круассаны классические',
-    description: 'Слоеное тесто с масляной прослойкой, хрустящие и ароматные',
-    imageUrl: 'cherry_pie_6.jpg',
-    categoryName: 'Выпечка',
-    categoryColor: 'fbbf24',
-    
-    batchId: 'b2',
-    quantityPerBatch: 12,
-    unitPrice: 38.00,
-    totalBatchPrice: 456.00,
-    
-    batchCount: 1,
-    totalUnits: 12,
-    totalPrice: 456.00,
-    
-    productionTimeMinutes: 180,
-    isSelected: true,
-  },
-  {
-    cartItemId: '3',
-    productId: '103',
-    productName: 'Макаруны ассорти',
-    description: 'Набор французских миндальных пирожных в трех вкусах: малина, фисташка, шоколад',
-    imageUrl: null,
-    categoryName: 'Десерты',
-    categoryColor: 'f472b6',
-    
-    batchId: 'b3',
-    quantityPerBatch: 6,
-    unitPrice: 85.00,
-    totalBatchPrice: 510.00,
-    
-    batchCount: 3,
-    totalUnits: 18,
-    totalPrice: 1530.00,
-    
-    productionTimeMinutes: 240,
-    isSelected: false,
-  },
-  {
-    cartItemId: '4',
-    productId: '104',
-    productName: 'Хлеб бородинский',
-    description: 'Классический ржаной хлеб с кориандром и солодом',
-    imageUrl: 'bread.jpg',
-    categoryName: 'Хлеб',
-    categoryColor: 'a78bfa',
-    
-    batchId: 'b4',
-    quantityPerBatch: 1,
-    unitPrice: 120.00,
-    totalBatchPrice: 120.00,
-    
-    batchCount: 5,
-    totalUnits: 5,
-    totalPrice: 600.00,
-    
-    productionTimeMinutes: 90,
-    isSelected: true,
-  },
-];
+import type { CartItem, CartSummary, CreateOrderResponse } from './types';
+import { getCart, updateCartItem, toggleFavorite as toggleFavoriteApi, createOrder } from './api';
+import { getLocalTimeZone, type DateValue } from '@internationalized/date';
+import { format } from 'date-fns';
+import { useNotifications } from '@/shared/composables';
 
 export function useCart() {
-  const items = ref<CartItem[]>(mockCartItems);
+  const { successToast } = useNotifications();
+  const items = ref<CartItem[]>([]);
   const isLoading = ref(false);
+  const isUpdating = ref(false);
+  const isCreatingOrder = ref(false);
+  const minimalDeliveryDate = ref<string | null>(null);
+  const maximalDeliveryDate = ref<string | null>(null);
+  const togglingFavorites = ref<Set<number>>(new Set());
 
+  const loadCart = async () => {
+    isLoading.value = true;
+    try {
+      const response = await getCart();
+      minimalDeliveryDate.value = response.minimalDeliveryDate;
+      maximalDeliveryDate.value = response.maximalDeliveryDate;
+      
+      items.value = (response.cartItemsList || []).map(dto => ({
+        ...dto,
+        isSelected: true,
+      }));
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  // ✅ Верни CartSummary, а не CartSummaryResponse
   const summary = computed<CartSummary>(() => {
     const selectedItems = items.value.filter(item => item.isSelected);
     return {
       totalItems: items.value.length,
       selectedItems: selectedItems.length,
-      totalPrice: selectedItems.reduce((sum, item) => sum + item.totalPrice, 0),
-      totalUnits: selectedItems.reduce((sum, item) => sum + item.totalUnits, 0),
+      totalPrice: selectedItems.reduce((sum, item) => sum + item.totalCostInCart, 0),
+      totalUnits: selectedItems.reduce((sum, item) => sum + (item.quantityPerBatch * item.quantityInCart), 0),
     };
   });
 
-  const updateBatchCount = (cartItemId: string, newCount: number) => {
-    const item = items.value.find(i => i.cartItemId === cartItemId);
-    if (item && newCount >= 1) {
-      item.batchCount = newCount;
-      item.totalUnits = item.quantityPerBatch * newCount;
-      item.totalPrice = item.totalBatchPrice * newCount;
+  const updateQuantity = async (productId: number, productBatchId: number, newCount: number) => {
+    const item = items.value.find(i => i.productBatchId === productBatchId);
+    if (!item || newCount < 0) return;
+
+    const oldCount = item.quantityInCart;
+    const oldCost = item.totalCostInCart;
+
+    // Оптимистичное обновление UI
+    if (newCount === 0) {
+      items.value = items.value.filter(i => i.productBatchId !== productBatchId);
+    } else {
+      item.quantityInCart = newCount;
+      item.totalCostInCart = (item.totalCostInCart / oldCount) * newCount;
+    }
+
+    try {
+      isUpdating.value = true;
+      // Отправляем запрос, но не используем ответ напрямую (перезагрузим корзину)
+      await updateCartItem({
+        productId,
+        productBatchId,
+        quantity: newCount
+      });
+      
+      // Перезагружаем корзину для синхронизации с сервером
+      await loadCart();
+    } catch (error) {
+      // Откат при ошибке
+      if (newCount === 0) {
+        await loadCart();
+      } else {
+        item.quantityInCart = oldCount;
+        item.totalCostInCart = oldCost;
+      }
+      console.error('Failed to update cart:', error);
+      throw error;
+    } finally {
+      isUpdating.value = false;
     }
   };
 
-  const toggleSelection = (cartItemId: string) => {
-    const item = items.value.find(i => i.cartItemId === cartItemId);
+  const toggleFavorite = async (productId: number) => {
+    const item = items.value.find(i => i.productId === productId);
+    if (!item) return;
+
+    // Оптимистично меняем UI сразу
+    const previousState = item.isFavorite;
+    item.isFavorite = !previousState;
+    
+    // Добавляем в Set для возможного отображения загрузки на конкретной кнопке
+    togglingFavorites.value.add(productId);
+
+    try {
+      await toggleFavoriteApi(productId);
+      // Успех — ничего не делаем, UI уже обновлен
+    } catch (error) {
+      // ❌ Ошибка — откатываем изменения
+      item.isFavorite = previousState;
+      console.error('Failed to toggle favorite:', error);
+      // Можно добавить toast уведомление об ошибке
+      throw error;
+    } finally {
+      togglingFavorites.value.delete(productId);
+    }
+  };
+
+  const incrementQuantity = async (productId: number, productBatchId: number) => {
+    const item = items.value.find(i => i.productBatchId === productBatchId);
+    if (item) {
+      await updateQuantity(productId, productBatchId, item.quantityInCart + 1);
+    }
+  };
+
+  const decrementQuantity = async (productId: number, productBatchId: number) => {
+    const item = items.value.find(i => i.productBatchId === productBatchId);
+    if (item && item.quantityInCart > 1) {
+      await updateQuantity(productId, productBatchId, item.quantityInCart - 1);
+    } else if (item && item.quantityInCart === 1) {
+      await updateQuantity(productId, productBatchId, 0);
+    }
+  };
+
+  const removeItem = async (productId: number, productBatchId: number) => {
+    await updateQuantity(productId, productBatchId, 0);
+  };
+
+  const toggleSelection = (productBatchId: number) => {
+    const item = items.value.find(i => i.productBatchId === productBatchId);
     if (item) {
       item.isSelected = !item.isSelected;
     }
-  };
-
-  const removeItem = (cartItemId: string) => {
-    items.value = items.value.filter(i => i.cartItemId !== cartItemId);
   };
 
   const selectAll = (selected: boolean) => {
@@ -130,29 +141,57 @@ export function useCart() {
     });
   };
 
-  const incrementBatch = (cartItemId: string) => {
-    const item = items.value.find(i => i.cartItemId === cartItemId);
-    if (item) {
-      updateBatchCount(cartItemId, item.batchCount + 1);
-    }
-  };
+  const isTogglingFavorite = (productId: number) => togglingFavorites.value.has(productId);
 
-  const decrementBatch = (cartItemId: string) => {
-    const item = items.value.find(i => i.cartItemId === cartItemId);
-    if (item && item.batchCount > 1) {
-      updateBatchCount(cartItemId, item.batchCount - 1);
+  // ✅ Создание заказа с "искусственной" задержкой 3 секунды
+  // useCart.ts
+  const submitOrder = async (selectedDate: DateValue): Promise<CreateOrderResponse> => {
+    isCreatingOrder.value = true;
+    const startTime = Date.now();
+    
+    try {
+      // Конвертируем DateValue в ISO строку прямо здесь
+      const isoDate = format(selectedDate.toDate(getLocalTimeZone()), 'yyyy-MM-dd');
+      
+      const response = await createOrder({
+        desiredDeliveryDate: isoDate,
+      });
+
+      // Задержка 3 секунды
+      const elapsed = Date.now() - startTime;
+      const remainingDelay = Math.max(0, 3000 - elapsed);
+      
+      if (remainingDelay > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingDelay));
+      }
+
+      // Очищаем выбранные товары
+      items.value = items.value.filter(item => !item.isSelected);
+
+      return response;
+    } finally {
+      isCreatingOrder.value = false;
+      successToast(`Поздравляем! Заказ оформлен успешно! Можете просмотреть детали в профиле`);
     }
   };
 
   return {
     items,
     isLoading,
+    isUpdating,
     summary,
-    updateBatchCount,
+    minimalDeliveryDate,
+    maximalDeliveryDate,
+    loadCart,
+    updateQuantity,
     toggleSelection,
     removeItem,
     selectAll,
-    incrementBatch,
-    decrementBatch,
+    incrementQuantity,
+    decrementQuantity,
+    toggleFavorite,
+    isTogglingFavorite,
+    isCreatingOrder,
+    submitOrder, // Добавь сюда
   };
 }
