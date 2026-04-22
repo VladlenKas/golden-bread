@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Features.CompanyOrder.Commands.CreateOrder;
+using GoldenBread.Application.Features.CompanyOrder.Queries.GetOrders;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GoldenBread.Api.Controllers;
@@ -8,6 +9,13 @@ namespace GoldenBread.Api.Controllers;
 [Authorize]
 public class OrdersController(IMediator mediator) : ControllerBase
 {
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetList()
+    {
+        return Ok(await mediator.Send(new GetOrdersQuery()));
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand request)

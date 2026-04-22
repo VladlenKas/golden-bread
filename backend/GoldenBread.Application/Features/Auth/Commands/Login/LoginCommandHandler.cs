@@ -26,7 +26,9 @@ public sealed class LoginCompanyCommandHandler(
         if (account == null ||
             !HasAccess(account.AccountType, command.AccountType) ||
             !passwordHasher.Verify(command.Password, account.PasswordHash)) 
-            throw new AuthException(ValidationErrorConstants.InvalidCredentials);
+            throw new AuthException(
+                ValidationErrorConstants.InvalidCredentials,
+                AuthErrorType.InvalidCredentials);
 
         account.SetSession();
 
@@ -36,9 +38,7 @@ public sealed class LoginCompanyCommandHandler(
 
         await unitOfWork.SaveChangesAsync(ct);
 
-        return new AuthResponse(
-            account.AccountId,
-            account.VerificationStatus);
+        return AuthResponse.Response(account);
     }
 
     private bool HasAccess(AccountType accountType, PortalType portalType)

@@ -24,6 +24,7 @@ public class ProductCartItemDto
 
     // Флаги / Вычисляемые свойства
     public bool IsFavorite { get; set; }
+
     public int QuantityInCart { get; set; }
     public decimal TotalCostInCart { get; set; }
 }

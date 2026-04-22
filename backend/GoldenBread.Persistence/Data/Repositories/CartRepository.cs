@@ -27,5 +27,13 @@ public class CartRepository(IGoldenBreadContext context) : ICartRepository
 
         context.CartItems.RemoveRange(items);
     }
+
+    public async Task ToggleSelectedAsync(int productId, int companyId, CancellationToken ct)
+    {
+        var product = await context.CartItems
+            .FirstOrDefaultAsync(f =>
+                f.Batch.ProductId == productId &&
+                f.CompanyId == companyId, ct);
+    }
 }
 

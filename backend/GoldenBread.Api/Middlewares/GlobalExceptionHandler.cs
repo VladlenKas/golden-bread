@@ -33,6 +33,7 @@ public sealed class GlobalExceptionHandler(
 
     private static (int StatusCode, string Title) MapException(Exception exception) => exception switch
     {
+        AuthException => (StatusCodes.Status401Unauthorized, "Unauthorized"),
         ValidationException => (StatusCodes.Status422UnprocessableEntity, "One or more validation errors has occurred"),
         DuplicateEntityException ex => (StatusCodes.Status409Conflict, $"Error duplicating the value for the \"{ex.PropertyName}\" parameter"),
         BusinessValidationException => (StatusCodes.Status422UnprocessableEntity, "One validation error has occurred"),

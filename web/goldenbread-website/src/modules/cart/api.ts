@@ -16,6 +16,10 @@ export async function toggleFavorite(productId: number): Promise<void> {
   await client.patch(`/api/favorites/${productId}`);
 }
 
+export async function toggleSelection(productId: number): Promise<void> {
+  await client.patch(`/api/cart/${productId}/selection`);
+}
+
 export const createOrder = async (data: CreateOrderRequest): Promise<CreateOrderResponse> => {
   const response = await client.post<CreateOrderResponse>('api/orders', data);
   return response.data;

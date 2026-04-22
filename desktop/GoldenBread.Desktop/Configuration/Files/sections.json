@@ -1,0 +1,224 @@
+{
+  "sections": [
+    {
+      "key": "dashboard",
+      "title": "Дашборд",
+      "icon": "LayoutDashboard",
+      "route": "/dashboard",
+      "showInSidebar": true,
+      "order": 0,
+      "pages": [
+        {
+          "key": "summary",
+          "title": "Сводка",
+          "route": "/dashboard/summary",
+          "order": 0
+        },
+        {
+          "key": "overdue_batches",
+          "title": "Просроченные партии",
+          "route": "/dashboard/overdue",
+          "order": 10
+        },
+        {
+          "key": "active_orders",
+          "title": "Заказы в работе",
+          "route": "/dashboard/orders",
+          "order": 20
+        },
+        {
+          "key": "production_tasks",
+          "title": "Производственные задачи",
+          "route": "/dashboard/tasks",
+          "order": 30
+        }
+      ]
+    },
+    {
+      "key": "references",
+      "title": "Справочники",
+      "icon": "BookOpen",
+      "route": "/references",
+      "showInSidebar": true,
+      "order": 10,
+      "pages": [
+        {
+          "key": "products",
+          "title": "Продукция",
+          "route": "/references/products",
+          "order": 0
+        },
+        {
+          "key": "ingredients",
+          "title": "Ингредиенты",
+          "route": "/references/ingredients",
+          "order": 10
+        },
+        {
+          "key": "suppliers",
+          "title": "Поставщики",
+          "route": "/references/suppliers",
+          "order": 20
+        },
+        {
+          "key": "employees",
+          "title": "Сотрудники",
+          "route": "/references/employees",
+          "order": 30
+        }
+      ]
+    },
+    {
+      "key": "procurement",
+      "title": "Закупки и склад",
+      "icon": "Warehouse",
+      "route": "/procurement",
+      "showInSidebar": true,
+      "order": 20,
+      "pages": [
+        {
+          "key": "purchase_positions",
+          "title": "Закупочные позиции",
+          "route": "/procurement/positions",
+          "order": 0
+        },
+        {
+          "key": "ingredient_batches",
+          "title": "Партии ингредиентов",
+          "route": "/procurement/batches",
+          "order": 10
+        },
+        {
+          "key": "stock_control",
+          "title": "Остатки / контроль сроков",
+          "route": "/procurement/stock",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "key": "production",
+      "title": "Производство",
+      "icon": "Factory",
+      "route": "/production",
+      "showInSidebar": true,
+      "order": 30,
+      "pages": [
+        {
+          "key": "recipes",
+          "title": "Рецептуры",
+          "route": "/production/recipes",
+          "order": 0
+        },
+        {
+          "key": "product_batches",
+          "title": "Производственные партии",
+          "route": "/production/batches",
+          "order": 10
+        },
+        {
+          "key": "employee_tasks",
+          "title": "Задачи сотрудников",
+          "route": "/production/tasks",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "key": "orders",
+      "title": "Заказы",
+      "icon": "ShoppingCart",
+      "route": "/orders",
+      "showInSidebar": true,
+      "order": 40,
+      "pages": [
+        {
+          "key": "orders_list",
+          "title": "Список заказов",
+          "route": "/orders/list",
+          "order": 0
+        },
+        {
+          "key": "create_order",
+          "title": "Создание заказа",
+          "route": "/orders/create",
+          "order": 10
+        },
+        {
+          "key": "order_details",
+          "title": "Детали заказа",
+          "route": "/orders/details",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "key": "administration",
+      "title": "Администрирование",
+      "icon": "Shield",
+      "route": "/administration",
+      "showInSidebar": true,
+      "order": 50,
+      "pages": [
+        {
+          "key": "system_users",
+          "title": "Системные пользователи",
+          "route": "/administration/users",
+          "order": 0
+        },
+        {
+          "key": "companies",
+          "title": "Компании",
+          "route": "/administration/companies",
+          "order": 10
+        },
+        {
+          "key": "accounts",
+          "title": "Аккаунты",
+          "route": "/administration/accounts",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "key": "documents",
+      "title": "Документы",
+      "icon": "FileText",
+      "route": "/documents",
+      "showInSidebar": true,
+      "order": 60,
+      "pages": [
+        {
+          "key": "incoming_invoice",
+          "title": "Приходная накладная",
+          "route": "/documents/incoming",
+          "order": 0
+        },
+        {
+          "key": "outgoing_invoice",
+          "title": "Расходная накладная",
+          "route": "/documents/outgoing",
+          "order": 10
+        },
+        {
+          "key": "return_act",
+          "title": "Акт возврата / отмены",
+          "route": "/documents/return",
+          "order": 20
+        },
+        {
+          "key": "revenue_report",
+          "title": "Отчёт по выручке",
+          "route": "/documents/revenue",
+          "order": 30
+        },
+        {
+          "key": "receipt_invoice",
+          "title": "Чек / Счёт",
+          "route": "/documents/receipt",
+          "order": 40
+        }
+      ]
+    }
+  ]
+}

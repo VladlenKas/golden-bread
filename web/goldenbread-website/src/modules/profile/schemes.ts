@@ -35,7 +35,7 @@ export const requisitesSchema = toTypedSchema(
 export const contactsSchema = toTypedSchema(
   z.object({
     phone: z.preprocess(
-      (val) => (val === '' ? undefined : val),
+      (val) => (val == null || val === '' ? undefined : val),
       z.string()
         .regex(/^\d+$/, { message: validationMessages.onlyDigits })
         .length(11, { message: validationMessages.length(11) })
@@ -45,7 +45,7 @@ export const contactsSchema = toTypedSchema(
         .optional()
     ),
     address: z.preprocess(
-      (val) => (val === '' ? undefined : val),
+      (val) => (val == null || val === '' ? undefined : val),
       z.string()
         .min(5, { message: validationMessages.minLength(5) })
         .max(200, { message: validationMessages.maxLength(200) })

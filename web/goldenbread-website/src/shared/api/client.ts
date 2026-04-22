@@ -3,6 +3,10 @@ import { useNotifications } from '@/shared/composables/useNotifications';
 import { ErrorKind } from './types';
 import { API_BASE_URL } from '../constants';
 
+export type AuthErrorType =
+  | "InvalidCredentials"
+  | "ExpiredToken";
+
 export interface ApiError {
   message: string;
   kind: ErrorKind;
@@ -15,6 +19,11 @@ export const client = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
+});
+
+export const clientDocument = axios.create({
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
@@ -38,17 +47,25 @@ client.interceptors.response.use(
     let message;
     let kind = ErrorKind.Http;
     const status = error.response.status;
-    const type = error.response.data.type;
-    
-    if (error.response.data.message) {
-      message = error.response.data.message;
+    let type: string | undefined;
+
+    const data = error.response?.data;
+
+    if (data?.message) {
+      message = data.message;
     } else {
       message = error.message;
+    }
+    
+    if (typeof data?.type === "string") {
+      type = data.type;
+    } else if (typeof data?.extensions?.type === "string") {
+      type = data.extensions.type;
     }
 
     switch (status) {
       case 401: {
-        if (type === "SessionExpiredException") {
+        if (type as AuthErrorType === "ExpiredToken") {
           infoToast(message);
         } else {
           errorToast(message);

@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using GoldenBread.Desktop.ViewModels;
+using GoldenBread.Desktop.UI.Common;
 using System;
 
 namespace GoldenBread.Desktop;

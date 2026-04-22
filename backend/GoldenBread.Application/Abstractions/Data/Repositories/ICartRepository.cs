@@ -11,4 +11,6 @@ public interface ICartRepository
     Task ClearAsync(
         int companyId,
         CancellationToken ct = default);
+
+    Task ToggleSelectedAsync(int productId, int companyId, CancellationToken ct);
 }

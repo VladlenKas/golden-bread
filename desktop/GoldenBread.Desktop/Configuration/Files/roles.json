@@ -1,0 +1,36 @@
+{
+  "roles": [
+    {
+      "key": "Technologist",
+      "title": "Технологист",
+      "permissions": {
+        "dashboard":   { "view": true, "create": false, "update": false, "delete": false },
+        "orders":      { "view": true, "create": true,  "update": true,  "delete": true  },
+        "products":    { "view": true, "create": true,  "update": true,  "delete": true  },
+        "recipes":     { "view": true, "create": true,  "update": true,  "delete": true  },
+        "ingredients": { "view": true, "create": true,  "update": true,  "delete": true  },
+        "suppliers":   { "view": true, "create": true,  "update": true,  "delete": true  },
+        "employees":   { "view": true, "create": true,  "update": true,  "delete": true  },
+        "production":  { "view": true, "create": true,  "update": true,  "delete": true  },
+        "clients":     { "view": true, "create": true,  "update": true,  "delete": true  },
+        "settings":    { "view": true, "create": false, "update": true,  "delete": false }
+      }
+    },
+    {
+      "key": "CommercialManager",
+      "title": "Коммерческий менеджер",
+      "permissions": {
+        "dashboard":   { "view": true, "create": false, "update": false, "delete": false },
+        "orders":      { "view": true, "create": true,  "update": true,  "delete": false },
+        "products":    { "view": true, "create": false, "update": true,  "delete": false },
+        "recipes":     { "view": true, "create": false, "update": true,  "delete": false },
+        "ingredients": { "view": true, "create": true,  "update": true,  "delete": false },
+        "suppliers":   { "view": true, "create": false, "update": false, "delete": false },
+        "employees":   { "view": true, "create": false, "update": false, "delete": false },
+        "production":  { "view": true, "create": true,  "update": true,  "delete": false },
+        "clients":     { "view": true, "create": false, "update": false, "delete": false },
+        "settings":    { "view": false,"create": false, "update": false, "delete": false }
+      }
+    }
+  ]
+}

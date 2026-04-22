@@ -25,10 +25,4 @@
     <ProjectReference Include="..\GoldenBread.Domain\GoldenBread.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\CompanyOrder\Queries\" />
-    <Folder Include="Features\Favorites\Dtos\" />
-    <Folder Include="Features\Favorites\Queries\" />
-  </ItemGroup>
-
 </Project>

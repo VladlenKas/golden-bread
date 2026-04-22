@@ -86,8 +86,7 @@ function formatUnit(unit: string): string {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-6">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 
       <!-- Вернуться -->
       <Button variant="ghost" class="gap-2 mb-6 -ml-2 text-muted-foreground hover:text-foreground" @click="goBack">
@@ -363,5 +362,4 @@ function formatUnit(unit: string): string {
       </div>
 
     </div>
-  </div>
 </template>

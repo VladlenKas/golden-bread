@@ -12,6 +12,7 @@ export interface ProductCartItemDto {
   quantityPerBatch: number;
   imageUrl: string | null;
   isFavorite: boolean;
+  IsSelected: boolean,
   quantityInCart: number;
   totalCostInCart: number;
 }

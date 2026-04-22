@@ -1,2 +1,2 @@
-export { client } from './client'
+export { client, clientDocument } from './client'
 export { ErrorKind } from './types'

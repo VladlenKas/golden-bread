@@ -1,5 +1,7 @@
 export interface AuthResponse {
   id: number;
+  session: string;
+  role: null;
   verificationStatus: VerificationStatus
 } 
 

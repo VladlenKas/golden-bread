@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Features.Favorites.Commands.ToggleFavorite;
+using GoldenBread.Application.Features.Favorites.Queries.GetFavorites;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GoldenBread.Api.Controllers;
@@ -8,6 +9,14 @@ namespace GoldenBread.Api.Controllers;
 [Authorize]
 public class FavoritesController(IMediator mediator) : ControllerBase
 {
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetList()
+    {
+        return Ok(await mediator.Send(new GetFavoritesQuery()));
+    }
+
+
     [HttpPatch("{id}")]
     [Authorize]
     public async Task<IActionResult> ToggleFavorite(int id)

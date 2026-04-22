@@ -4,7 +4,7 @@ namespace GoldenBread.Application.Abstractions.Services;
 
 public interface ICurrentAccountContext
 {
-    bool HasCookie { get; }
+    bool HasSession { get; }
     Task<Account> GetAccountAsync(CancellationToken ct);
     Task<int?> GetCompanyIdAsync(CancellationToken ct);
     Task<int> GetRequiredCompanyIdAsync(CancellationToken ct);

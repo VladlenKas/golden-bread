@@ -66,8 +66,7 @@ const {
 </script>
 
 <template>
-  <div class="min-h-screen bg-background">
-    <div class="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-6">
+    <div class="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
 
       <!-- Заголовок и поиск -->
       <div class="mb-6 space-y-4">
@@ -105,7 +104,7 @@ const {
       <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-6">
 
         <!-- Левая панель: Навигация по категориям -->
-        <aside class="space-y-6 lg:block">
+        <aside class="space-y-6 lg:block lg:sticky lg:top-24 h-fit"">
           <Card>
             <CardHeader class="pb-3">
               <CardTitle class="text-base flex items-center gap-2">
@@ -211,7 +210,7 @@ const {
         </main>
 
         <!-- Правая панель: Фильтры -->
-        <aside class="space-y-6 lg:block">
+        <aside class="space-y-6 lg:block lg:sticky lg:top-24 h-fit"">
           <Card>
             <CardHeader class="pb-3">
               <div class="flex items-center justify-between">
@@ -257,27 +256,6 @@ const {
                 </div>
               </div>
 
-              <Separator />
-
-              <!-- Дополнительные опции -->
-              <div class="space-y-3">
-                <Label class="text-sm font-medium">Дополнительно</Label>
-                <div class="space-y-2">
-                  <div class="flex items-center space-x-2">
-                    <Checkbox id="in-stock" />
-                    <Label for="in-stock" class="text-sm font-normal cursor-pointer">
-                      В наличии
-                    </Label>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <Checkbox id="new" />
-                    <Label for="new" class="text-sm font-normal cursor-pointer">
-                      Новинки
-                    </Label>
-                  </div>
-                </div>
-              </div>
-
             </CardContent>
           </Card>
 
@@ -295,6 +273,5 @@ const {
         </aside>
 
       </div>
-    </div>
   </div>
 </template>

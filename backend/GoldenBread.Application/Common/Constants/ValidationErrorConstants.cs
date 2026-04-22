@@ -13,7 +13,6 @@ public static class ValidationErrorConstants
     public const string NewPasswordSameAsOld = "Новый пароль должен отличаться от старого";
 
     // Компания/Аккаунт
-    public const string InvalidCredentials = "Аккаунт не найден или не существует. Проверьте свои данные";
+    public const string InvalidCredentials = "Аккаунт не найден или не существует. Проверьте введенные данные и попробуйте снова";
     public const string SessionExpired = "Сессия истекла или не существует. Выполните вход в систему заново";
 }
-

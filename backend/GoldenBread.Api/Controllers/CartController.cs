@@ -1,4 +1,5 @@
-﻿using GoldenBread.Application.Features.CompanyCart.Commands.UpdateCartItem;
+﻿using GoldenBread.Application.Features.CompanyCart.Commands.ToggleSelected;
+using GoldenBread.Application.Features.CompanyCart.Commands.UpdateCartItem;
 using GoldenBread.Application.Features.CompanyCart.Queries.GetCart;
 using Microsoft.AspNetCore.Authorization;
 
@@ -25,11 +26,14 @@ public class CartController(IMediator mediator) : ControllerBase
         return Ok(await mediator.Send(command));
     }
 
-    [HttpPost("place-an-order")]
+    [HttpPatch("{id}/selection")]
     [Authorize]
-    public async Task<IActionResult> PlaceAnOrder()
+    public async Task<IActionResult> ToggleSelected(
+        int id,
+        [FromBody] ToggleSelectedCommand command)
     {
-        return null;
+        command = command with { ProductId = id };
+        return Ok(await mediator.Send(command));
     }
 }
     

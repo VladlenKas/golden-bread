@@ -1,4 +1,4 @@
-import { client } from '@/shared/api';
+import { client, clientDocument } from '@/shared/api';
 
 import type {
   ChangeEmailRequest,
@@ -6,7 +6,9 @@ import type {
   ProfileResponse,
   UpdateContactsRequest,
   UpdateRequisitesRequest,
+  OrdersListResponse
 } from './types';
+import type { ProductListItem } from '../catalog/types';
 
 export async function changeEmail(value: ChangeEmailRequest): Promise<void> {
   await client.put('/api/company-profile/email', value);
@@ -27,4 +29,29 @@ export async function updateRequisites(value: UpdateRequisitesRequest,): Promise
 export async function getProfile(): Promise<ProfileResponse> {
   const { data } = await client.get('/api/company-profile');
   return data;
+}
+
+export async function getOrders(): Promise<OrdersListResponse> {
+  const { data } = await client.get('/api/orders');
+  return data;
+}
+
+export async function getFavorites(): Promise<ProductListItem[]> {
+  const { data } = await client.get('/api/favorites');
+  return data;
+}
+
+export async function createDeliveryInvoiceXlsx(orderId: number) {
+  const response = await clientDocument.post(
+    `/api/document/delivery-invoice-xlsx/${orderId}`,
+    {}, 
+    { 
+      responseType: 'blob', 
+      headers: {
+        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      }
+    }
+  );
+  
+  return response; 
 }

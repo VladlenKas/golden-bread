@@ -3,8 +3,17 @@ using GoldenBread.Domain.Exceptions;
 
 namespace GoldenBread.Application.Common.Exceptions;
 
-public class AuthException(string message) 
-    : UnauthorizedAccessException(message) { }
+public enum AuthErrorType
+{
+    InvalidCredentials,
+    ExpiredToken,
+}
+
+public class AuthException(string message, AuthErrorType type) 
+    : UnauthorizedAccessException(message) 
+{
+    public AuthErrorType Type { get; } = type;
+}
 
 public class NotFoundException(string message) 
     : Exception(message) { }

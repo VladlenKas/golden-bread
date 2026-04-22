@@ -21,6 +21,17 @@ public class GetCartQueryHandler(
     {
         int companyId = await accountContext.GetRequiredCompanyIdAsync(ct);
 
+        var items = await context.CartItems.Where(ci => ci.CompanyId == companyId).ToListAsync(cancellationToken: ct);
+        if (items.Count <= 0)
+        {
+            return new CartDto
+            {
+                CartItemsList = null,
+                MinimalDeliveryDate = null,
+                MaximalDeliveryDate = null
+            };
+        }
+
         // Загружаем позиции корзины для DTO
         var productCartItemsDto = await context.CartItems
             .AsNoTracking()
@@ -49,7 +60,8 @@ public class GetCartQueryHandler(
             .AsNoTracking()
             .Include(ci => ci.Batch)
                 .ThenInclude(b => b.Product)
-            .Where(ci => ci.CompanyId == companyId)
+            .Where(ci => 
+                ci.CompanyId == companyId)
             .ToListAsync(ct);
 
         // Грузим сотрудников
@@ -81,20 +93,13 @@ public class GetCartQueryHandler(
         var scheduleResult = scheduler.Distribute(orderItems, employees, asap);
 
         // Определяем даты доставки
-        DateOnly? minimalDate;
-        DateOnly? maximalDate;
+        DateOnly? minimalDate = null;
+        DateOnly? maximalDate = null;
 
         if (scheduleResult.IsFeasible)
         {
-            // ASAP вернул план - берем дату окончания
             minimalDate = DateOnly.FromDateTime(scheduleResult.PlanEnd);
             maximalDate = minimalDate.Value.AddDays(30);
-        }
-        else
-        {
-            // Если не влезает - показываем "недоступно" или дату через неделю (бизнес-решение)
-            minimalDate = null;
-            maximalDate = null;
         }
 
         return new CartDto

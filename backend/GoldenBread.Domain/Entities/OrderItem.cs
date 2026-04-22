@@ -14,6 +14,7 @@ public class OrderItem
     public int UnitsPerBatch { get; set; } // Кол-во продукций в партии для истории
     
     public int TotalUnits => Quantity * UnitsPerBatch; // Всего единиц продукции
+    public decimal TotalAmount => Quantity * UnitPrice * UnitsPerBatch;
 
     public ProductBatch Batch { get; set; } = null!;
     public Order Order { get; set; } = null!;

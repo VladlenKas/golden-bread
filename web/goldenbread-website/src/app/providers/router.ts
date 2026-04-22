@@ -14,16 +14,6 @@ export const router = createRouter({
       component: () => import('@/pages/HomePage.vue'),
     },
     {
-      path: '/about', 
-      name: 'about',
-      component: () => import('@/pages/AboutPage.vue'),
-    },
-    {
-      path: '/contacts',
-      name: 'contacts',
-      component: () => import('@/pages/ContactsPage.vue'),
-    },
-    {
       path: '/cart',
       name: 'cart',
       component: () => import('@/modules/cart/CartPage.vue'),
@@ -39,15 +29,9 @@ export const router = createRouter({
       component: () => import('@/modules/catalog/ProductDetailPage.vue'),
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/modules/auth/LoginPage.vue'),
-      meta: { guestOnly: true },
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: () => import('@/modules/auth/RegisterPage.vue'),
+      path: '/auth',
+      name: 'auth',
+      component: () => import('@/modules/auth/AuthPage.vue'),
       meta: { guestOnly: true },
     },
     {
@@ -55,21 +39,6 @@ export const router = createRouter({
       name: 'profile',
       component: () => import('@/modules/profile/ProfilePage.vue'),
       meta: { requiresAuth: true },
-    },
-    {
-      path: '/privacy',
-      name: 'privacy',
-      component: () => import('@/pages/PrivacyPage.vue'),
-    },
-    {
-      path: '/faq',
-      name: 'faq',
-      component: () => import('@/pages/FaqPage.vue'),
-    },
-    {
-      path: '/docs',
-      name: 'docs',
-      component: () => import('@/pages/DocsPage.vue'),
     },
   ],
 });
@@ -82,7 +51,7 @@ router.beforeEach(async (to) => {
   }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return '/login';
+    return '/auth';
   }
 
   if (to.meta.guestOnly && authStore.isAuthenticated) {

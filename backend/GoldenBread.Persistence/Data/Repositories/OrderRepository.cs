@@ -11,12 +11,21 @@ public class OrderRepository(IGoldenBreadContext context) : IOrderRepository
         context.Orders.Add(order);
     }
 
+    public async Task<List<Order>> GetAllByCompanyIdAsync(int companyId, CancellationToken ct = default)
+    {
+        return await context.Orders
+            .Include(o => o.OrderItems)
+            .Where(o => o.CompanyId == companyId)
+            .ToListAsync(ct);
+    }
+
     public async Task<Order?> GetByIdAsync(int orderId, CancellationToken ct = default)
     {
         return await context.Orders
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.Batch)
                     .ThenInclude(b => b.Product)
+            .Include(o => o.Company)
             .FirstOrDefaultAsync(o => o.OrderId == orderId, ct);
     }
 

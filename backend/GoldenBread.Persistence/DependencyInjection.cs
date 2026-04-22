@@ -49,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ICurrentAccountContext, CurrentAccountContext>();
         services.AddScoped<ICookieService, CookieService>();
+        services.AddScoped<IDeliveryInvoiceGenerator, DeliveryInvoiceGenerator>();
 
         // Repositories
         services.AddScoped<IAccountRepository, AccountRepository>();

@@ -11,8 +11,14 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
         int? excludeId = null,
         CancellationToken ct = default)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+
+        name = name.Trim().ToLower();
+
         return await context.Companies.AnyAsync(c =>
-            c.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase) &&
+            c.Name != null &&
+            c.Name.Trim().ToLower() == name &&
             (!excludeId.HasValue || c.CompanyId != excludeId.Value), ct);
     }
 
@@ -33,10 +39,14 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
         int? excludeId = null,
         CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(address)) return false;
+        if (string.IsNullOrWhiteSpace(address))
+            return false;
+
+        address = address.Trim().ToLower();
 
         return await context.Companies.AnyAsync(c =>
-            (c.Address ?? "").Equals(address, StringComparison.CurrentCultureIgnoreCase) &&
+            c.Address != null &&
+            c.Address.Trim().ToLower() == address &&
             (!excludeId.HasValue || c.CompanyId != excludeId.Value), ct);
     }
 

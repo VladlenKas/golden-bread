@@ -1,16 +1,19 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using GoldenBread.Desktop.Api;
-using GoldenBread.Desktop.Services.Dialogs;
-using GoldenBread.Desktop.Services.Tosts;
-using GoldenBread.Desktop.ViewModels;
-using GoldenBread.Desktop.Views;
+using GoldenBread.Desktop.Features.Auth;
+using GoldenBread.Desktop.Features.Menu;
+using GoldenBread.Desktop.Infrastructure.Api.Clients;
+using GoldenBread.Desktop.Infrastructure.Auth;
+using GoldenBread.Desktop.UI.Dialogs;
+using GoldenBread.Desktop.UI.Tosts;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace GoldenBread.Desktop;
 
@@ -33,28 +36,64 @@ public partial class App : Application, IDisposable
         {
             desktop.ShutdownRequested += OnShutdownRequested;
 
-            var mainVm = _serviceProvider.GetRequiredService<LoginWindowViewModel>();
-            desktop.MainWindow = new LoginWindow
-            {
-                DataContext = mainVm,
-            };
+            var window = ResolveStartupWindowAsync().GetAwaiter().GetResult();
+            desktop.MainWindow = window;
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
+    private async Task<Window> ResolveStartupWindowAsync()
+    {
+        var sessionStorage = _serviceProvider!.GetRequiredService<ISessionStorage>();
+        var authApi = _serviceProvider!.GetRequiredService<IAuthApi>();
+        var authState = _serviceProvider!.GetRequiredService<IAuthState>();
+
+        // Получаем сессию пользователя из хранилища
+        var session = sessionStorage.LoadSession();
+
+        if (!string.IsNullOrEmpty(session))
+        {
+            // Проверяем валидность сессии
+            var response = await authApi.Me();
+
+            if (response.IsSuccessStatusCode && response.Content != null)
+            {
+                // Загружаем актуальные данные пользователя
+                var data = response.Content;
+                authState.Authenticate(data.Id, data.Role!.Value, data.VerificationStatus);
+
+                // Главное окно
+                var mainVm = _serviceProvider!.GetRequiredService<MenuWindowViewModel>();
+                return new MenuWindow { DataContext = mainVm };
+            }
+
+            sessionStorage.Clear();
+        }
+
+        // Окно авторизации
+        var authVm = _serviceProvider!.GetRequiredService<AuthWindowViewModel>();
+        return new AuthWindow { DataContext = authVm };
+    }
+
     private static ServiceProvider ConfigureServices(IServiceCollection services)
     {
-        // Add services
+        // UI
         services.AddSingleton<IToastService, ToastService>();
         services.AddSingleton<IDialogService, DialogService>();
 
-        // Add view models
-        services.AddTransient<LoginWindowViewModel>();
+        // Infra
+        services.AddSingleton<ISessionStorage, DataProtectionSessionStorage>();
+        services.AddSingleton<SessionHeaderHandler>();
+        services.AddSingleton<IAuthState, AuthState>();
 
-        // Add api
-        services.AddRefitClient<IUserApi>(new RefitSettings())
-            .ConfigureHttpClient(ConfigureClient);
+        // View Models
+        services.AddTransient<AuthWindowViewModel>();
+
+        // Refit 
+        services.AddRefitClient<IAuthApi>(new RefitSettings())
+            .ConfigureHttpClient(ConfigureClient)
+            .AddHttpMessageHandler<SessionHeaderHandler>();
 
         return services.BuildServiceProvider();
     }

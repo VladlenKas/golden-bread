@@ -12,7 +12,6 @@ export function useRegister() {
     try {
       await register(values);
       successToast("Регистрация прошла успешно. На вашу электронную почту поступит уведомление, когда аккаунт будет проверен");
-      router.push('/login')
     } catch (error: any) {
       if (error.status === 422 || 409) {
         const fieldMapping = { Name: 'name', Inn: 'inn', Ogrn: 'ogrn', Email: 'email', Password: 'password' }

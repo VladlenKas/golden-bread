@@ -18,13 +18,16 @@ internal class CurrentAccountContext(
         httpContextAccessor.HttpContext?.User.FindFirst("session")?.Value
         ?? httpContextAccessor.HttpContext?.Request.Headers["X-Desktop-Session"].FirstOrDefault();
 
-    public bool HasCookie =>
-        httpContextAccessor.HttpContext?.Request.Cookies.ContainsKey("gb.session") == true;
+    public bool HasSession =>
+        httpContextAccessor.HttpContext?.Request.Cookies.ContainsKey("gb.session") == true ||
+        !string.IsNullOrEmpty(httpContextAccessor.HttpContext?.Request.Headers["X-Desktop-Session"].FirstOrDefault());
 
     public async Task<Account> GetAccountAsync(CancellationToken ct)
     {
         _accountCache ??= accountRepository.GetBySessionAsync(Session, ct);
-        return await _accountCache ?? throw new AuthException(ValidationErrorConstants.SessionExpired);
+        return await _accountCache ?? throw new AuthException(
+            ValidationErrorConstants.SessionExpired,
+            AuthErrorType.ExpiredToken);
     }
 
     /// <summary>

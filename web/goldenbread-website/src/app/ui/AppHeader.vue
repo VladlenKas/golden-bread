@@ -33,8 +33,8 @@ const navItems = [
   { name: 'Главная', path: '/home', icon: Home },
   { name: 'Каталог', path: '/catalog', icon: Package },
   { name: 'Корзина', path: '/cart', icon: ShoppingCart },
-  { name: 'О нас', path: '/about', icon: Info },
-  { name: 'Контакты', path: '/contacts', icon: Phone },
+  { name: 'О нас', path: '/home#about', icon: Info },
+  { name: 'Контакты', path: '/home#contacts', icon: Phone },
 ];
 
 function handleScroll() {
@@ -58,11 +58,11 @@ async function onLogoutConfirm() {
 <template>
   <header 
     :class="[
-      'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+      'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ',
       isScrolled 
         ? 'bg-background/80 backdrop-blur-md border-b shadow-sm' 
         : 'bg-background border-b'
-    ]">
+    ]" >
     <div class="mx-auto max-w-screen-2xl h-16">
       <div class="grid grid-cols-[1fr_auto_1fr] h-full items-center gap-4">
         
@@ -107,10 +107,10 @@ async function onLogoutConfirm() {
           <!-- Неавторизован -->
           <template v-if="!authStore.isAuthenticated">
             <Button variant="ghost" as-child>
-              <RouterLink to="/login">Войти</RouterLink>
+              <RouterLink to="/auth?mode=login">Вход</RouterLink>
             </Button>
             <Button as-child>
-              <RouterLink to="/register">Регистрация</RouterLink>
+              <RouterLink to="/auth?mode=register">Регистрация</RouterLink>
             </Button>
           </template>
 
@@ -119,7 +119,7 @@ async function onLogoutConfirm() {
             <Button variant="ghost" class="gap-2" as-child>
               <RouterLink to="/profile">
                 <User/>
-                <span>Профиль</span>
+                <span>Личный кабинет</span>
               </RouterLink>
             </Button>
             
@@ -133,9 +133,9 @@ async function onLogoutConfirm() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Вы действительно хотите выйти?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    После выхода ваша сессия обнулится, а cookie удалятся.
-                    Все данные останутся сохранены. 
-                    Следующий вход будет выполнен без дополнительной проверки
+                      После выхода ваша сессия перестанет быть действительной, 
+                      а печеньки будут полностью очищены.
+                      Все остальные данные сохранятся без изменений. Вы согласны?
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

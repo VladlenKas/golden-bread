@@ -1,3 +1,5 @@
+// Данные профиля
+
 export interface UpdateRequisitesRequest {
   name: string;
   inn: string;
@@ -27,4 +29,21 @@ export interface ProfileResponse {
   phone: string;
   address: string;
   orders: unknown[]; 
+}
+
+// Данные по заказу
+export type OrderStatus = 'Awaiting' | 'AwaitingIngredients' | 'InProgress' | 'Completed' | 'Canceled';
+
+export interface OrderListItemResponse {
+  orderId: number;
+  startDate: string; 
+  endDate: string;  
+  createdAt: string; 
+  status: OrderStatus;
+  quantityOrderItems: number;
+  totalAmount: number;
+}
+
+export interface OrdersListResponse {
+  listOrderItems: OrderListItemResponse[];
 }

@@ -62,6 +62,7 @@ export function useProfile() {
     try {
       await updateContacts(values);
       successToast('Контактные данные успешно обновлены');
+      loadProfile();
     } catch (error: any) {
       if (error.status === 422 || 409) {
         const fieldMapping = { Phone: 'phone', Address: 'address' }
@@ -90,9 +91,21 @@ export function useProfile() {
 
   // Смена email
   async function handleChangeEmail(values: ChangeEmailRequest, setErrors: any) {
+    const startTime = Date.now();
+    
     try {
       await changeEmail(values);
-      successToast('Email изменен');
+      successToast('Email изменен. Сейчас страница перезагрузится. Выполните повтороный вход');
+
+      // Задержка 3 секунды
+      const elapsed = Date.now() - startTime;
+      const remainingDelay = Math.max(0, 3000 - elapsed);
+      
+      if (remainingDelay > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingDelay));
+      }
+
+      window.location.reload();
       return true;
     } catch (error: any) {
       if (error.status === 422 || 409) {  

@@ -1,4 +1,3 @@
-<!-- modules/cart/pages/CartPage.vue -->
 <script setup lang="ts">
 import { Loader2 } from 'lucide-vue-next';
 
@@ -10,31 +9,15 @@ import { Badge } from '@/shared/ui/badge';
 import { Separator } from '@/shared/ui/separator';
 import {
   ShoppingCart,
-  ArrowLeft,
-  Package,
   Clock,
   Trash2,
   ShoppingBag,
   AlertCircle,
-  ChevronRight,
-  Sparkles,
-  Layers,
-  Truck,
-  Banknote,
   Layers2,
-  Percent,
-  Info
 } from 'lucide-vue-next';
 import { useCart } from './useCart';
 import CartItemCard from './CartItemCard.vue';
 import { computed, ref, type Ref, onMounted, watch  } from 'vue';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/shared/ui/select';
 import {
   Popover,
   PopoverContent,
@@ -50,16 +33,16 @@ import { getLocalTimeZone, today } from '@internationalized/date'
 const {
   items,
   isLoading,
-  summary, // ✅ Это CartSummary (с selectedItems, totalPrice и т.д.)
+  summary, 
   minimalDeliveryDate,
   maximalDeliveryDate,
   loadCart,
   toggleSelection,
   removeItem,
   selectAll,
-  incrementQuantity, // ✅ Теперь есть
-  decrementQuantity, // ✅ Теперь есть
-  toggleFavorite, // ✅ Добавь сюда
+  incrementQuantity, 
+  decrementQuantity, 
+  toggleFavorite,
   isCreatingOrder,
   submitOrder
 } = useCart();
@@ -73,12 +56,12 @@ const someSelected = computed(() => items.value.some(i => i.isSelected) && !allS
 
 const minDate = computed<DateValue | undefined>(() => {
   if (!minimalDeliveryDate.value) return undefined;
-  return parseDate(minimalDeliveryDate.value) as DateValue; // <-- Приведение типа
+  return parseDate(minimalDeliveryDate.value) as DateValue; 
 });
 
 const maxDate = computed<DateValue | undefined>(() => {
   if (!maximalDeliveryDate.value) return undefined;
-  return parseDate(maximalDeliveryDate.value) as DateValue; // <-- Приведение типа
+  return parseDate(maximalDeliveryDate.value) as DateValue; 
 });
 
 const formattedDate = computed(() => {
@@ -96,11 +79,16 @@ watch([minDate, maxDate], ([newMin, newMax]) => {
     }
   }
 });
+
+watch(isCalendarDisabled, (disabled) => {
+  if (disabled && selectedDate.value) {
+    selectedDate.value = undefined;
+  }
+});
 </script>
 
 <template>
-  <div class="min-h-screen bg-background">
-    <div class="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-6">
+    <div class="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
       <!-- Заголовок -->
       <div class="mb-6 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -183,11 +171,11 @@ watch([minDate, maxDate], ([newMin, newMax]) => {
                 </Popover>
                 <p v-if="isCalendarDisabled" class="text-xs text-destructive flex items-center gap-1">
                   <AlertCircle class="w-3 h-3" />
-                  Выбор даты недоступен
+                  Слишком большой заказ
                 </p>
                 <p v-else-if="selectedDate" class="text-xs text-muted-foreground flex items-center gap-1">
                   <Clock class="w-3 h-3" />
-                  Доставка с 9:00 до 18:00
+                  Доставка с 6:00 до 18:00
                 </p>
               </div>
 
@@ -258,7 +246,6 @@ watch([minDate, maxDate], ([newMin, newMax]) => {
         </Button>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>

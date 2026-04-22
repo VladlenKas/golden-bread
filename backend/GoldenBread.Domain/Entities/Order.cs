@@ -8,7 +8,7 @@ public class Order
 
     public int CompanyId { get; set; }
 
-    public DateOnly StartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
     public DateOnly EndDate { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? CanceledAt { get; private set; }
