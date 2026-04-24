@@ -1,0 +1,122 @@
+{
+  "sections": [
+    {
+      "key": "references",
+      "title": "Справочники",
+      "icon": "BookOpen",
+      "order": 10,
+      "pages": [
+        {
+          "key": "products",
+          "title": "Продукция",
+          "showInWindow": true,
+          "order": 0
+        },
+        {
+          "key": "ingredients",
+          "title": "Ингредиенты",
+          "showInWindow": true,
+          "order": 10
+        },
+        {
+          "key": "suppliers",
+          "title": "Поставщики",
+          "showInWindow": true,
+          "order": 20
+        },
+        {
+          "key": "employees",
+          "title": "Сотрудники",
+          "showInWindow": true,
+          "order": 30
+        }
+      ]
+    },
+    {
+      "key": "procurement",
+      "title": "Закупки и склад",
+      "icon": "Warehouse",
+      "order": 20,
+      "pages": [
+        {
+          "key": "purchase_positions",
+          "title": "Закупочные позиции",
+          "showInWindow": true,
+          "order": 0
+        },
+        {
+          "key": "warehouse",
+          "title": "Складской учет",
+          "showInWindow": true,
+          "order": 10
+        }
+      ]
+    },
+    {
+      "key": "production",
+      "title": "Производство",
+      "icon": "Factory",
+      "order": 30,
+      "pages": [
+        {
+          "key": "recipes",
+          "title": "Рецептуры",
+          "showInWindow": true,
+          "order": 0
+        },
+        {
+          "key": "product_batches",
+          "title": "Производственные партии",
+          "showInWindow": true,
+          "order": 10
+        },
+        {
+          "key": "employee_tasks",
+          "title": "Задачи сотрудников",
+          "showInWindow": true,
+          "order": 20
+        }
+      ]
+    },
+    {
+      "key": "orders",
+      "title": "Заказы",
+      "icon": "ShoppingCart",
+      "order": 40,
+      "pages": [
+        {
+          "key": "orders_list",
+          "title": "Список заказов",
+          "showInWindow": true,
+          "order": 0
+        }
+      ]
+    },
+    {
+      "key": "administration",
+      "title": "Администрирование",
+      "icon": "Shield",
+      "order": 50,
+      "pages": [
+        {
+          "key": "system_users",
+          "title": "Системные пользователи",
+          "showInWindow": true,
+          "order": 0
+        },
+        {
+          "key": "companies",
+          "title": "Компании",
+          "showInWindow": true,
+          "order": 10
+        },
+        {
+          "key": "accounts",
+          "title": "Аккаунты",
+          "showInWindow": true,
+          "order": 20
+        }
+      ]
+    }
+  ]
+}

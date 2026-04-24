@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="src/GoldenBread.Api/GoldenBread.Api.csproj" />
+  <Project Path="src/GoldenBread.Application/GoldenBread.Application.csproj" />
+  <Project Path="src/GoldenBread.Domain/GoldenBread.Domain.csproj" />
+  <Project Path="src/GoldenBread.Infrastructure/GoldenBread.Infrastructure.csproj" />
+  <Project Path="tests/GoldenBread.Infrastructure.Tests/GoldenBread.Infrastructure.Tests.csproj" />
+</Solution>
