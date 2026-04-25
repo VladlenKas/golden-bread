@@ -3,7 +3,7 @@
     {
       "key": "references",
       "title": "Справочники",
-      "icon": "BookOpen",
+      "icon": "BookOutline",
       "order": 10,
       "pages": [
         {
@@ -34,8 +34,8 @@
     },
     {
       "key": "procurement",
-      "title": "Закупки и склад",
-      "icon": "Warehouse",
+      "title": "Закупки",
+      "icon": "PackageVariant",
       "order": 20,
       "pages": [
         {
@@ -54,8 +54,8 @@
     },
     {
       "key": "production",
-      "title": "Производство",
-      "icon": "Factory",
+      "title": "Работа",
+      "icon": "AccountMultipleOutline",
       "order": 30,
       "pages": [
         {
@@ -81,7 +81,7 @@
     {
       "key": "orders",
       "title": "Заказы",
-      "icon": "ShoppingCart",
+      "icon": "InvoiceTextPlusOutline",
       "order": 40,
       "pages": [
         {
@@ -94,8 +94,8 @@
     },
     {
       "key": "administration",
-      "title": "Администрирование",
-      "icon": "Shield",
+      "title": "Аккаунты",
+      "icon": "ShieldAccountOutline",
       "order": 50,
       "pages": [
         {

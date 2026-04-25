@@ -6,10 +6,9 @@ using System.Security.Claims;
 
 namespace GoldenBread.Infrastructure.Services;
 
-public sealed class CookieService(
-    IHttpContextAccessor httpContextAccessor) : ICookieService
+public sealed class CookieService(IHttpContextAccessor httpContextAccessor) : ICookieService
 {
-    public async Task SignInAsync(string session)
+    public async Task SignInWebAsync(string session)
     {
         var claims = new[]
         {

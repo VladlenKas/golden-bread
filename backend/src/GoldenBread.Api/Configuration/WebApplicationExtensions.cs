@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿using GoldenBread.Api.Handlers;
+using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
 namespace GoldenBread.Api.Configuration;
@@ -7,10 +8,6 @@ public static class WebApplicationExtensions
 {
     public static WebApplication UseApi(this WebApplication app)
     {
-        app.UseExceptionHandler();
-
-        app.UseHttpsRedirection();
-
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
@@ -23,6 +20,8 @@ public static class WebApplicationExtensions
                 .AllowAnyHeader()
                 .AllowCredentials());
 
+        app.UseExceptionHandler();
+        app.UseMiddleware<DesktopAuthMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
 

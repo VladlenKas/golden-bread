@@ -2,6 +2,6 @@
 
 public interface ICookieService
 {
-    Task SignInAsync(string session);
+    Task SignInWebAsync(string session);
     Task SignOutAsync();
 }

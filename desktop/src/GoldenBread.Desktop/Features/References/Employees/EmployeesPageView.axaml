@@ -1,0 +1,17 @@
+<UserControl 
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:suki="https://github.com/kikipoulet/SukiUI"
+    xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+    xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+    xmlns:vm="using:GoldenBread.Desktop.Features.References.Employees"
+    x:Class="GoldenBread.Desktop.Features.References.Employees.EmployeesPageView"
+    x:DataType="vm:EmployeesPageViewModel">
+
+    <Grid>
+        <TextBlock Classes="h2" Text="{Binding DisplayName}"/>
+    </Grid>
+</UserControl>

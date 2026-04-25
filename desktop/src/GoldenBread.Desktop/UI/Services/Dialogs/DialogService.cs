@@ -1,10 +1,5 @@
 ﻿using Avalonia.Controls.Notifications;
 using SukiUI.Dialogs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GoldenBread.Desktop.UI.Services.Dialogs;
 
@@ -48,5 +43,26 @@ public class DialogService : IDialogService
             .OfType(NotificationType.Warning)
             .Dismiss().ByClickingBackground()
             .TryShow();
+    }
+
+    public TaskCompletionSource<bool> ShowQustion(ISukiDialogManager manager, string message)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+
+        manager.CreateDialog()
+            .WithTitle("Подтверждение")
+            .WithContent(message)
+            .OfType(NotificationType.Information)
+            .WithActionButton("Нет", _ =>
+            {
+                tcs.TrySetResult(false);
+            }, dismissOnClick: true)
+            .WithActionButton("Да", _ =>
+            {
+                tcs.TrySetResult(true);
+            }, dismissOnClick: true)
+            .TryShow();
+
+        return tcs;
     }
 }

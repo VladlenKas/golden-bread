@@ -2,11 +2,11 @@
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Infrastructure.Api.Clients;
 using GoldenBread.Desktop.Infrastructure.Auth;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services.Dialogs;
 using GoldenBread.Desktop.UI.Services.Windows;
 using ReactiveUI.SourceGenerators;
-using Refit;
 using System.Diagnostics;
 
 namespace GoldenBread.Desktop.Features.Preview;
@@ -18,14 +18,16 @@ public partial class PreviewWindowViewModel(
     ICurrentUserStore userStore,
     IAuthApi authApi) : ViewModelBase
 {
-    [Reactive] private bool _isIndeterminate = true;
+    [Reactive] private bool _isLoading = true;
     [Reactive] private string _statusText = "Загрузка...";
 
     [ReactiveCommand]
     public async Task InitializeAsync()
     {
-        IsIndeterminate = true;
+        IsLoading = true;
         StatusText = "Загрузка...";
+
+        await Task.Delay(1500);
 
         try
         {
@@ -64,11 +66,11 @@ public partial class PreviewWindowViewModel(
         }
         catch (Exception)
         {
-            dialogService.ShowError(DialogManager, $"Не удалось выполнить запрос");
+            dialogService.ShowError(DialogManager, DialogMessages.ErrorException);
         }
         finally
         {
-            IsIndeterminate = false;
+            IsLoading = false;
             StatusText = "Попробуйте перезапустить приложение";
         }
     }

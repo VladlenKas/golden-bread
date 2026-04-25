@@ -2,12 +2,12 @@
 using GoldenBread.Desktop.Infrastructure.Api.Clients;
 using GoldenBread.Desktop.Infrastructure.Api.Models.Auth;
 using GoldenBread.Desktop.Infrastructure.Auth;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services.Dialogs;
 using GoldenBread.Desktop.UI.Services.Windows;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
-using Refit;
 using System.ComponentModel.DataAnnotations;
 
 namespace GoldenBread.Desktop.Features.Auth;
@@ -29,7 +29,7 @@ public partial class AuthWindowViewModel(
 
         if (HasErrors)
         {
-            dialogService.ShowError(DialogManager, "Заполните все поля");
+            dialogService.ShowError(DialogManager, ValidationMessages.EmptyField);
             return;
         }
 
@@ -70,7 +70,7 @@ public partial class AuthWindowViewModel(
         }
         catch (Exception)
         {
-            dialogService.ShowError(DialogManager, $"Не удалось выполнить запрос");
+            dialogService.ShowError(DialogManager, DialogMessages.ErrorException);
         }
         finally
         {

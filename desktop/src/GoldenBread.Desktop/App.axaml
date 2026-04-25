@@ -8,7 +8,7 @@
 
     <Application.Resources> 
         <ResourceDictionary> 
-            <FontFamily x:Key="DefaultFontFamily"> avares://GoldenBread.Desktop/Assets/Fonts#SF Pro Display</FontFamily> 
+            <FontFamily x:Key="DefaultFontFamily">avares://GoldenBread.Desktop/Assets/Fonts#SF Pro Display</FontFamily> 
         </ResourceDictionary> 
     </Application.Resources> 
 

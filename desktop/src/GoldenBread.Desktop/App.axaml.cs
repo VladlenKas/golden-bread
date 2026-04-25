@@ -1,13 +1,29 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using GoldenBread.Desktop.Configuration.Services;
+using GoldenBread.Desktop.Features.Administration.Accounts;
+using GoldenBread.Desktop.Features.Administration.Companies;
+using GoldenBread.Desktop.Features.Administration.SystemUsers;
 using GoldenBread.Desktop.Features.Auth;
 using GoldenBread.Desktop.Features.Menu;
+using GoldenBread.Desktop.Features.Orders.OrdersList;
 using GoldenBread.Desktop.Features.Preview;
+using GoldenBread.Desktop.Features.Procurement.PurchasePositions;
+using GoldenBread.Desktop.Features.Procurement.Warehouse;
+using GoldenBread.Desktop.Features.Production.EmployeeTasks;
+using GoldenBread.Desktop.Features.Production.ProductBatches;
+using GoldenBread.Desktop.Features.Production.Recipes;
+using GoldenBread.Desktop.Features.References.Employees;
+using GoldenBread.Desktop.Features.References.Ingredients;
+using GoldenBread.Desktop.Features.References.Products;
+using GoldenBread.Desktop.Features.References.Suppliers;
 using GoldenBread.Desktop.Infrastructure.Api.Clients;
 using GoldenBread.Desktop.Infrastructure.Auth;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Services.Dialogs;
 using GoldenBread.Desktop.UI.Services.Tosts;
+using GoldenBread.Desktop.UI.Services.Views;
 using GoldenBread.Desktop.UI.Services.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
@@ -48,69 +64,42 @@ public partial class App : Application, IDisposable
         base.OnFrameworkInitializationCompleted();
     }
 
-    /*private async Task<Window> ResolveStartupWindowAsync()
-    {
-        var sessionStorage = _serviceProvider!.GetRequiredService<ISessionStorage>();
-        var authApi = _serviceProvider!.GetRequiredService<IAuthApi>();
-        var authState = _serviceProvider!.GetRequiredService<IAuthState>();
-
-        // Получаем сессию пользователя из хранилища
-        var session = sessionStorage.LoadSession();
-
-        if (!string.IsNullOrEmpty(session))
-        {
-            try
-            {
-                // Проверяем валидность сессии
-                var response = await authApi.Me();
-
-                if (response.IsSuccessStatusCode && response.Content != null)
-                {
-                    // Загружаем актуальные данные пользователя
-                    var data = response.Content;
-                    authState.Authenticate(data.Id, data.Role!.Value, data.VerificationStatus);
-
-                    // Главное окно
-                    var menuVm = _serviceProvider!.GetRequiredService<AuthWindowViewModel>();
-                    return new AuthWindowView { DataContext = menuVm };
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[ResolveStartup] Error: {ex}");
-                throw;
-            }
-        }
-
-        Debug.WriteLine($"[ResolveStartup] Clearing session due to error");
-        sessionStorage.Clear();
-
-        // Окно авторизации
-        var authVm = _serviceProvider!.GetRequiredService<AuthWindowViewModel>();
-        return new AuthWindowView { DataContext = authVm };
-    }*/
-
     private static ServiceProvider ConfigureServices(IServiceCollection services)
     {
         // UI
+        services.AddSingleton<IPageFactory, PageFactory>();
         services.AddSingleton<IWindowService, WindowService>();
         services.AddSingleton<IToastService, ToastService>();
         services.AddSingleton<IDialogService, DialogService>();
 
         // Infra
+        services.AddTransient<SessionHeaderHandler>();
+        services.AddSingleton<IMenuConfigService, MenuConfigService>();
         services.AddSingleton<ISessionStorage, DataProtectionSessionStorage>();
-        services.AddSingleton<SessionHeaderHandler>();
         services.AddSingleton<ICurrentUserStore, CurrentUserStore>();
 
-        // View Models
+        // ViewModels - Windows
         services.AddTransient<PreviewWindowView>();
         services.AddTransient<PreviewWindowViewModel>();
-
         services.AddTransient<AuthWindowView>();
         services.AddTransient<AuthWindowViewModel>();
-
         services.AddTransient<MenuWindowView>();
         services.AddTransient<MenuWindowViewModel>();
+
+        // ViewModels - Pages
+        services.AddTransient<ProductsPageViewModel>();
+        services.AddTransient<IngredientsPageViewModel>();
+        services.AddTransient<SuppliersPageViewModel>();
+        services.AddTransient<EmployeesPageViewModel>();
+        services.AddTransient<PurchasePositionsPageViewModel>();
+        services.AddTransient<WarehousePageViewModel>();
+        services.AddTransient<RecipesPageViewModel>();
+        services.AddTransient<ProductBatchesPageViewModel>();
+        services.AddTransient<EmployeeTasksPageViewModel>();
+        services.AddTransient<OrdersListPageViewModel>();
+        services.AddTransient<SystemUsersPageViewModel>();
+        services.AddTransient<CompaniesPageViewModel>();
+        services.AddTransient<AccountsPageViewModel>();
 
         // Refit 
         services.AddApiClient<IAuthApi>();
@@ -139,15 +128,13 @@ public partial class App : Application, IDisposable
 
 public static class RefitServiceExtensions
 {
-    private const string BaseUrl = "https://localhost:7107";
-
-    public static IServiceCollection AddApiClient<TInterface>(
-        this IServiceCollection services) where TInterface : class
+    public static IServiceCollection AddApiClient<TInterface>(this IServiceCollection services) 
+        where TInterface : class
     {
         services.AddRefitClient<TInterface>()
             .ConfigureHttpClient(client =>
             {
-                client.BaseAddress = new Uri(BaseUrl);
+                client.BaseAddress = new Uri(Paths.BaseUrl);
                 client.Timeout = TimeSpan.FromSeconds(10);
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));

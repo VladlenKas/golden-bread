@@ -33,13 +33,13 @@
                 Text="{Binding StatusText}"
                 Classes="h5"/>
 
-            <ProgressBar IsIndeterminate="{Binding IsIndeterminate}" />
+            <ProgressBar IsIndeterminate="{Binding IsLoading}" />
         </StackPanel>
         <Button 
             Classes="Outlined"
             Content="Повторить" 
             Command="{Binding InitializeCommand}"
-            IsVisible="{Binding !IsIndeterminate}"/>
+            IsVisible="{Binding !IsLoading}"/>
     </StackPanel>
 
 </sukiUI:SukiWindow>

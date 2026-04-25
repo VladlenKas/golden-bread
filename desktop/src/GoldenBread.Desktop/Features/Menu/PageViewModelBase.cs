@@ -1,18 +1,18 @@
 ﻿using ReactiveUI;
-using SukiUI.Dialogs;
-using SukiUI.Toasts;
+using ReactiveUI.SourceGenerators;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace GoldenBread.Desktop.UI.Common;
 
-public class ViewModelBase : ReactiveObject, INotifyDataErrorInfo
+public partial class PageViewModelBase : ReactiveObject, INotifyDataErrorInfo
 {
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-    public ISukiDialogManager DialogManager { get; } = new SukiDialogManager();
-    public ISukiToastManager ToastManager { get; } = new SukiToastManager();
+    [Reactive] private string _displayName = string.Empty;
+    [Reactive] private string _pageKey = string.Empty;
+    [Reactive] private int _order;
 
     public bool HasErrors
     {

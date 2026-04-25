@@ -46,7 +46,7 @@ public sealed class RegisterCompanyCommandHandler(
             await companyRepository.AddAsync(company, ct);
             await unitOfWork.CommitAsync(ct);
 
-            await cookieService.SignInAsync(account.Session!);
+            await cookieService.SignInWebAsync(account.Session!);
 
             return AuthResponse.Response(account);
         }

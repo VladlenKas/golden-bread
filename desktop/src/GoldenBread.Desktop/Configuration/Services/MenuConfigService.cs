@@ -1,11 +1,14 @@
-﻿using GoldenBread.Desktop.Configuration.Models;
+﻿using Avalonia.Platform;
+using GoldenBread.Desktop.Configuration.Models;
+using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Infrastructure.Common;
+using GoldenBread.Desktop.UI.Common;
 using System.Data;
 using System.Text.Json;
 
 namespace GoldenBread.Desktop.Configuration.Services;
 
-public sealed class AuthorizationConfigService : IAuthorizationConfigService
+public sealed class MenuConfigService : IMenuConfigService
 {
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
@@ -14,16 +17,24 @@ public sealed class AuthorizationConfigService : IAuthorizationConfigService
 
     public SectionsConfig LoadSections(string path)
     {
-        string json = File.ReadAllText(path);
-        return JsonSerializer.Deserialize<SectionsConfig>(json, _jsonOptions)
-               ?? new SectionsConfig();
+        var uri = new Uri(path);
+
+        using var stream = AssetLoader.Open(uri);
+        using var reader = new StreamReader(stream);
+
+        var json = reader.ReadToEnd();
+        return JsonSerializer.Deserialize<SectionsConfig>(json)!;
     }
 
     public RolesConfig LoadRoles(string path)
     {
-        string json = File.ReadAllText(path);
-        return JsonSerializer.Deserialize<RolesConfig>(json, _jsonOptions)
-               ?? new RolesConfig();
+        var uri = new Uri(path);
+
+        using var stream = AssetLoader.Open(uri);
+        using var reader = new StreamReader(stream);
+
+        var json = reader.ReadToEnd();
+        return JsonSerializer.Deserialize<RolesConfig>(json)!;
     }
 
     public IReadOnlyList<AppSectionConfig> GetSidebarSections(
@@ -52,7 +63,32 @@ public sealed class AuthorizationConfigService : IAuthorizationConfigService
             .OrderBy(section => section.Order)
             .ToList();
     }
-    
+
+    public IReadOnlyList<AppPageConfig> GetPages(
+        UserRole role,
+        SectionsConfig sectionsConfig,
+        string sectionKey,
+        RolesConfig rolesConfig)
+    {
+        var roleConfig = rolesConfig.Roles
+            .FirstOrDefault(r => r.Key == role.ToString());
+
+        if (roleConfig is null)
+            return Array.Empty<AppPageConfig>();
+
+        var fullSection = sectionsConfig.Sections
+            .FirstOrDefault(s => s.Key == sectionKey);
+
+        if (fullSection is null)
+            return Array.Empty<AppPageConfig>();
+
+        return fullSection.Pages
+            .Where(page =>
+                GetPagePermissions(role, page.Key, rolesConfig).View)
+            .OrderBy(page => page.Order)
+            .ToList();
+    }
+
     public bool CanAccessSection(
         UserRole role,
         string sectionKey,

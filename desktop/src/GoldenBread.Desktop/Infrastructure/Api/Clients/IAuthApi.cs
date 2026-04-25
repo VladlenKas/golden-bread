@@ -1,6 +1,5 @@
 ﻿using GoldenBread.Desktop.Infrastructure.Api.Models.Auth;
 using Refit;
-using System.Threading.Tasks;
 
 namespace GoldenBread.Desktop.Infrastructure.Api.Clients;
 

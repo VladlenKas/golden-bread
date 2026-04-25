@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GoldenBread.Desktop.Configuration.Services;
 
-public interface IAuthorizationConfigService
+public interface IMenuConfigService
 {
     /// <summary>
     /// Загружает конфигурацию разделов из JSON-файла.
@@ -34,10 +34,24 @@ public interface IAuthorizationConfigService
         RolesConfig rolesConfig);
 
     /// <summary>
+    /// Возвращает страницы раздела, доступные пользователю (с правом View).
+    /// </summary>
+    /// <param name="role">Роль пользователя.</param>
+    /// <param name="sectionsConfig">Конфигурация всех разделов.</param>
+    /// <param name="sectionKey">Ключ раздела.</param>
+    /// <param name="rolesConfig">Конфигурация ролей и прав.</param>
+    /// <returns>Список конфигураций страниц, отсортированный по Order.</returns>
+    IReadOnlyList<AppPageConfig> GetPages(
+        UserRole role,
+        SectionsConfig sectionsConfig,
+        string sectionKey,
+        RolesConfig rolesConfig);
+
+    /// <summary>
     /// Возвращает CRUD-права пользователя на конкретную страницу.
     /// </summary>
     /// <param name="currentUser">Текущий пользователь.</param>
-    /// <param name="pageKey">Ключ страницы (не раздела!).</param>
+    /// <param name="pageKey">Ключ страницы.</param>
     /// <param name="rolesConfig">Конфигурация ролей и прав.</param>
     /// <returns>Права доступа (View, Create, Update, Delete).</returns>
     CrudPermissionConfig GetPagePermissions(
