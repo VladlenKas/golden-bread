@@ -12,5 +12,12 @@ public class EmployeeRepository(IGoldenBreadContext context) : IEmployeeReposito
             .AsNoTracking()
             .ToListAsync(ct);
     }
+
+    public async Task<Employee?> GetByIdAsync(int id, CancellationToken ct = default)
+    {
+        return await context.Employees
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.EmployeeId == id, ct);
+    }
 }
 

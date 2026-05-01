@@ -8,14 +8,14 @@ public class DesktopAuthMiddleware(RequestDelegate next)
     {
         if (!context.User.Identity?.IsAuthenticated ?? true)
         {
-            var session = context.Request.Headers["X-Session-Desktop"]
+            var session = context.Request.Headers["X-Desktop-Session"]
                 .FirstOrDefault();
 
             if (!string.IsNullOrEmpty(session))
             {
                 context.User = new ClaimsPrincipal(
                     new ClaimsIdentity(
-                        [new Claim("session", session)],
+                        [new Claim("dstp.session", session)],
                         "DesktopScheme"));
             }
         }

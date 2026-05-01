@@ -32,4 +32,6 @@ public class Employee
             EmployeeTasks = employeeTasks ?? new List<EmployeeTask>()
         };
     }
+
+    public string Fullname => $"{Lastname} {Firstname} {Patronymic}".Trim();
 }

@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.References.Products;
 
-public class ProductsPageViewModel : PageViewModelBase
+public class ProductsPageViewModel : PageViewModel
 {
 
 }

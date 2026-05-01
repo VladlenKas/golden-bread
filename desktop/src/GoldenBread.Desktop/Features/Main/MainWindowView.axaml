@@ -1,0 +1,45 @@
+<sukiUI:SukiWindow 
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:suki="https://github.com/kikipoulet/SukiUI"
+        xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+        xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+        xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+        xmlns:vm="using:GoldenBread.Desktop.Features.Main"
+        x:Class="GoldenBread.Desktop.Features.Main.MainWindowView"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/Icons/logo.ico"
+        Title="GoldenBread UI - Загрузка"
+        WindowStartupLocation="CenterScreen"
+        Width="600" Height="400">
+
+    <sukiUI:SukiWindow.Hosts>
+		<sukiUI:SukiDialogHost Manager="{Binding SukiDialogManager}"/>
+	</sukiUI:SukiWindow.Hosts>
+
+    <StackPanel 
+        HorizontalAlignment="Center" 
+        VerticalAlignment="Center"
+        Spacing="24">
+
+		<Image 
+            Source="/Assets/Icons/logo.ico"
+             Width="100"/>
+
+        <StackPanel Spacing="4">
+            <TextBlock 
+                Text="{Binding StatusText}"
+                Classes="h5"/>
+
+            <ProgressBar IsIndeterminate="{Binding IsLoading}" />
+        </StackPanel>
+        <Button 
+            Classes="Outlined"
+            Content="Повторить" 
+            Command="{Binding InitializeCommand}"
+            IsVisible="{Binding !IsLoading}"/>
+    </StackPanel>
+
+</sukiUI:SukiWindow>

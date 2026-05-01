@@ -1,0 +1,96 @@
+<UserControl 
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:suki="https://github.com/kikipoulet/SukiUI"
+    xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+    xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+    xmlns:vm="using:GoldenBread.Desktop.Features.References.Employees.ViewModels"
+    x:Class="GoldenBread.Desktop.Features.References.Employees.Views.EmployeesListPageView"
+    x:DataType="vm:EmployeesListPageViewModel"
+    x:CompileBindings="False">
+
+    <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+        <DockPanel VerticalSpacing="12">
+
+            <!-- Тулбар -->
+            <DockPanel 
+                DockPanel.Dock="Top" 
+                HorizontalSpacing="8"
+                LastChildFill="False"
+                >
+            
+                <!-- Поиск -->
+			    <TextBox
+                    DockPanel.Dock="Left"
+                    Width="300" 
+                    Watermark="{Binding ItemsList.Count, StringFormat='Искать среди {0} записей...'}"
+                    suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}"
+                    />
+
+                <!-- Фильтры --><!--
+                <ComboBox DockPanel.Dock="Left" PlaceholderText="Фильтры">
+				    <ComboBoxItem>Фильтр 1</ComboBoxItem>
+				    <ComboBoxItem>Фильтр 2</ComboBoxItem>
+                </ComboBox>-->
+
+                <!-- Добавление -->
+                <Button 
+                    DockPanel.Dock="Right"
+                    Classes="Flat"
+                    Content="Добавить"
+                    suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
+                    Command="{Binding AddCommand}"
+                    />
+            </DockPanel>
+
+            <!-- Таблица -->
+            <suki:GlassCard>
+			    <DataGrid 
+                    ItemsSource="{Binding ItemsList}"
+                    SelectedItem="{Binding SelectedItem}"
+                    AutoGenerateColumns="False"
+                    CanUserResizeColumns="True"
+                    >
+                    <DataGrid.Columns >
+                        <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" />
+                        <DataGridTextColumn Header="ФИО" Binding="{Binding Fullname}" />
+                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}" />
+                        <DataGridTemplateColumn Header="Действия" Width="Auto">
+                            <DataTemplate>
+                                <Menu Height="32" Padding="-2 0">
+                                    <MenuItem Height="36" Width="36">
+                                        <MenuItem.Header>
+                                            <icon:MaterialIcon Kind="DotsVertical" Width="16" />
+                                        </MenuItem.Header>
+                                        <MenuItem 
+                                            Header="Приостановить"
+                                            Icon="{icon:MaterialIconExt Kind=Pause}"
+                                            Command="{Binding $parent[DataGrid].DataContext.PauseCommand}"
+                                            >
+                                        </MenuItem>
+                                        <MenuItem 
+                                            Header="Изменить"
+                                            Icon="{icon:MaterialIconExt Kind=Edit}"
+                                            Command="{Binding $parent[DataGrid].DataContext.EditCommand}"
+                                            CommandParameter="{Binding}">
+                                        </MenuItem>
+                                        <MenuItem 
+                                            Header="Удалить"
+                                            Icon="{icon:MaterialIconExt Kind=Delete}"
+                                            Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}"
+                                            >
+                                        </MenuItem>
+                                    </MenuItem>
+                                </Menu>
+                            </DataTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </suki:GlassCard>
+        </DockPanel>
+    </suki:BusyArea>
+
+</UserControl>

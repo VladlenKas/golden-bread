@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Orders.OrdersList;
 
-public class OrdersListPageViewModel : PageViewModelBase
+public class OrdersListPageViewModel : PageViewModel
 {
 
 }

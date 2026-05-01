@@ -1,6 +1,4 @@
 ﻿using ReactiveUI;
-using SukiUI.Dialogs;
-using SukiUI.Toasts;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -11,18 +9,18 @@ public class ViewModelBase : ReactiveObject, INotifyDataErrorInfo
 {
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-    public ISukiDialogManager DialogManager { get; } = new SukiDialogManager();
-    public ISukiToastManager ToastManager { get; } = new SukiToastManager();
-
-    public bool HasErrors
-    {
-        get
-        {
-            var context = new ValidationContext(this);
-            var result = new List<ValidationResult>();
-            return !Validator.TryValidateObject(this, context, result, true);
-        }
-    }
+    public bool HasErrors => GetAllErrors().Any();
 
     public IEnumerable GetErrors(string? propertyName) => Enumerable.Empty<string>();
+
+    // Получить все ошибки через DataAnnotations
+    public List<string> GetAllErrors()
+    {
+        var context = new ValidationContext(this);
+        var results = new List<ValidationResult>();
+        Validator.TryValidateObject(this, context, results, true);
+        return results.Select(r => r.ErrorMessage!).ToList();
+    }
+
+    public string? GetFirstError() => GetAllErrors().FirstOrDefault();
 }

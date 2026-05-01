@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Administration.Companies;
 
-public class CompaniesPageViewModel : PageViewModelBase
+public class CompaniesPageViewModel : PageViewModel
 {
 
 }

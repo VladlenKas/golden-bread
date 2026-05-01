@@ -1,0 +1,49 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:suki="https://github.com/kikipoulet/SukiUI"
+	xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+	xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+	xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+	xmlns:vm="using:GoldenBread.Desktop.Features.References.Employees.ViewModels"
+	x:Class="GoldenBread.Desktop.Features.References.Employees.Views.EditableEmployeePageView"
+	x:DataType="vm:EditableEmployeePageViewModel">
+
+    <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+			<!-- Кнопки -->
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="Сохранить" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<!-- Форма -->
+			<suki:GlassCard Width="400" HorizontalAlignment="Left">
+				<Expander 
+					ExpandDirection="Down" 
+					Header="Персональные данные"
+					IsExpanded="True">
+
+					<StackPanel Spacing="8">
+
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="Фамилия"/>
+							<TextBox Text="{Binding ItemResponse.LastName}"/>
+						</StackPanel>
+
+						<TextBox suki:TextBoxExtensions.Prefix="Фамилия: " Text="{Binding ItemResponse.LastName}"/>
+						<TextBox suki:TextBoxExtensions.Prefix="Имя: " Text="{Binding ItemResponse.FirstName}"/>
+						<TextBox suki:TextBoxExtensions.Prefix="Отчество: " Text="{Binding ItemResponse.Patronymic}"/>
+						<DatePicker Width="400" SelectedDate="{Binding ItemResponse.Birthday}"/>
+					</StackPanel>
+					</Expander>
+			</suki:GlassCard>
+
+		</DockPanel>
+    </suki:BusyArea>
+
+</UserControl>

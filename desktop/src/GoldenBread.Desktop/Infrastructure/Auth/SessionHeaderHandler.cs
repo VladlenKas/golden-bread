@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Infrastructure.Auth;
 
-public sealed class SessionHeaderHandler(ISessionStorage storage) : DelegatingHandler
+public sealed class SessionHeaderHandler(SessionStorage storage) : DelegatingHandler
 {
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request, 
@@ -13,9 +13,10 @@ public sealed class SessionHeaderHandler(ISessionStorage storage) : DelegatingHa
             var session = storage.LoadSession();
 
             if (!string.IsNullOrEmpty(session))
-                request.Headers.TryAddWithoutValidation("X-Session-Desktop", session);
+                request.Headers.TryAddWithoutValidation("X-Desktop-Session", session);
 
-            return await base.SendAsync(request, ct);
+            var response = await base.SendAsync(request, ct);
+            return response;
         }
         catch (Exception ex)
         {

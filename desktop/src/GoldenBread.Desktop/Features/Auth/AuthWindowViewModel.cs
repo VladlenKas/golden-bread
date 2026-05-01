@@ -1,24 +1,27 @@
-﻿using GoldenBread.Desktop.Features.Menu;
-using GoldenBread.Desktop.Infrastructure.Api.Clients;
-using GoldenBread.Desktop.Infrastructure.Api.Models.Auth;
+﻿using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Menu;
+using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
-using GoldenBread.Desktop.UI.Services.Dialogs;
-using GoldenBread.Desktop.UI.Services.Windows;
+using GoldenBread.Desktop.UI.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using SukiUI.Dialogs;
 using System.ComponentModel.DataAnnotations;
 
 namespace GoldenBread.Desktop.Features.Auth;
 
 public partial class AuthWindowViewModel(
-    IWindowService windowService,
-    IDialogService dialogService,
-    ISessionStorage sessionStorage,
-    ICurrentUserStore authState,
+    DialogService dialogService,
+    ISukiDialogManager sukiDialogManager,
+    WindowService windowService,
+    SessionStorage sessionStorage,
+    CurrentUserStore authState,
     IAuthApi authApi) : ViewModelBase
 {
+    public ISukiDialogManager SukiDialogManager { get; } = sukiDialogManager;
+
     [Reactive][Required] private string _password = null!;
     [Reactive][Required] private string _email = null!;
     [Reactive] private bool _isLoading = false;
@@ -26,10 +29,9 @@ public partial class AuthWindowViewModel(
     [ReactiveCommand]
     private async Task LoginAsync()
     {
-
         if (HasErrors)
         {
-            dialogService.ShowError(DialogManager, ValidationMessages.EmptyField);
+            dialogService.ShowError(ConstantMessages.EmptyFieldsException);
             return;
         }
 
@@ -42,7 +44,7 @@ public partial class AuthWindowViewModel(
 
             if (!response.IsSuccessStatusCode || response.Content == null)
             {
-                dialogService.ShowError(DialogManager, "Пользователь не найден");
+                dialogService.ShowError("Пользователь не найден");
                 return;
             }
 
@@ -51,7 +53,7 @@ public partial class AuthWindowViewModel(
             // Проверяем статус аккаунта
             if (data.VerificationStatus != VerificationStatus.Approved)
             {
-                dialogService.ShowError(DialogManager, $"Аккаунт {data.VerificationStatus}");
+                dialogService.ShowError($"Аккаунт {data.VerificationStatus}");
                 return;
             }
 
@@ -68,9 +70,9 @@ public partial class AuthWindowViewModel(
             windowService.ShowWindow<MenuWindowView, MenuWindowViewModel>();
             windowService.CloseWindow(this);
         }
-        catch (Exception)
+        catch
         {
-            dialogService.ShowError(DialogManager, DialogMessages.ErrorException);
+            dialogService.ShowError(ConstantMessages.ErrorException);
         }
         finally
         {

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+	<AvaloniaResource Include="Configuration\Files\*.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,8 +21,8 @@
     </PackageReference>
 	<PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
 	<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
-	<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="10.0.0" />
-	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+	<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="10.0.7" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	<PackageReference Include="ReactiveUI" Version="22.3.1" />
 	<PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
@@ -29,19 +30,10 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Refit" Version="9.0.2" />
-	<PackageReference Include="Refit.HttpClientFactory" Version="9.0.2" />
+	<PackageReference Include="Refit" Version="10.1.6" />
+	<PackageReference Include="Refit.HttpClientFactory" Version="10.1.6" />
 	<PackageReference Include="SukiUI" Version="6.0.3" />
 	<PackageReference Include="HotAvalonia" Version="3.0.2" PrivateAssets="All" Publish="True" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Features\Auth\AuthWindowView.axaml.cs">
-      <DependentUpon>AuthWindowView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Features\Menu\MenuWindowView.axaml.cs">
-      <DependentUpon>MenuWindowView.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

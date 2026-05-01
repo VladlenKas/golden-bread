@@ -35,7 +35,6 @@ public sealed class LoginCompanyCommandHandler(
         // Храним сессию в HttpContextAccessor только web-пользователей
         if (account.AccountType == AccountType.Company)
             await cookieService.SignInWebAsync(account.Session!);
-        else
 
         await unitOfWork.SaveChangesAsync(ct);
 

@@ -6,8 +6,8 @@ namespace GoldenBread.Application.Features.CompanyOrder.Queries.GetOrders;
 
 public sealed class GetOrdersQueryHandler(
     ICurrentAccountContext accountContext,
-    IOrderRepository orderRepository) :
-    IRequestHandler<GetOrdersQuery, OrdersListResponse>
+    IOrderRepository orderRepository) 
+    : IRequestHandler<GetOrdersQuery, OrdersListResponse>
 {
     public async Task<OrdersListResponse> Handle(
         GetOrdersQuery query, 

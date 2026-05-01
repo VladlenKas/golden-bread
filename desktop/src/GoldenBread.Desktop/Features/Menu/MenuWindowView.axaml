@@ -16,7 +16,8 @@ WindowStartupLocation="CenterScreen"
 Width="1300" Height="850">
 
 	<sukiUI:SukiWindow.Hosts>
-		<sukiUI:SukiDialogHost Manager="{Binding DialogManager}"/>
+		<sukiUI:SukiDialogHost Manager="{Binding SukiDialogManager}"/>
+		<sukiUI:SukiToastHost Manager="{Binding SukiToastManager}"/>
 	</sukiUI:SukiWindow.Hosts>
 
 	<Grid ColumnDefinitions="Auto *">
@@ -57,7 +58,7 @@ Width="1300" Height="850">
 
 		<!-- Основной контент справа от меню -->
 		<TabControl
-			Grid.Column="1"
+			Grid.Column="1" 
 			Margin="24"
 			ItemsSource="{Binding SectionPages}"
 			SelectedItem="{Binding ActivePage}">

@@ -19,7 +19,7 @@ internal class CurrentAccountContext(
         ?? httpContextAccessor.HttpContext?.Request.Headers["X-Desktop-Session"].FirstOrDefault();
 
     public bool HasSession =>
-        httpContextAccessor.HttpContext?.Request.Cookies.ContainsKey("gb.session") == true ||
+        httpContextAccessor.HttpContext?.Request.Cookies.ContainsKey("dstp.session") == true ||
         !string.IsNullOrEmpty(httpContextAccessor.HttpContext?.Request.Headers["X-Desktop-Session"].FirstOrDefault());
 
     public async Task<Account> GetAccountAsync(CancellationToken ct)

@@ -2,4 +2,4 @@
 
 namespace GoldenBread.Application.Features.CompanyOrder.Queries.GetOrders;
 
-public sealed record class GetOrdersQuery() : IRequest<OrdersListResponse>;
+public sealed record GetOrdersQuery : IRequest<OrdersListResponse>;

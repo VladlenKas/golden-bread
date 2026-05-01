@@ -1,14 +1,12 @@
 ﻿using Avalonia.Platform;
 using GoldenBread.Desktop.Configuration.Models;
-using GoldenBread.Desktop.Features.Menu;
-using GoldenBread.Desktop.Infrastructure.Common;
-using GoldenBread.Desktop.UI.Common;
+using GoldenBread.Desktop.Features.Common.Models;
 using System.Data;
 using System.Text.Json;
 
 namespace GoldenBread.Desktop.Configuration.Services;
 
-public sealed class MenuConfigService : IMenuConfigService
+public sealed class MenuConfigService
 {
     private readonly JsonSerializerOptions _jsonOptions = new()
     {

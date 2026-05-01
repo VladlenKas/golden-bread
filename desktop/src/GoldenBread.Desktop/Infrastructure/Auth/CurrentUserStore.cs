@@ -1,20 +1,8 @@
-﻿using GoldenBread.Desktop.Infrastructure.Api.Models.Auth;
-using GoldenBread.Desktop.Infrastructure.Common;
+﻿using GoldenBread.Desktop.Features.Common.Models;
 
 namespace GoldenBread.Desktop.Infrastructure.Auth;
 
-public interface ICurrentUserStore
-{
-    int? UserId { get; }
-    UserRole? Role { get; }
-    VerificationStatus? VerificationStatus { get; }
-    bool IsAuthenticated { get; }
-
-    void Authenticate(int id, UserRole role, VerificationStatus status);
-    void Logout();
-}
-
-public sealed class CurrentUserStore : ICurrentUserStore
+public sealed class CurrentUserStore
 {
     public int? UserId { get; private set; }
     public UserRole? Role { get; private set; }
