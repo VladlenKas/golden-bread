@@ -26,6 +26,7 @@
 			    <TextBox
                     DockPanel.Dock="Left"
                     Width="300" 
+                    MaxLength="50"
                     Text="{Binding SearchText}"
                     Watermark="{Binding FilteredItems.Count, StringFormat='Искать среди {0} записей...'}"
                     suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}"
@@ -48,49 +49,60 @@
                     />
             </DockPanel>
 
-            <!-- Таблица -->
             <suki:GlassCard>
-			    <DataGrid 
-                    ItemsSource="{Binding FilteredItems}"
-                    SelectedItem="{Binding SelectedItem}"
-                    AutoGenerateColumns="False"
-                    CanUserResizeColumns="True"
-                    >
-                    <DataGrid.Columns >
-                        <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" />
-                        <DataGridTextColumn Header="ФИО" Binding="{Binding Fullname}" />
-                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}" />
-                        <DataGridTemplateColumn Header="Действия" Width="Auto">
-                            <DataTemplate>
-                                <Menu Height="32" Padding="-2 0">
-                                    <MenuItem Height="36" Width="36">
-                                        <MenuItem.Header>
-                                            <icon:MaterialIcon Kind="DotsVertical" Width="16" />
-                                        </MenuItem.Header>
-                                        <MenuItem 
-                                            Header="Приостановить"
-                                            Icon="{icon:MaterialIconExt Kind=Pause}"
-                                            Command="{Binding $parent[DataGrid].DataContext.PauseCommand}"
-                                            >
+                <Grid>
+                    <!-- Таблица -->
+			        <DataGrid 
+                        ItemsSource="{Binding FilteredItems}"
+                        SelectedItem="{Binding SelectedItem}"
+                        AutoGenerateColumns="False"
+                        CanUserResizeColumns="True"
+                        >
+                        <DataGrid.Columns >
+                            <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" />
+                            <DataGridTextColumn Header="ФИО" Binding="{Binding Fullname}" />
+                            <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}" />
+                            <DataGridTemplateColumn Header="Действия" Width="Auto">
+                                <DataTemplate>
+                                    <Menu Height="32" Padding="-2 0">
+                                        <MenuItem Height="36" Width="36">
+                                            <MenuItem.Header>
+                                                <icon:MaterialIcon Kind="DotsVertical" Width="16" />
+                                            </MenuItem.Header>
+                                            <MenuItem 
+                                                Header="Приостановить"
+                                                Icon="{icon:MaterialIconExt Kind=Pause}"
+                                                Command="{Binding $parent[DataGrid].DataContext.PauseCommand}"
+                                                >
+                                            </MenuItem>
+                                            <MenuItem 
+                                                Header="Изменить"
+                                                Icon="{icon:MaterialIconExt Kind=Edit}"
+                                                Command="{Binding $parent[DataGrid].DataContext.EditCommand}"
+                                                CommandParameter="{Binding}">
+                                            </MenuItem>
+                                            <MenuItem 
+                                                Header="Уволить"
+                                                Icon="{icon:MaterialIconExt Kind=Delete}"
+                                                Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}"
+                                                >
+                                            </MenuItem>
                                         </MenuItem>
-                                        <MenuItem 
-                                            Header="Изменить"
-                                            Icon="{icon:MaterialIconExt Kind=Edit}"
-                                            Command="{Binding $parent[DataGrid].DataContext.EditCommand}"
-                                            CommandParameter="{Binding}">
-                                        </MenuItem>
-                                        <MenuItem 
-                                            Header="Удалить"
-                                            Icon="{icon:MaterialIconExt Kind=Delete}"
-                                            Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}"
-                                            >
-                                        </MenuItem>
-                                    </MenuItem>
-                                </Menu>
-                            </DataTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                                    </Menu>
+                                </DataTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Плейсхолдер -->
+                    <TextBlock
+                        Text="Данные отсутствуют"
+                        Margin="8 54 0 0"
+                        Classes="h6"
+                        IsHitTestVisible="False"
+                        IsVisible="{Binding IsEmpty}"
+                        />
+                </Grid>
             </suki:GlassCard>
         </DockPanel>
     </suki:BusyArea>

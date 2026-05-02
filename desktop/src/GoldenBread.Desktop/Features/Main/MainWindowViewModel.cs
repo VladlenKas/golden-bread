@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.Auth;
+using GoldenBread.Desktop.Features.Common.Models;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
@@ -13,12 +14,16 @@ namespace GoldenBread.Desktop.Features.Main;
 
 public partial class MainWindowViewModel(
     WindowService windowService,
+    ISukiDialogManager sukiDialogManager,
     SessionStorage sessionStorage,
     CurrentUserStore userStore,
+    DialogService dialogService,
     IAuthApi authApi) : ViewModelBase
 {
     [Reactive] private bool _isLoading = true;
     [Reactive] private string _statusText = "Загрузка...";
+
+    public ISukiDialogManager SukiDialogManager { get; } = sukiDialogManager;
 
     [ReactiveCommand]
     public async Task InitializeAsync()
@@ -39,6 +44,14 @@ public partial class MainWindowViewModel(
                 StatusText = "Получение данных...";
 
                 var data = response.Content;
+
+                if (data.VerificationStatus != VerificationStatus.Approved)
+                {
+                    dialogService.ShowWarning(ConstantMessages.GetStatusMessage(data.VerificationStatus));
+                    sessionStorage.Clear();
+                    return;
+                }
+
                 userStore.Authenticate(data.Id, data.Role!.Value, data.VerificationStatus);
 
                 StatusText = "Открытие главного меню...";

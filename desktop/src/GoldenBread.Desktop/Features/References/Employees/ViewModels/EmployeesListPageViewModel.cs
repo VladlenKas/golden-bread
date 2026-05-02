@@ -8,6 +8,7 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
@@ -20,12 +21,12 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     private readonly SourceList<EmployeeListItem> _sourceList = new();
 
     [Reactive] private bool _isBusy;
+    [Reactive] public bool _isEmpty;
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public EmployeeListItem? _selectedItem;
 
-    public string Title { get; set; } = "Список сотрудников";
-
-    [ObservableAsProperty] public ReadOnlyObservableCollection<EmployeeListItem> FilteredItems { get; }
+    public string Title { get; set; } = ConstantMessages.EmployeesTitlePage;
+    public ReadOnlyObservableCollection<EmployeeListItem> FilteredItems { get; }
 
     public EmployeesListPageViewModel(
         IEmployeesApi api,
@@ -37,13 +38,16 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
         _toastService = toastService;
 
         var filter = this.WhenAnyValue(x => x.SearchText)
-            .Select(SearchFilter)
-            .DistinctUntilChanged();
+            .DistinctUntilChanged()
+            .Select(SearchFilter);
 
         _sourceList.Connect()
             .Filter(filter)           
             .Bind(out var filtered)
-            .Subscribe();
+            .Subscribe(_ => 
+            {
+                IsEmpty = filtered.Count == 0;
+            });
 
         FilteredItems = filtered;
     }
@@ -77,7 +81,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
         }
         catch (Exception)
         {
-            _dialogService.ShowInfo(ConstantMessages.ErrorException);
+            _dialogService.ShowInfo(ConstantMessages.ExceptionDialog);
         }
         finally
         {
@@ -86,21 +90,55 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     }
 
     [ReactiveCommand]
-    private async Task AddAsync() { }
-
-    [ReactiveCommand]
-    private async Task<EmployeeListItem?> EditAsync(EmployeeListItem? selectedItem) => selectedItem;
-
-    // Временная остановка назначения заказов сотруднику
-    [ReactiveCommand]
-    private async Task PauseAsync()
-    {
-        _toastService.ShowInfo(SelectedItem?.Fullname + " Приостановить");
-    }
-
-    [ReactiveCommand]
     private async Task DeleteAsync()
     {
-        _dialogService.ShowInfo(SelectedItem?.Fullname + " Удалить");
+        var tcs = _dialogService.ShowQustion(ConstantMessages.EmployeeDismissConfirmDialog);
+
+        bool confirmed = await tcs.Task;
+
+        if (!confirmed)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            if (SelectedItem == null)
+            {
+                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+                return;
+            }
+
+            var response = await _api.Delete(SelectedItem!.EmployeeId);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _sourceList.Remove(SelectedItem);
+                _toastService.ShowSuccess(ConstantMessages.EmployeeDismissedToast);
+            }
+            else
+            {
+                _toastService.ShowError();
+            }
+        }
+        catch
+        {
+            _dialogService.ShowError();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
+
+    [ReactiveCommand]
+    private async Task ToggleActiveStatusAsync()
+    {
+        _toastService.ShowInfo(SelectedItem?.Fullname!);
+    }
+
+    [ReactiveCommand] // Оповещение оркестартора
+    private async Task AddAsync() { }
+
+    [ReactiveCommand] // Оповещение оркестартора
+    private async Task<EmployeeListItem?> EditAsync(EmployeeListItem? selectedItem) => selectedItem;
 }

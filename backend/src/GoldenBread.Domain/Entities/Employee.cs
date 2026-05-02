@@ -34,5 +34,17 @@ public class Employee
         };
     }
 
+    public void Update(
+        string firstname,
+        string lastname,
+        string? patronymic,
+        DateOnly birthday)
+    {
+        Firstname = firstname;
+        Lastname = lastname;
+        Patronymic = patronymic;
+        Birthday = birthday;
+    }
+
     public string Fullname => $"{Lastname} {Firstname} {Patronymic}".Trim();
 }

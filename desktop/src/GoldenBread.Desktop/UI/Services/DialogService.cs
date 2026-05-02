@@ -1,11 +1,12 @@
 ﻿using Avalonia.Controls.Notifications;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using SukiUI.Dialogs;
 
 namespace GoldenBread.Desktop.UI.Services;
 
 public class DialogService(ISukiDialogManager manager)
 {
-    public void ShowError(string message)
+    public void ShowError(string message = ConstantMessages.ExceptionDialog)
     {
         manager.CreateDialog()
             .WithTitle("Ошибка")

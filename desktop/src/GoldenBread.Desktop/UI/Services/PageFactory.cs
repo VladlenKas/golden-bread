@@ -1,4 +1,5 @@
-﻿using GoldenBread.Desktop.Features.Administration.Accounts;
+﻿using GoldenBread.Desktop.Configuration.Models;
+using GoldenBread.Desktop.Features.Administration.Accounts;
 using GoldenBread.Desktop.Features.Administration.Companies;
 using GoldenBread.Desktop.Features.Administration.SystemUsers;
 using GoldenBread.Desktop.Features.Orders.OrdersList;
@@ -34,12 +35,26 @@ public sealed class PageFactory(IServiceProvider provider)
         ["accounts"] = typeof(AccountsHostPageViewModel),
     };
 
-    public HostPageViewModel? GetHostPage(string pageKey)
+    public HostPageViewModel? GetHostPage(
+        string pageKey, 
+        string title,
+        CrudPermissionConfig permissions)
     {
-        if (_pageTypes.TryGetValue(pageKey, out var type))
-            return (HostPageViewModel)provider.GetRequiredService(type);
-        return null;
+        if (!_pageTypes.TryGetValue(pageKey, out var type))
+            return null;
+
+        var page = (HostPageViewModel)provider.GetRequiredService(type);
+
+        if (page != null)
+        {
+            page.PageKey = pageKey;  
+            page.DisplayName = title;  
+            page.Permissions = permissions;  
+        }
+
+        return page;
     }
 
-    public T GetPage<T>() where T : PageViewModel => provider.GetRequiredService<T>();
+    public T GetPage<T>() where T : PageViewModel
+        => provider.GetRequiredService<T>();
 }

@@ -74,12 +74,10 @@ public partial class MenuWindowViewModel : ViewModelBase
 
         foreach (var page in section.Pages.OrderBy(p => p.Order))
         {
-            var vm = _pageFactory.GetHostPage(page.Key);
-            if (vm is null) continue;
+            var perm = _menuConfig.GetPagePermissions(page.Key);
+            var vm = _pageFactory.GetHostPage(page.Key, page.Title, perm);
 
-            vm.DisplayName = page.Title;
-            vm.PageKey = page.Key;
-            vm.Permissions = _menuConfig.GetPagePermissions(page.Key);
+            if (vm is null) continue;
 
             SectionPages.Add(vm);
         }
@@ -90,7 +88,7 @@ public partial class MenuWindowViewModel : ViewModelBase
     [ReactiveCommand]
     private async Task LogoutAsync()
     {
-        var tcs = _dialogService.ShowQustion("Вы действительно хотите выйти?");
+        var tcs = _dialogService.ShowQustion(ConstantMessages.LogoutConfirmDialog);
 
         bool confirmed = await tcs.Task;
 
@@ -110,7 +108,7 @@ public partial class MenuWindowViewModel : ViewModelBase
         }
         catch
         {
-            _dialogService.ShowError(ConstantMessages.ErrorException);
+            _dialogService.ShowError(ConstantMessages.ExceptionDialog);
         }
         finally
         {

@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Desktop.Configuration.Models;
+using ReactiveUI.SourceGenerators;
 
 namespace GoldenBread.Desktop.UI.Common;
 

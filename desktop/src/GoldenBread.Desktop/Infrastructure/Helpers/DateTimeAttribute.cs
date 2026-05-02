@@ -11,11 +11,12 @@ public class DateTimeAttribute : ValidationAttribute
 
         var maxDate = DateTimeOffset.Now;
         var minDate = maxDate.AddYears(-65);
+        maxDate = maxDate.AddYears(-18);
 
         if (dto < minDate || dto > maxDate)
         {
             var message = ErrorMessage
-                ?? $"Дата должна быть в промежутке от {minDate:dd.MM.yyyy} по текущий день";
+                ?? $"Дата должна быть в промежутке от {minDate:dd.MM.yyyy} по {maxDate:dd.MM.yyyy}";
             return new ValidationResult(message);
         }
 

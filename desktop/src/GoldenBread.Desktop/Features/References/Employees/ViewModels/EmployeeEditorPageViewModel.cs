@@ -15,12 +15,12 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private EmployeeResponse? _itemResponse;
+    [Reactive] private EmployeeForm? _itemResponse;
     [Reactive] private EmployeeListItem? _selectedItem;
     [Reactive] private bool _isBusy;
 
-    private EmployeeResponse? ItemResponseCache { get; set; }
-    public string Title { get; set; } = "Добавление";
+    private EmployeeForm? ItemResponseCache { get; set; }
+    public string Title { get; set; } = ConstantMessages.CreateTitlePage;
 
     public EmployeeEditorPageViewModel(
         IEmployeesApi api,
@@ -36,27 +36,106 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
             {
                 if (item == null)
                 {
-                    ItemResponse = new(); 
-                    ItemResponseCache = null; 
+                    ItemResponse = new EmployeeForm();
+                    ItemResponseCache = null;
+
                     return;
                 }
-                    
-                Title = "Редактирование";
+
+                Title = ConstantMessages.EditorTitlePage;
                 await LoadEmployeeAsync(item.EmployeeId);
             });
     }
 
+    [ReactiveCommand]
+    public async Task<bool> SaveAsync()
+    {
+        if (ItemResponse!.HasErrors)
+        {
+            _toastService.ShowError(ItemResponse.GetFirstError());
+            return false;
+        }
+
+        if (ItemResponseCache is not null && 
+            ItemResponseCache.EqualsValues(ItemResponse))
+        {
+            _toastService.ShowInfo(ConstantMessages.NoChangesToast);
+            return false;
+        }
+
+        IsBusy = true;
+        try
+        {
+            // Создание
+            if (ItemResponse.EmployeeId == 0)
+            {
+                var command = new CreateEmployeeRequest(
+                    ItemResponse.FirstName!,
+                    ItemResponse.LastName!,
+                    ItemResponse.Patronymic,
+                    DateOnly.FromDateTime(ItemResponse.Birthday.DateTime));
+
+                var response = await _api.Create(command);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _toastService.ShowSuccess(ConstantMessages.CreatedToast);
+                    return true;
+                }
+                else
+                {
+                    _toastService.ShowError();
+                    return false;
+                }
+            }
+            // Обновление
+            else
+            {
+                var command = new UpdateEmployeeRequest(
+                    ItemResponse.EmployeeId,
+                    ItemResponse.FirstName!,
+                    ItemResponse.LastName!,
+                    ItemResponse.Patronymic,
+                    DateOnly.FromDateTime(ItemResponse.Birthday.DateTime));
+
+                var response = await _api.Update(ItemResponse.EmployeeId, command);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _toastService.ShowSuccess(ConstantMessages.UpdatedToast);
+                    return true;
+                }
+                else
+                {
+                    _toastService.ShowError();
+                    return false;
+                }
+            }
+        }
+        catch
+        {
+            _dialogService.ShowError(ConstantMessages.ExceptionDialog);
+            return false;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [ReactiveCommand] // Оповещение оркестартора
+    public async Task GoBackAsync() { }
+
     private async Task LoadEmployeeAsync(int id)
     {
         IsBusy = true;
-
         try
         {
             var response = await _api.GetById(id);
 
             if (!response.IsSuccessStatusCode || response.Content == null)
             {
-                _dialogService.ShowError(ConstantMessages.ErrorException);
+                _dialogService.ShowError(ConstantMessages.ExceptionDialog);
                 return;
             }
 
@@ -67,28 +146,5 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
         {
             IsBusy = false;
         }
-    }
-
-    [ReactiveCommand]
-    public async Task SaveAsync()
-    {
-        if (ItemResponse!.HasErrors)
-        {
-            _toastService.ShowError(ItemResponse!.GetFirstError() ?? "Ошибка");
-        }
-        else if (ItemResponseCache != null && ItemResponseCache.EqualsValues(ItemResponse))
-        {
-            _toastService.ShowInfo("Вы не внесли изменений");
-        }
-        else
-        {
-            _toastService.ShowSuccess("Ура");
-        }
-    }
-
-    [ReactiveCommand]
-    public async Task GoBackAsync()
-    {
-
     }
 }

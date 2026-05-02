@@ -22,5 +22,5 @@ public class ViewModelBase : ReactiveObject, INotifyDataErrorInfo
         return results.Select(r => r.ErrorMessage ?? "Ошибка").ToList();
     }
 
-    public string? GetFirstError() => GetAllErrors().FirstOrDefault();
+    public string GetFirstError() => GetAllErrors().FirstOrDefault()!;
 }

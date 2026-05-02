@@ -31,7 +31,7 @@ public partial class AuthWindowViewModel(
     {
         if (HasErrors)
         {
-            dialogService.ShowError(ConstantMessages.EmptyFieldsException);
+            dialogService.ShowError(ConstantMessages.RequiredFieldsDialog);
             return;
         }
 
@@ -44,7 +44,7 @@ public partial class AuthWindowViewModel(
 
             if (!response.IsSuccessStatusCode || response.Content == null)
             {
-                dialogService.ShowError("Пользователь не найден");
+                dialogService.ShowError(ConstantMessages.UserNotFoundDialog);
                 return;
             }
 
@@ -53,7 +53,7 @@ public partial class AuthWindowViewModel(
             // Проверяем статус аккаунта
             if (data.VerificationStatus != VerificationStatus.Approved)
             {
-                dialogService.ShowError($"Аккаунт {data.VerificationStatus}");
+                dialogService.ShowWarning(ConstantMessages.GetStatusMessage(data.VerificationStatus));
                 return;
             }
 
@@ -72,7 +72,7 @@ public partial class AuthWindowViewModel(
         }
         catch
         {
-            dialogService.ShowError(ConstantMessages.ErrorException);
+            dialogService.ShowError(ConstantMessages.ExceptionDialog);
         }
         finally
         {

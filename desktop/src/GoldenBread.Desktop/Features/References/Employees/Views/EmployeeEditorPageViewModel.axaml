@@ -23,25 +23,60 @@
 
 			<!-- Форма -->
 			<suki:GlassCard Width="400" HorizontalAlignment="Left">
-				<Expander 
-					ExpandDirection="Down" 
-					Header="Персональные данные"
-					IsExpanded="True">
+                <Expander
+                    Header="Персональные данные"
+                    ExpandDirection="Down"
+                    IsExpanded="True">
 
-					<StackPanel Spacing="8">
+                    <StackPanel Spacing="12">
 
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="Фамилия"/>
-							<TextBox Text="{Binding ItemResponse.LastName}"/>
-						</StackPanel>
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                Grid.Row="0"
+                                VerticalAlignment="Center"
+                                Text="Фамилия:" />
+                            <TextBox
+                                Grid.Row="1"
+                                MaxLength="50"
+                                Text="{Binding ItemResponse.LastName}" />
+                        </DockPanel>
 
-						<TextBox suki:TextBoxExtensions.Prefix="Фамилия: " Text="{Binding ItemResponse.LastName}"/>
-						<TextBox suki:TextBoxExtensions.Prefix="Имя: " Text="{Binding ItemResponse.FirstName}"/>
-						<TextBox suki:TextBoxExtensions.Prefix="Отчество: " Text="{Binding ItemResponse.Patronymic}"/>
-						<DatePicker Width="400" SelectedDate="{Binding ItemResponse.Birthday}"/>
-					</StackPanel>
-					</Expander>
-			</suki:GlassCard>
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                Grid.Row="0"
+                                VerticalAlignment="Center"
+                                Text="Имя:" />
+                            <TextBox
+                                Grid.Row="1"
+                                MaxLength="50"
+                                Text="{Binding ItemResponse.FirstName}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                Grid.Row="0"
+                                VerticalAlignment="Center"
+                                Text="Отчество:" />
+                            <TextBox
+                                Grid.Row="1"
+                                MaxLength="50"
+                                Text="{Binding ItemResponse.Patronymic}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                Grid.Row="0"
+                                VerticalAlignment="Center"
+                                Text="Дата рождения:" />
+                            <DatePicker
+                                Grid.Row="1"
+                                HorizontalAlignment="Right"
+                                SelectedDate="{Binding ItemResponse.Birthday}" />
+                        </DockPanel>
+
+                    </StackPanel>
+                </Expander>
+            </suki:GlassCard>
 
 		</DockPanel>
     </suki:BusyArea>

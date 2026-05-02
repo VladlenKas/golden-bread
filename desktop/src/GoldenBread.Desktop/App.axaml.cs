@@ -94,20 +94,20 @@ public partial class App : Application, IDisposable
     private static ServiceProvider ConfigureViewModels(IServiceCollection services)
     {
         // Main Window (Loading)
-        services.AddTransient<MainWindowView>();
-        services.AddTransient<MainWindowViewModel>();
+        services.AddSingleton<MainWindowView>();
+        services.AddSingleton<MainWindowViewModel>();
 
         // Auth Window
-        services.AddTransient<AuthWindowView>();
-        services.AddTransient<AuthWindowViewModel>();
+        services.AddSingleton<AuthWindowView>();
+        services.AddSingleton<AuthWindowViewModel>();
 
         // Menu Window
-        services.AddTransient<MenuWindowView>();
-        services.AddTransient<MenuWindowViewModel>();
+        services.AddSingleton<MenuWindowView>();
+        services.AddSingleton<MenuWindowViewModel>();
 
         // Employee Pages
-        services.AddTransient<EmployeesHostPageViewModel>();
-        services.AddTransient<EmployeesListPageViewModel>();
+        services.AddSingleton<EmployeesHostPageViewModel>();
+        services.AddSingleton<EmployeesListPageViewModel>();
         services.AddTransient<EmployeeEditorPageViewModel>();
 
         // Other Pages

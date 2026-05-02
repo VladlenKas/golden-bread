@@ -1,6 +1,7 @@
 ﻿using GoldenBread.Desktop.Features.References.Employees.Models;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
+using System.Reactive.Linq;
 
 namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
 
@@ -13,10 +14,8 @@ public partial class EmployeesHostPageViewModel : HostPageViewModel
     {
         var listPage = factory.GetPage<EmployeesListPageViewModel>();
 
-        _listPage = listPage;
         _factory = factory;
-
-        _listPage.Permissions = this.Permissions;
+        _listPage = listPage;
 
         _listPage.EditCommand.Subscribe(item => ShowEditor(item));
         _listPage.AddCommand.Subscribe(_ => ShowEditor(null));
@@ -33,12 +32,22 @@ public partial class EmployeesHostPageViewModel : HostPageViewModel
         var editPage = _factory.GetPage<EmployeeEditorPageViewModel>();
         editPage.SelectedItem = employee;
 
-        editPage.SaveCommand.Subscribe(_ => ShowList());
-        editPage.GoBackCommand.Subscribe(_ => ShowList());
+        editPage.SaveCommand
+            .Where(action => action)
+            .Take(1)
+            .Subscribe(_ => ShowList());
+
+        editPage.GoBackCommand
+            .Take(1)
+            .Subscribe(_ => ShowList());
 
         NavigateTo(editPage);
     }
 
-    protected override void OnActivated() => ShowList();
+    protected override void OnActivated() 
+    {
+        _listPage.Permissions = this.Permissions;
+        ShowList();
+    }
     protected override void OnDeactivated() => ShowList();
 }

@@ -1,11 +1,12 @@
 ﻿using Avalonia.Controls.Notifications;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using SukiUI.Toasts;
 
 namespace GoldenBread.Desktop.UI.Services;
 
 public class ToastService(ISukiToastManager manager)
 {
-    public void ShowError(string message)
+    public void ShowError(string message = ConstantMessages.ExceptionToast)
     {
         manager.CreateToast()
             .WithTitle("Ошибка")
@@ -33,7 +34,7 @@ public class ToastService(ISukiToastManager manager)
             .WithTitle("Успех")
             .WithContent(message)
             .OfType(NotificationType.Success)
-            .Dismiss().After(TimeSpan.FromSeconds(13))
+            .Dismiss().After(TimeSpan.FromSeconds(3))
             .Dismiss().ByClicking()
             .Queue();
     }
