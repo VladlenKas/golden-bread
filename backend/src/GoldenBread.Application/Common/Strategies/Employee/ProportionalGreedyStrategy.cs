@@ -18,8 +18,9 @@ public class ProportionalGreedyStrategy : IEmployeeSelectionStrategy
         var minutesPerUnit = item.Batch.Product.ProductionTimeMinutes;
         var totalWorkMinutes = totalUnits * minutesPerUnit;
 
-        // Берем 3 самых свободных сотрудника
+        // Берем самых свободных и активных сотрудника
         var topAll = candidates
+            .Where(e => e.IsActive)
             .OrderBy(e => context.CurrentLoadMinutes.GetValueOrDefault(e))
             .ToList();
 

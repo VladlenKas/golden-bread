@@ -1,7 +1,6 @@
 ﻿using GoldenBread.Desktop.Features.References.Employees.Models;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
-using ReactiveUI;
 
 namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
 
