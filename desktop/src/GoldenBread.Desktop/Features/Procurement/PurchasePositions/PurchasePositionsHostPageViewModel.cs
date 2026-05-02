@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Procurement.PurchasePositions;
 
-public class PurchasePositionsPageViewModel : PageViewModel
+public class PurchasePositionsHostPageViewModel : HostPageViewModel
 {
 
 }

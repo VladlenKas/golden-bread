@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Administration.SystemUsers;
 
-public class SystemUsersPageViewModel : PageViewModel
+public class SystemUsersHostPageViewModel : HostPageViewModel
 {
 
 }

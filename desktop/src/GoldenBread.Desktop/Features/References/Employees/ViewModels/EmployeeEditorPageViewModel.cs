@@ -9,7 +9,7 @@ using SukiUI.Controls;
 
 namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
 
-public partial class EditableEmployeePageViewModel : PageViewModel, ISukiStackPageTitleProvider
+public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPageTitleProvider
 {
     private readonly IEmployeesApi _api;
     private readonly ToastService _toastService;
@@ -22,7 +22,7 @@ public partial class EditableEmployeePageViewModel : PageViewModel, ISukiStackPa
     private EmployeeResponse? ItemResponseCache { get; set; }
     public string Title { get; set; } = "Добавление";
 
-    public EditableEmployeePageViewModel(
+    public EmployeeEditorPageViewModel(
         IEmployeesApi api,
         DialogService dialogService,
         ToastService toastService)
@@ -40,7 +40,8 @@ public partial class EditableEmployeePageViewModel : PageViewModel, ISukiStackPa
                     ItemResponseCache = null; 
                     return;
                 }
-
+                    
+                Title = "Редактирование";
                 await LoadEmployeeAsync(item.EmployeeId);
             });
     }

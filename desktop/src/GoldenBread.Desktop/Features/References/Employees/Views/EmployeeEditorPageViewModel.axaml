@@ -8,8 +8,8 @@
 	xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 	xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
 	xmlns:vm="using:GoldenBread.Desktop.Features.References.Employees.ViewModels"
-	x:Class="GoldenBread.Desktop.Features.References.Employees.Views.EditableEmployeePageView"
-	x:DataType="vm:EditableEmployeePageViewModel">
+	x:Class="GoldenBread.Desktop.Features.References.Employees.Views.EmployeeEditorPageView"
+	x:DataType="vm:EmployeeEditorPageViewModel">
 
     <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
 		<DockPanel LastChildFill="False">

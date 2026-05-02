@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.References.Ingredients;
 
-public class IngredientsPageViewModel : PageViewModel
+public class IngredientsHostPageViewModel : HostPageViewModel
 {
 
 }

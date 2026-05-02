@@ -106,23 +106,23 @@ public partial class App : Application, IDisposable
         services.AddTransient<MenuWindowViewModel>();
 
         // Employee Pages
-        services.AddTransient<EmployeesPageViewModel>();
+        services.AddTransient<EmployeesHostPageViewModel>();
         services.AddTransient<EmployeesListPageViewModel>();
-        services.AddTransient<EditableEmployeePageViewModel>();
+        services.AddTransient<EmployeeEditorPageViewModel>();
 
         // Other Pages
-        services.AddTransient<ProductsPageViewModel>();
-        services.AddTransient<IngredientsPageViewModel>();
-        services.AddTransient<SuppliersPageViewModel>();
-        services.AddTransient<PurchasePositionsPageViewModel>();
-        services.AddTransient<WarehousePageViewModel>();
-        services.AddTransient<RecipesPageViewModel>();
-        services.AddTransient<ProductBatchesPageViewModel>();
-        services.AddTransient<EmployeeTasksPageViewModel>();
-        services.AddTransient<OrdersListPageViewModel>();
-        services.AddTransient<SystemUsersPageViewModel>();
-        services.AddTransient<CompaniesPageViewModel>();
-        services.AddTransient<AccountsPageViewModel>();
+        services.AddTransient<ProductsHostPageViewModel>();
+        services.AddTransient<IngredientsHostPageViewModel>();
+        services.AddTransient<SuppliersHostPageViewModel>();
+        services.AddTransient<PurchasePositionsHostPageViewModel>();
+        services.AddTransient<WarehouseHostPageViewModel>();
+        services.AddTransient<RecipesHostPageViewModel>();
+        services.AddTransient<ProductBatchesHostPageViewModel>();
+        services.AddTransient<EmployeeTasksHostPageViewModel>();
+        services.AddTransient<OrdersHostPageViewModel>();
+        services.AddTransient<SystemUsersHostPageViewModel>();
+        services.AddTransient<CompaniesHostPageViewModel>();
+        services.AddTransient<AccountsHostPageViewModel>();
 
         return services.BuildServiceProvider();
     }
@@ -154,7 +154,7 @@ public static class RefitServiceExtensions
         services.AddRefitClient<TInterface>()
             .ConfigureHttpClient(client =>
             {
-                client.BaseAddress = new Uri(AppSettings.BaseUrl);
+                client.BaseAddress = new Uri(AppSettings.ApiUrl);
                 client.Timeout = TimeSpan.FromSeconds(10);
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));

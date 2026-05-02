@@ -15,10 +15,6 @@
         WindowStartupLocation="CenterScreen"
         Width="600" Height="400">
 
-    <sukiUI:SukiWindow.Hosts>
-		<sukiUI:SukiDialogHost Manager="{Binding SukiDialogManager}"/>
-	</sukiUI:SukiWindow.Hosts>
-
     <StackPanel 
         HorizontalAlignment="Center" 
         VerticalAlignment="Center"

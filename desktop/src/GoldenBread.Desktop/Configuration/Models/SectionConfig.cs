@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace GoldenBread.Desktop.Configuration.Models;
 
-public sealed class AppSectionConfig
+public sealed class SectionConfig
 {
     [JsonPropertyName("key")]
     public string Key { get; set; } = string.Empty;
@@ -14,12 +13,9 @@ public sealed class AppSectionConfig
     [JsonPropertyName("icon")]
     public string Icon { get; set; } = string.Empty;
 
-    [JsonPropertyName("showInSidebar")]
-    public bool ShowInSidebar { get; set; }
-
     [JsonPropertyName("order")]
     public int Order { get; set; }
 
     [JsonPropertyName("pages")]
-    public List<AppPageConfig> Pages { get; set; } = new();
+    public List<PageConfig> Pages { get; set; } = new();
 }

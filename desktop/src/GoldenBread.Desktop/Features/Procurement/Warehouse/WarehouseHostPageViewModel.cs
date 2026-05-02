@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Procurement.Warehouse;
 
-internal class WarehousePageViewModel : PageViewModel
+internal class WarehouseHostPageViewModel : HostPageViewModel
 {
 
 }

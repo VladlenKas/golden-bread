@@ -9,25 +9,21 @@
         {
           "key": "products",
           "title": "Продукция",
-          "showInWindow": true,
           "order": 0
         },
         {
           "key": "ingredients",
           "title": "Ингредиенты",
-          "showInWindow": true,
           "order": 10
         },
         {
           "key": "suppliers",
           "title": "Поставщики",
-          "showInWindow": true,
           "order": 20
         },
         {
           "key": "employees",
           "title": "Сотрудники",
-          "showInWindow": true,
           "order": 30
         }
       ]
@@ -41,13 +37,11 @@
         {
           "key": "purchase_positions",
           "title": "Закупочные позиции",
-          "showInWindow": true,
           "order": 0
         },
         {
           "key": "warehouse",
           "title": "Складской учет",
-          "showInWindow": true,
           "order": 10
         }
       ]
@@ -61,19 +55,16 @@
         {
           "key": "recipes",
           "title": "Рецептуры",
-          "showInWindow": true,
           "order": 0
         },
         {
           "key": "product_batches",
           "title": "Производственные партии",
-          "showInWindow": true,
           "order": 10
         },
         {
           "key": "employee_tasks",
           "title": "Задачи сотрудников",
-          "showInWindow": true,
           "order": 20
         }
       ]
@@ -87,7 +78,6 @@
         {
           "key": "orders_list",
           "title": "Список заказов",
-          "showInWindow": true,
           "order": 0
         }
       ]
@@ -101,19 +91,16 @@
         {
           "key": "system_users",
           "title": "Системные пользователи",
-          "showInWindow": true,
           "order": 0
         },
         {
           "key": "companies",
           "title": "Компании",
-          "showInWindow": true,
           "order": 10
         },
         {
           "key": "accounts",
           "title": "Аккаунты",
-          "showInWindow": true,
           "order": 20
         }
       ]

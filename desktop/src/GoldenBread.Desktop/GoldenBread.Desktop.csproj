@@ -36,4 +36,13 @@
 	<PackageReference Include="HotAvalonia" Version="3.0.2" PrivateAssets="All" Publish="True" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Features\References\Employees\Views\EmployeeEditorPageViewModel.axaml.cs">
+      <DependentUpon>EmployeeEditorPageViewModel.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Features\References\Employees\Views\EmployeesHostPageView.axaml.cs">
+      <DependentUpon>EmployeesHostPageView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

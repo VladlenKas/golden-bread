@@ -8,8 +8,4 @@ public partial class EmployeesListPageView : UserControl
     {
         InitializeComponent();
     }
-
-    private void DropDownButton_ActualThemeVariantChanged(object? sender, System.EventArgs e)
-    {
-    }
 }

@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Production.ProductBatches;
 
-public class ProductBatchesPageViewModel : PageViewModel
+public class ProductBatchesHostPageViewModel : HostPageViewModel
 {
 
 }

@@ -1,23 +1,26 @@
 ﻿using GoldenBread.Desktop.Features.References.Employees.Models;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
+using ReactiveUI;
 
 namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
 
-public partial class EmployeesPageViewModel : StackPageViewModel
+public partial class EmployeesHostPageViewModel : HostPageViewModel
 {
     private readonly EmployeesListPageViewModel _listPage;
     private readonly PageFactory _factory;
 
-    public EmployeesPageViewModel(
-        EmployeesListPageViewModel listPage,
-        PageFactory factory)
+    public EmployeesHostPageViewModel(PageFactory factory)
     {
+        var listPage = factory.GetPage<EmployeesListPageViewModel>();
+
         _listPage = listPage;
         _factory = factory;
 
-        _listPage.EditCommand.Subscribe(item => ShowEdit(item));
-        _listPage.AddCommand.Subscribe(_ => ShowEdit(null));
+        _listPage.Permissions = this.Permissions;
+
+        _listPage.EditCommand.Subscribe(item => ShowEditor(item));
+        _listPage.AddCommand.Subscribe(_ => ShowEditor(null));
     }
 
     private void ShowList()
@@ -26,10 +29,9 @@ public partial class EmployeesPageViewModel : StackPageViewModel
         NavigateTo(_listPage);
     }
 
-    private void ShowEdit(EmployeeListItem? employee)
+    private void ShowEditor(EmployeeListItem? employee)
     {
-        var editPage = _factory.Create<EditableEmployeePageViewModel>();
-        editPage.Title = employee == null ? "Добавление" : "Редактирование";
+        var editPage = _factory.GetPage<EmployeeEditorPageViewModel>();
         editPage.SelectedItem = employee;
 
         editPage.SaveCommand.Subscribe(_ => ShowList());

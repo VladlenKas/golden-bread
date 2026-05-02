@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace GoldenBread.Desktop.Features.References.Employees.Views;
 
-public partial class EditableEmployeePageView : UserControl
+public partial class EmployeeEditorPageView : UserControl
 {
-    public EditableEmployeePageView()
+    public EmployeeEditorPageView()
     {
         InitializeComponent();
     }

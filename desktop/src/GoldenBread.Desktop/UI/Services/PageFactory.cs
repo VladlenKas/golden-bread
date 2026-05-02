@@ -15,31 +15,31 @@ using GoldenBread.Desktop.UI.Common;
 using Microsoft.Extensions.DependencyInjection;
 namespace GoldenBread.Desktop.UI.Services;
 
-public class PageFactory(IServiceProvider provider) 
+public sealed class PageFactory(IServiceProvider provider) 
 {
-    private readonly Dictionary<string, Type> _pageTypes = new()
+    private static readonly Dictionary<string, Type> _pageTypes = new()
     {
-        { "products", typeof(ProductsPageViewModel) },
-        { "ingredients", typeof(IngredientsPageViewModel) },
-        { "suppliers", typeof(SuppliersPageViewModel) },
-        { "employees", typeof(EmployeesPageViewModel) },
-        { "purchase_positions", typeof(PurchasePositionsPageViewModel) },
-        { "warehouse", typeof(WarehousePageViewModel) },
-        { "recipes", typeof(RecipesPageViewModel) },
-        { "product_batches", typeof(ProductBatchesPageViewModel) },
-        { "employee_tasks", typeof(EmployeeTasksPageViewModel) },
-        { "orders_list", typeof(OrdersListPageViewModel) },
-        { "system_users", typeof(SystemUsersPageViewModel) },
-        { "companies", typeof(CompaniesPageViewModel) },
-        { "accounts", typeof(AccountsPageViewModel) },
+        ["products"] = typeof(ProductsHostPageViewModel),
+        ["ingredients"] = typeof(IngredientsHostPageViewModel),
+        ["suppliers"] = typeof(SuppliersHostPageViewModel),
+        ["employees"] = typeof(EmployeesHostPageViewModel),
+        ["purchase_positions"] = typeof(PurchasePositionsHostPageViewModel),
+        ["warehouse"] = typeof(WarehouseHostPageViewModel),
+        ["recipes"] = typeof(RecipesHostPageViewModel),
+        ["product_batches"] = typeof(ProductBatchesHostPageViewModel),
+        ["employee_tasks"] = typeof(EmployeeTasksHostPageViewModel),
+        ["orders_list"] = typeof(OrdersHostPageViewModel),
+        ["system_users"] = typeof(SystemUsersHostPageViewModel),
+        ["companies"] = typeof(CompaniesHostPageViewModel),
+        ["accounts"] = typeof(AccountsHostPageViewModel),
     };
 
-    public PageViewModel? CreateMainPage(string pageKey)
+    public HostPageViewModel? GetHostPage(string pageKey)
     {
         if (_pageTypes.TryGetValue(pageKey, out var type))
-            return (PageViewModel)provider.GetRequiredService(type);
+            return (HostPageViewModel)provider.GetRequiredService(type);
         return null;
     }
 
-    public T Create<T>() where T : PageViewModel => provider.GetRequiredService<T>();
+    public T GetPage<T>() where T : PageViewModel => provider.GetRequiredService<T>();
 }

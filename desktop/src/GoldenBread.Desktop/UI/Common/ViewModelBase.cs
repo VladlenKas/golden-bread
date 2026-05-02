@@ -9,7 +9,7 @@ public class ViewModelBase : ReactiveObject, INotifyDataErrorInfo
 {
     public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-    public bool HasErrors => GetAllErrors().Any();
+    public bool HasErrors => GetAllErrors().Count != 0;
 
     public IEnumerable GetErrors(string? propertyName) => Enumerable.Empty<string>();
 
@@ -19,7 +19,7 @@ public class ViewModelBase : ReactiveObject, INotifyDataErrorInfo
         var context = new ValidationContext(this);
         var results = new List<ValidationResult>();
         Validator.TryValidateObject(this, context, results, true);
-        return results.Select(r => r.ErrorMessage!).ToList();
+        return results.Select(r => r.ErrorMessage ?? "Ошибка").ToList();
     }
 
     public string? GetFirstError() => GetAllErrors().FirstOrDefault();

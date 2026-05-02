@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Administration.Accounts;
 
-public class AccountsPageViewModel : PageViewModel
+public class AccountsHostPageViewModel : HostPageViewModel
 {
 
 }

@@ -2,7 +2,7 @@
 
 namespace GoldenBread.Desktop.Features.Production.EmployeeTasks;
 
-public class EmployeeTasksPageViewModel : PageViewModel
+public class EmployeeTasksHostPageViewModel : HostPageViewModel
 {
 
 }

@@ -8,8 +8,8 @@
     xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
     xmlns:vm="using:GoldenBread.Desktop.Features.References.Employees.ViewModels"
-    x:Class="GoldenBread.Desktop.Features.References.Employees.Views.EmployeesPageView"
-    x:DataType="vm:EmployeesPageViewModel">
+    x:Class="GoldenBread.Desktop.Features.References.Employees.Views.EmployeesHostPageView"
+    x:DataType="vm:EmployeesHostPageViewModel">
 
     <suki:SukiStackPage Margin="-36 0" Content="{Binding ActivePage}"/>
 </UserControl>

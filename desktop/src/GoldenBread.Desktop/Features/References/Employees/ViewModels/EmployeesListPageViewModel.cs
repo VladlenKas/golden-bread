@@ -8,19 +8,55 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 
 namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
 
-public partial class EmployeesListPageViewModel(
-    IEmployeesApi api,
-    DialogService dialogService,
-    ToastService toastService) : PageViewModel, ISukiStackPageTitleProvider
+public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageTitleProvider
 {
+    private readonly IEmployeesApi _api;
+    private readonly DialogService _dialogService;
+    private readonly ToastService _toastService;
+    private readonly SourceList<EmployeeListItem> _sourceList = new();
+
     [Reactive] private bool _isBusy;
+    [Reactive] private string _searchText = string.Empty;
     [Reactive] public EmployeeListItem? _selectedItem;
-    [Reactive] public ObservableCollection<EmployeeListItem> _itemsList = new();
 
     public string Title { get; set; } = "Список сотрудников";
+
+    [ObservableAsProperty] public ReadOnlyObservableCollection<EmployeeListItem> FilteredItems { get; }
+
+    public EmployeesListPageViewModel(
+        IEmployeesApi api,
+        DialogService dialogService,
+        ToastService toastService)
+    {
+        _api = api;
+        _dialogService = dialogService;
+        _toastService = toastService;
+
+        var filter = this.WhenAnyValue(x => x.SearchText)
+            .Select(SearchFilter)
+            .DistinctUntilChanged();
+
+        _sourceList.Connect()
+            .Filter(filter)           
+            .Bind(out var filtered)
+            .Subscribe();
+
+        FilteredItems = filtered;
+    }
+
+    // Фильтрация
+    private static Func<EmployeeListItem, bool> SearchFilter(string? search)
+    {
+        if (string.IsNullOrWhiteSpace(search))
+            return _ => true;
+
+        var lower = search.ToLowerInvariant();
+        return item => item.Fullname.Contains(lower, StringComparison.InvariantCultureIgnoreCase);
+    }
 
     [ReactiveCommand]
     private async Task RefreshAsync()
@@ -29,19 +65,19 @@ public partial class EmployeesListPageViewModel(
         {
             IsBusy = true;
 
-            var response = await api.GetAll();
+            var response = await _api.GetAll();
             if (!response.IsSuccessStatusCode || response.Content == null)
                 return;
 
             var data = response.Content;
 
-            ItemsList.Clear();
+            _sourceList.Clear();
             foreach (var item in data.EmployeesList)
-                ItemsList.Add(item);
+                _sourceList.Add(item);
         }
         catch (Exception)
         {
-            dialogService.ShowInfo(ConstantMessages.ErrorException);
+            _dialogService.ShowInfo(ConstantMessages.ErrorException);
         }
         finally
         {
@@ -59,12 +95,12 @@ public partial class EmployeesListPageViewModel(
     [ReactiveCommand]
     private async Task PauseAsync()
     {
-        toastService.ShowInfo(SelectedItem?.Fullname + " Приостановить");
+        _toastService.ShowInfo(SelectedItem?.Fullname + " Приостановить");
     }
 
     [ReactiveCommand]
     private async Task DeleteAsync()
     {
-        dialogService.ShowInfo(SelectedItem?.Fullname + " Удалить");
+        _dialogService.ShowInfo(SelectedItem?.Fullname + " Удалить");
     }
 }

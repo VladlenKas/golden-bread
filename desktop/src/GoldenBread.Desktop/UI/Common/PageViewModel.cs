@@ -1,30 +1,8 @@
-﻿using ReactiveUI;
-using ReactiveUI.SourceGenerators;
-using System.Reactive.Disposables;
-using System.Reactive.Disposables.Fluent;
+﻿using GoldenBread.Desktop.Configuration.Models;
 
 namespace GoldenBread.Desktop.UI.Common;
 
-public partial class PageViewModel : ViewModelBase, IActivatableViewModel
+public partial class PageViewModel : ViewModelBase
 {
-    public ViewModelActivator Activator { get; } = new();
-
-    [Reactive] private string _displayName = string.Empty;
-    [Reactive] private string _pageKey = string.Empty;
-    [Reactive] private int _order;
-
-    protected PageViewModel()
-    {
-        this.WhenActivated(disposables =>
-        {
-            OnActivated();
-            Disposable.Create(() =>
-            {
-                OnDeactivated();
-            }).DisposeWith(disposables);
-        });
-    }   
-            
-    protected virtual void OnActivated() { }
-    protected virtual void OnDeactivated() { }
+    public CrudPermissionConfig Permissions { get; set; } = new();
 }

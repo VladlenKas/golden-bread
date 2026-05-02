@@ -3,88 +3,68 @@
     {
       "key": "Technologist",
       "title": "Технолог",
-      "sections": {
-        "references": { "showInSidebar": true },
-        "procurement": { "showInSidebar": true },
-        "production": { "showInSidebar": true },
-        "orders": { "showInSidebar": true },
-        "administration": { "showInSidebar": true }
-      },
       "pages": {
         "products": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "ingredients": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "suppliers": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "employees": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "purchase_positions": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "warehouse": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "recipes": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "product_batches": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "employee_tasks": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "orders_list": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": true
         },
         "system_users": {
-          "view": true,
           "create": false,
           "update": true,
           "delete": false
         },
         "companies": {
-          "view": true,
           "create": false,
           "update": true,
           "delete": false
         },
         "accounts": {
-          "view": true,
           "create": false,
           "update": true,
           "delete": false
@@ -94,90 +74,40 @@
     {
       "key": "CommercialManager",
       "title": "Коммерческий менеджер",
-      "sections": {
-        "references": { "showInSidebar": true },
-        "procurement": { "showInSidebar": true },
-        "production": { "showInSidebar": true },
-        "orders": { "showInSidebar": true },
-        "administration": { "showInSidebar": false }
-      },
       "pages": {
         "products": {
-          "view": true,
           "create": false,
           "update": true,
           "delete": false
         },
         "ingredients": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": false
         },
-        "suppliers": {
-          "view": false,
-          "create": false,
-          "update": false,
-          "delete": false
-        },
-        "employees": {
-          "view": false,
-          "create": false,
-          "update": false,
-          "delete": false
-        },
         "purchase_positions": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": false
         },
         "warehouse": {
-          "view": true,
           "create": true,
           "update": true,
           "delete": false
         },
         "recipes": {
-          "view": true,
           "create": false,
           "update": true,
           "delete": false
         },
         "product_batches": {
-          "view": true,
           "create": true,
           "update": true,
-          "delete": false
-        },
-        "employee_tasks": {
-          "view": false,
-          "create": false,
-          "update": false,
           "delete": false
         },
         "orders_list": {
-          "view": true,
           "create": true,
           "update": true,
-          "delete": false
-        },
-        "system_users": {
-          "view": false,
-          "create": false,
-          "update": false,
-          "delete": false
-        },
-        "companies": {
-          "view": false,
-          "create": false,
-          "update": false,
-          "delete": false
-        },
-        "accounts": {
-          "view": false,
-          "create": false,
-          "update": false,
           "delete": false
         }
       }

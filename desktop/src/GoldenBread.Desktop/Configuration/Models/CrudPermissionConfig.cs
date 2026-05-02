@@ -4,8 +4,7 @@ namespace GoldenBread.Desktop.Configuration.Models;
 
 public sealed class CrudPermissionConfig
 {
-    [JsonPropertyName("view")]
-    public bool View { get; set; }
+    public bool View => true;
 
     [JsonPropertyName("create")]
     public bool Create { get; set; }

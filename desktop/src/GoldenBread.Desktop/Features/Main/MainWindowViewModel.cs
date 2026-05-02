@@ -12,15 +12,11 @@ using System.Diagnostics;
 namespace GoldenBread.Desktop.Features.Main;
 
 public partial class MainWindowViewModel(
-    DialogService dialogService,
-    ISukiDialogManager sukiDialogManager,
     WindowService windowService,
     SessionStorage sessionStorage,
     CurrentUserStore userStore,
     IAuthApi authApi) : ViewModelBase
 {
-    public ISukiDialogManager SukiDialogManager { get; } = sukiDialogManager;
-
     [Reactive] private bool _isLoading = true;
     [Reactive] private string _statusText = "Загрузка...";
 
@@ -60,14 +56,14 @@ public partial class MainWindowViewModel(
             windowService.ShowWindow<AuthWindowView, AuthWindowViewModel>();
             windowService.CloseWindow(this);
         }
-        catch
+        catch(Exception ex)
         {
-            dialogService.ShowError(ConstantMessages.ErrorException);
+            Debug.WriteLine($"[MainWindow]: {ex}");
         }
         finally
         {
+            StatusText = "Не удалось запустить приложение";
             IsLoading = false;
-            StatusText = "Попробуйте перезапустить приложение";
         }
     }
 }

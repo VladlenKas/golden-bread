@@ -26,7 +26,8 @@
 			    <TextBox
                     DockPanel.Dock="Left"
                     Width="300" 
-                    Watermark="{Binding ItemsList.Count, StringFormat='Искать среди {0} записей...'}"
+                    Text="{Binding SearchText}"
+                    Watermark="{Binding FilteredItems.Count, StringFormat='Искать среди {0} записей...'}"
                     suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}"
                     />
 
@@ -43,13 +44,14 @@
                     Content="Добавить"
                     suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
                     Command="{Binding AddCommand}"
+                    IsVisible="{Binding Permissions.Create}"
                     />
             </DockPanel>
 
             <!-- Таблица -->
             <suki:GlassCard>
 			    <DataGrid 
-                    ItemsSource="{Binding ItemsList}"
+                    ItemsSource="{Binding FilteredItems}"
                     SelectedItem="{Binding SelectedItem}"
                     AutoGenerateColumns="False"
                     CanUserResizeColumns="True"
