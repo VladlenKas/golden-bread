@@ -1,8 +1,5 @@
-﻿namespace GoldenBread.Application.Features.Employees.Commands.UpdateEmployee;
+﻿using GoldenBread.Application.Features.Employees.Dtos;
 
-public sealed record UpdateEmployeeCommand(
-    int EmployeeId,
-    string Firstname,
-    string Lastname,
-    string? Patronymic,
-    DateOnly Birthday) : IRequest<bool>;
+namespace GoldenBread.Application.Features.Employees.Commands.UpdateEmployee;
+
+public sealed record UpdateEmployeeCommand(EmployeeDto EmployeeDto) : IRequest<bool>;

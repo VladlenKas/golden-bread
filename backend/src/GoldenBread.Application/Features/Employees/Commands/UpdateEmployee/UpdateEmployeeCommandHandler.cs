@@ -10,16 +10,17 @@ public sealed class UpdateEmployeeCommandHandler(
 {
     public async Task<bool> Handle(UpdateEmployeeCommand request, CancellationToken ct)
     {
-        var employee = await employeeRepository.GetByIdAsync(request.EmployeeId, ct);
+        var employeeRequest = request.EmployeeDto;
+        var employee = await employeeRepository.GetByIdAsync(employeeRequest.EmployeeId, ct);
 
         if (employee is null)
             return false;
 
         employee.Update(
-            request.Firstname, 
-            request.Lastname, 
-            request.Patronymic, 
-            request.Birthday);
+            employeeRequest.Firstname,
+            employeeRequest.Lastname,
+            employeeRequest.Patronymic,
+            employeeRequest.Birthday);
 
         await unitOfWork.SaveChangesAsync(ct);
 

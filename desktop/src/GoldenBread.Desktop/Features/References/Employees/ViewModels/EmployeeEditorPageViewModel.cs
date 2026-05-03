@@ -6,6 +6,7 @@ using GoldenBread.Desktop.UI.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
+using System.Diagnostics;
 
 namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
 
@@ -69,12 +70,7 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
             // Создание
             if (ItemResponse.EmployeeId == 0)
             {
-                var command = new CreateEmployeeRequest(
-                    ItemResponse.FirstName!,
-                    ItemResponse.LastName!,
-                    ItemResponse.Patronymic,
-                    DateOnly.FromDateTime(ItemResponse.Birthday.DateTime));
-
+                var command = ItemResponse.ToDto();
                 var response = await _api.Create(command);
 
                 if (response.IsSuccessStatusCode)
@@ -91,14 +87,8 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
             // Обновление
             else
             {
-                var command = new UpdateEmployeeRequest(
-                    ItemResponse.EmployeeId,
-                    ItemResponse.FirstName!,
-                    ItemResponse.LastName!,
-                    ItemResponse.Patronymic,
-                    DateOnly.FromDateTime(ItemResponse.Birthday.DateTime));
-
-                var response = await _api.Update(ItemResponse.EmployeeId, command);
+                var command = ItemResponse.ToDto();
+                var response = await _api.Update(command);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -107,6 +97,7 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
                 }
                 else
                 {
+                    Debug.WriteLine(response.Error);
                     _toastService.ShowError();
                     return false;
                 }
@@ -139,7 +130,7 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
                 return;
             }
 
-            ItemResponse = response.Content;
+            ItemResponse = EmployeeForm.FromDto(response.Content);
             ItemResponseCache = ItemResponse.Clone();
         }
         finally

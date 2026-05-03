@@ -1,6 +1,7 @@
 ﻿using GoldenBread.Application.Features.Employees.Commands.CreateEmployee;
 using GoldenBread.Application.Features.Employees.Commands.DeleteEmployee;
 using GoldenBread.Application.Features.Employees.Commands.UpdateEmployee;
+using GoldenBread.Application.Features.Employees.Dtos;
 using GoldenBread.Application.Features.Employees.Queries.GetEmployeeById;
 using GoldenBread.Application.Features.Employees.Queries.GetEmployeesList;
 using Microsoft.AspNetCore.Authorization;
@@ -26,17 +27,17 @@ public class EmployeesController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Post([FromBody] CreateEmployeeCommand command)
+    public async Task<IActionResult> Post([FromBody] EmployeeDto dto)
     {
-        var id = await mediator.Send(command);
+        var id = await mediator.Send(new CreateEmployeeCommand(dto));
         return CreatedAtAction(nameof(Get), new { id }, id);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut]
     [Authorize]
-    public async Task<IActionResult> Put(int id, [FromBody] UpdateEmployeeCommand command)
+    public async Task<IActionResult> Put([FromBody] EmployeeDto dto)
     {
-        var result = await mediator.Send(command with { EmployeeId = id });
+        var result = await mediator.Send(new UpdateEmployeeCommand(dto));
         return result ? NoContent() : NotFound();
     }
 

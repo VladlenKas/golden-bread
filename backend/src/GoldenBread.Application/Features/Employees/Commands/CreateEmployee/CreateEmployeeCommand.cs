@@ -1,9 +1,5 @@
-﻿using GoldenBread.Application.Features.CompanyOrder.Dtos;
+﻿using GoldenBread.Application.Features.Employees.Dtos;
 
 namespace GoldenBread.Application.Features.Employees.Commands.CreateEmployee;
 
-public sealed record CreateEmployeeCommand(
-    string Firstname,
-    string Lastname,
-    string? Patronymic,
-    DateOnly Birthday) : IRequest<int>;
+public sealed record CreateEmployeeCommand(EmployeeDto EmployeeDto) : IRequest<int>;

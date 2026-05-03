@@ -1,3 +1,5 @@
-﻿namespace GoldenBread.Application.Features.Employees.Queries.GetEmployeeById;
+﻿using GoldenBread.Application.Features.Employees.Dtos;
 
-public sealed record GetEmployeeByIdQuery(int Id) : IRequest<EmployeeResponse>;
+namespace GoldenBread.Application.Features.Employees.Queries.GetEmployeeById;
+
+public sealed record GetEmployeeByIdQuery(int Id) : IRequest<EmployeeDto>;

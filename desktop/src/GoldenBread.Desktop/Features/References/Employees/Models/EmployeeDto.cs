@@ -1,6 +1,6 @@
 ﻿namespace GoldenBread.Desktop.Features.References.Employees.Models;
 
-public sealed record UpdateEmployeeRequest(
+public record class EmployeeDto(
     int EmployeeId,
     string Firstname,
     string Lastname,

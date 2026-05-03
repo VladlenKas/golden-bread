@@ -9,13 +9,13 @@ public interface IEmployeesApi
     Task<IApiResponse<EmployeesListResponse>> GetAll();
 
     [Get("/api/employees/{id}")]
-    Task<IApiResponse<EmployeeForm>> GetById(int id);
+    Task<IApiResponse<EmployeeDto>> GetById(int id);
 
     [Post("/api/employees")]
-    Task<IApiResponse<int>> Create([Body] CreateEmployeeRequest command);
+    Task<IApiResponse<int>> Create([Body] EmployeeDto dto);
 
-    [Put("/api/employees/{id}")]
-    Task<IApiResponse> Update(int id, [Body] UpdateEmployeeRequest command);
+    [Put("/api/employees")]
+    Task<IApiResponse> Update([Body] EmployeeDto dto);
 
     [Delete("/api/employees/{id}")]
     Task<IApiResponse> Delete(int id);

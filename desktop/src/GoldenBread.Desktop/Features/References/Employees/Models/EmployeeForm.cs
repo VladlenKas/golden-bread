@@ -15,13 +15,13 @@ public partial class EmployeeForm : ViewModelBase
     [RegularExpression(ConstantRegularExpressions.Name, ErrorMessage = ConstantMessages.NameFormatValidation)]
     [StringLength(35, MinimumLength = 2, ErrorMessage = ConstantMessages.NameLengthValidation)]
     [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
-    string? _firstName;
+    string _firstName = null!;
 
     [Reactive]
     [RegularExpression(ConstantRegularExpressions.Name, ErrorMessage = ConstantMessages.NameFormatValidation)]
     [StringLength(35, MinimumLength = 2, ErrorMessage = ConstantMessages.NameLengthValidation)]
     [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
-    string? _lastName;
+    string _lastName = null!;
 
     [Reactive]
     [RegularExpression(ConstantRegularExpressions.NotRequiredName, ErrorMessage = ConstantMessages.NotRequiredNameFormatValidation)]
@@ -31,21 +31,26 @@ public partial class EmployeeForm : ViewModelBase
     [DateTime]
     DateTimeOffset _birthday;
 
-    public static EmployeeForm Create(
-        int employeeId,
-        string firstname,
-        string lastname,
-        string? patronymic,
-        DateTimeOffset birthday)
+    public static EmployeeForm FromDto(EmployeeDto dto)
     {
         return new EmployeeForm
         {
-            EmployeeId = employeeId,
-            FirstName = firstname,
-            LastName = lastname,
-            Patronymic = patronymic,
-            Birthday = birthday,
+            EmployeeId = dto.EmployeeId,
+            FirstName = dto.Firstname,
+            LastName = dto.Lastname,
+            Patronymic = dto.Patronymic,
+            Birthday = new DateTimeOffset(dto.Birthday.ToDateTime(TimeOnly.MinValue))
         };
+    }
+
+    public EmployeeDto ToDto()
+    {
+        return new EmployeeDto(
+            EmployeeId,
+            FirstName,
+            LastName,
+            Patronymic,
+            DateOnly.FromDateTime(Birthday.DateTime));
     }
 
     public EmployeeForm Clone() => new()
