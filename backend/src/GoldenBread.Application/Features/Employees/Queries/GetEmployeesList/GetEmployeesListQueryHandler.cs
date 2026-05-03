@@ -15,8 +15,7 @@ public sealed class GetEmployeesListQueryHandler(IEmployeeRepository employeeRep
             new EmployeeListItem(
                 employee.EmployeeId,
                 employee.Fullname,
-                employee.Birthday,
-                employee.IsActive))
+                employee.Birthday))
             .ToList();
 
         return new EmployeesListResponse(employeesListRepository);

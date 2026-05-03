@@ -20,7 +20,6 @@ public class ProportionalGreedyStrategy : IEmployeeSelectionStrategy
 
         // Берем самых свободных и активных сотрудника
         var topAll = candidates
-            .Where(e => e.IsActive)
             .OrderBy(e => context.CurrentLoadMinutes.GetValueOrDefault(e))
             .ToList();
 

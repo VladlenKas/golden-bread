@@ -9,7 +9,6 @@ public class Employee
     public string? Patronymic { get; set; }
     public DateOnly Birthday { get; set; }
     public DateTime? DeletedAt { get; set; }
-    public bool IsActive { get; set; } = true;
 
     public ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
 

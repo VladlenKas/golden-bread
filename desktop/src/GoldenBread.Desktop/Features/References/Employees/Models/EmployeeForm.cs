@@ -24,6 +24,7 @@ public partial class EmployeeForm : ViewModelBase
     string? _lastName;
 
     [Reactive]
+    [RegularExpression(ConstantRegularExpressions.NotRequiredName, ErrorMessage = ConstantMessages.NotRequiredNameFormatValidation)]
     string? _patronymic;
 
     [Reactive] 

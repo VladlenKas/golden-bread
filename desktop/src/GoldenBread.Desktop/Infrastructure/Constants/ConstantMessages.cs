@@ -24,11 +24,6 @@ public static class ConstantMessages
 
     #endregion
 
-    // For Attributes, Validation
-    public const string NameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов";
-    public const string NameLengthValidation = "Длина поля должна быть от 2 до 35 символов";
-    public const string RequiredValidation = "Обязательное поле не может быть пустым";
-
     #region For Toasts
 
     // Success
@@ -50,16 +45,27 @@ public static class ConstantMessages
     public const string NoChangesToast = "Вы не внесли изменений";
 
     // Warning
-    public const string EmployeePausedToast = "Работа сотрудника приостановлена"; 
+    public const string EmployeePausedToast = "Работа сотрудника приостановлена";
+
     #endregion
+
+    #region Common
 
     // For UI 
     public const string CreateTitlePage = "Добавление";
     public const string EditorTitlePage = "Редактирование";
     public const string EmployeesTitlePage = "Список сотрудников";
 
+    // For Attributes, Validation
+    public const string NameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов";
+    public const string NotRequiredNameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов длиной от 2 до 35 символов";
+    public const string NameLengthValidation = "Длина поля должна быть от 2 до 35 символов";
+    public const string RequiredValidation = "Обязательное поле не может быть пустым";
 
-    // Helper Methods
+    #endregion
+
+    #region Helper Methods
+
     public static string GetStatusMessage(VerificationStatus status) =>
         status switch
         {
@@ -68,4 +74,6 @@ public static class ConstantMessages
             VerificationStatus.Suspended => AccountSuspendedDialog,
             _ => "Неизвестный статус"
         };
+
+    #endregion
 }
