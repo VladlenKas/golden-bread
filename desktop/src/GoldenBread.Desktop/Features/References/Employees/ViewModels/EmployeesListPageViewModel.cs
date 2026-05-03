@@ -59,7 +59,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
             return _ => true;
 
         var lower = search.ToLowerInvariant();
-        return item => item.Fullname.Contains(lower, StringComparison.InvariantCultureIgnoreCase);
+        return item => item.SearchText.Contains(lower, StringComparison.InvariantCultureIgnoreCase);
     }
 
     [ReactiveCommand]
@@ -128,12 +128,6 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
         {
             IsBusy = false;
         }
-    }
-
-    [ReactiveCommand]
-    private async Task ToggleActiveStatusAsync()
-    {
-        _toastService.ShowInfo(SelectedItem?.Fullname!);
     }
 
     [ReactiveCommand] // Оповещение оркестартора

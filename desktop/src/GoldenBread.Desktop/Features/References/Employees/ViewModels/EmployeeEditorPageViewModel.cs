@@ -39,7 +39,6 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
                 {
                     ItemResponse = new EmployeeForm();
                     ItemResponseCache = null;
-
                     return;
                 }
 
