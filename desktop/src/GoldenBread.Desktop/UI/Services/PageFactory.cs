@@ -11,7 +11,7 @@ using GoldenBread.Desktop.Features.Production.Recipes;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
 using GoldenBread.Desktop.Features.References.Ingredients;
 using GoldenBread.Desktop.Features.References.Products;
-using GoldenBread.Desktop.Features.References.Suppliers;
+using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.UI.Common;
 using Microsoft.Extensions.DependencyInjection;
 namespace GoldenBread.Desktop.UI.Services;

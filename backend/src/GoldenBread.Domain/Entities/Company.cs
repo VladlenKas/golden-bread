@@ -1,4 +1,6 @@
-﻿namespace GoldenBread.Domain.Entities;
+﻿using GoldenBread.Domain.Extensions;
+
+namespace GoldenBread.Domain.Entities;
 
 public sealed class Company
 {
@@ -31,11 +33,11 @@ public sealed class Company
         return new Company
         {       
             AccountId = accountId,
-            Name = name,
+            Name = name.ToUpperFirstChar()!,
             Inn = inn,
             Ogrn = ogrn,
-            Phone = phone,
-            Address = address,
+            Phone = phone.StringOrNullNormalize(),
+            Address = address.StringOrNullNormalize(),
         };
     }
 
@@ -44,7 +46,7 @@ public sealed class Company
         string inn, 
         string ogrn)
     {
-        Name = name;
+        Name = name.ToUpperFirstChar()!;
         Inn = inn;
         Ogrn = ogrn;
     }
@@ -53,7 +55,7 @@ public sealed class Company
         string? phone, 
         string? address)
     {
-        Phone = phone;
-        Address = address;
+        Phone = phone.StringOrNullNormalize();
+        Address = address.StringOrNullNormalize();
     }
 }

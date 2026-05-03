@@ -56,11 +56,21 @@ public static class ConstantMessages
     public const string EditorTitlePage = "Редактирование";
     public const string EmployeesTitlePage = "Список сотрудников";
 
+    public const string SuppliersTitlePage = "Список поставщиков";
+    public const string SupplierDeleteConfirmDialog = "Вы уверены, что хотите удалить этого поставщика?";
+    public const string SupplierDeletedToast = "Поставщик удалён";
+
     // For Attributes, Validation
     public const string NameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов";
     public const string NotRequiredNameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов длиной от 2 до 35 символов";
     public const string NameLengthValidation = "Длина поля должна быть от 2 до 35 символов";
     public const string RequiredValidation = "Обязательное поле не может быть пустым";
+
+    public const string SupplierNameLengthValidation = "Название должно содержать от 2 до 100 символов";
+    public const string SupplierNameFormatValidation = "Название может содержать только буквы, пробелы, дефисы и ковычки";
+    public const string EmailFormatValidation = "Некорректный формат электронной почты";
+    public const string PhoneFormatValidation = "Телефон может содержать только цифры";
+    public const string AddressLengthValidation = "Адрес не должен превышать 200 символов";
 
     #endregion
 

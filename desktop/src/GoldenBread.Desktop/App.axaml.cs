@@ -18,10 +18,9 @@ using GoldenBread.Desktop.Features.Production.Recipes;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
 using GoldenBread.Desktop.Features.References.Ingredients;
 using GoldenBread.Desktop.Features.References.Products;
-using GoldenBread.Desktop.Features.References.Suppliers;
+using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
-using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
@@ -70,7 +69,6 @@ public partial class App : Application, IDisposable
         // UI
         services.AddSingleton<PageFactory>();
         services.AddSingleton<WindowService>();
-
         services.AddSingleton<ISukiDialogManager, SukiDialogManager>();
         services.AddSingleton<ISukiToastManager, SukiToastManager>();
         services.AddSingleton<DialogService>();
@@ -87,6 +85,7 @@ public partial class App : Application, IDisposable
         // Refit 
         services.AddApiClient<IAuthApi>();
         services.AddApiClient<IEmployeesApi>();
+        services.AddApiClient<ISuppliersApi>();
 
         return services.BuildServiceProvider();
     }
@@ -95,25 +94,29 @@ public partial class App : Application, IDisposable
     {
         // Main Window (Loading)
         services.AddSingleton<MainWindowView>();
-        services.AddSingleton<MainWindowViewModel>();
+        services.AddTransient<MainWindowViewModel>();
 
         // Auth Window
         services.AddSingleton<AuthWindowView>();
-        services.AddSingleton<AuthWindowViewModel>();
+        services.AddTransient<AuthWindowViewModel>();
 
         // Menu Window
         services.AddSingleton<MenuWindowView>();
-        services.AddSingleton<MenuWindowViewModel>();
+        services.AddTransient<MenuWindowViewModel>();
 
         // Employee Pages
         services.AddSingleton<EmployeesHostPageViewModel>();
         services.AddSingleton<EmployeesListPageViewModel>();
         services.AddTransient<EmployeeEditorPageViewModel>();
 
+        // Supplier Pages
+        services.AddSingleton<SuppliersHostPageViewModel>();
+        services.AddSingleton<SuppliersListPageViewModel>();
+        services.AddTransient<SupplierEditorPageViewModel>();
+
         // Other Pages
         services.AddTransient<ProductsHostPageViewModel>();
         services.AddTransient<IngredientsHostPageViewModel>();
-        services.AddTransient<SuppliersHostPageViewModel>();
         services.AddTransient<PurchasePositionsHostPageViewModel>();
         services.AddTransient<WarehouseHostPageViewModel>();
         services.AddTransient<RecipesHostPageViewModel>();

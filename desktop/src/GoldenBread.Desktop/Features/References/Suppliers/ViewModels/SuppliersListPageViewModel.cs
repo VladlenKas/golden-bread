@@ -1,34 +1,34 @@
 ﻿using DynamicData;
-using GoldenBread.Desktop.Features.References.Employees.Models;
+using GoldenBread.Desktop.Features.References.Suppliers.Models;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
 using ReactiveUI;
-using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
 using System.Collections.ObjectModel;
+using ReactiveUI.SourceGenerators;
 using System.Reactive.Linq;
 
-namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
+namespace GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 
-public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageTitleProvider
+public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageTitleProvider
 {
-    private readonly IEmployeesApi _api;
+    private readonly ISuppliersApi _api;
     private readonly DialogService _dialogService;
     private readonly ToastService _toastService;
-    private readonly SourceList<EmployeeListItem> _sourceList = new();
+    private readonly SourceList<SupplierListItem> _sourceList = new();
 
     [Reactive] private bool _isBusy;
     [Reactive] public bool _isEmpty;
     [Reactive] private string _searchText = string.Empty;
-    [Reactive] public EmployeeListItem? _selectedItem;
+    [Reactive] public SupplierListItem? _selectedItem;
 
-    public string Title { get; set; } = ConstantMessages.EmployeesTitlePage;
-    public ReadOnlyObservableCollection<EmployeeListItem> FilteredItems { get; }
+    public string Title { get; set; } = ConstantMessages.SuppliersTitlePage;
+    public ReadOnlyObservableCollection<SupplierListItem> FilteredItems { get; }
 
-    public EmployeesListPageViewModel(
-        IEmployeesApi api,
+    public SuppliersListPageViewModel(
+        ISuppliersApi api,
         DialogService dialogService,
         ToastService toastService)
     {
@@ -41,9 +41,9 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
             .Select(SearchFilter);
 
         _sourceList.Connect()
-            .Filter(filter)           
+            .Filter(filter)
             .Bind(out var filtered)
-            .Subscribe(_ => 
+            .Subscribe(_ =>
             {
                 IsEmpty = filtered.Count == 0;
             });
@@ -51,7 +51,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
         FilteredItems = filtered;
     }
 
-    private static Func<EmployeeListItem, bool> SearchFilter(string? search)
+    private static Func<SupplierListItem, bool> SearchFilter(string? search)
     {
         if (string.IsNullOrWhiteSpace(search))
             return _ => true;
@@ -74,7 +74,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
             var data = response.Content;
 
             _sourceList.Clear();
-            foreach (var item in data.EmployeesList)
+            foreach (var item in data.SuppliersList)
                 _sourceList.Add(item);
         }
         catch (Exception)
@@ -90,7 +90,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     [ReactiveCommand]
     private async Task DeleteAsync()
     {
-        var tcs = _dialogService.ShowQustion(ConstantMessages.EmployeeDismissConfirmDialog);
+        var tcs = _dialogService.ShowQustion(ConstantMessages.SupplierDeleteConfirmDialog);
 
         bool confirmed = await tcs.Task;
 
@@ -106,12 +106,12 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
                 return;
             }
 
-            var response = await _api.Delete(SelectedItem!.EmployeeId);
+            var response = await _api.Delete(SelectedItem!.SupplierId);
 
             if (response.IsSuccessStatusCode)
             {
                 _sourceList.Remove(SelectedItem);
-                _toastService.ShowSuccess(ConstantMessages.EmployeeDismissedToast);
+                _toastService.ShowSuccess(ConstantMessages.SupplierDeletedToast);
             }
             else
             {
@@ -128,9 +128,9 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
         }
     }
 
-    [ReactiveCommand] // Оповещение оркестартора
+    [ReactiveCommand]
     private async Task AddAsync() { }
 
-    [ReactiveCommand] // Оповещение оркестартора
-    private async Task<EmployeeListItem?> EditAsync(EmployeeListItem? selectedItem) => selectedItem;
+    [ReactiveCommand]
+    private async Task<SupplierListItem?> EditAsync(SupplierListItem? selectedItem) => selectedItem;
 }

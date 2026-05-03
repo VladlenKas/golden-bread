@@ -10,7 +10,6 @@
     <Application.Resources> 
         <ResourceDictionary> 
             <FontFamily x:Key="DefaultFontFamily">avares://GoldenBread.Desktop/Assets/Fonts#SF Pro Display</FontFamily> 
-            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
         </ResourceDictionary> 
     </Application.Resources> 
 

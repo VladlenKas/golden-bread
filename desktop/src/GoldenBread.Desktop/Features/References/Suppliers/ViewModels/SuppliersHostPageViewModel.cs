@@ -1,18 +1,18 @@
-﻿using GoldenBread.Desktop.Features.References.Employees.Models;
+﻿using GoldenBread.Desktop.Features.References.Suppliers.Models;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
 using System.Reactive.Linq;
 
-namespace GoldenBread.Desktop.Features.References.Employees.ViewModels;
+namespace GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 
-public partial class EmployeesHostPageViewModel : HostPageViewModel
+public partial class SuppliersHostPageViewModel : HostPageViewModel
 {
-    private readonly EmployeesListPageViewModel _listPage;
+    private readonly SuppliersListPageViewModel _listPage;
     private readonly PageFactory _factory;
 
-    public EmployeesHostPageViewModel(PageFactory factory)
+    public SuppliersHostPageViewModel(PageFactory factory)
     {
-        var listPage = factory.GetPage<EmployeesListPageViewModel>();
+        var listPage = factory.GetPage<SuppliersListPageViewModel>();
 
         _factory = factory;
         _listPage = listPage;
@@ -27,10 +27,10 @@ public partial class EmployeesHostPageViewModel : HostPageViewModel
         NavigateTo(_listPage);
     }
 
-    private void ShowEditor(EmployeeListItem? employee)
+    private void ShowEditor(SupplierListItem? supplier)
     {
-        var editPage = _factory.GetPage<EmployeeEditorPageViewModel>();
-        editPage.SelectedItem = employee;
+        var editPage = _factory.GetPage<SupplierEditorPageViewModel>();
+        editPage.SelectedItem = supplier;
 
         editPage.SaveCommand
             .Where(action => action)
@@ -44,7 +44,7 @@ public partial class EmployeesHostPageViewModel : HostPageViewModel
         NavigateTo(editPage);
     }
 
-    protected override void OnActivated() 
+    protected override void OnActivated()
     {
         _listPage.Permissions = this.Permissions;
         ShowList();

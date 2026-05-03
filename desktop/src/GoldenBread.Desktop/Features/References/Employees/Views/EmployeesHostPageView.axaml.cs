@@ -3,8 +3,7 @@ using ReactiveUI.Avalonia;
 
 namespace GoldenBread.Desktop.Features.References.Employees.Views;
 
-public partial class EmployeesHostPageView 
-    : ReactiveUserControl<EmployeesHostPageViewModel>
+public partial class EmployeesHostPageView : ReactiveUserControl<EmployeesHostPageViewModel>
 {
     public EmployeesHostPageView()
     {

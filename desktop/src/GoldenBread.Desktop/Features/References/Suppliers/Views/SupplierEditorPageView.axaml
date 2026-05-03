@@ -1,0 +1,80 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:suki="https://github.com/kikipoulet/SukiUI"
+	xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+	xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+	xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+	xmlns:vm="using:GoldenBread.Desktop.Features.References.Suppliers.ViewModels"
+	x:Class="GoldenBread.Desktop.Features.References.Suppliers.Views.SupplierEditorPageView"
+	x:DataType="vm:SupplierEditorPageViewModel">
+
+    <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+			<!-- Кнопки -->
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="Сохранить" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<!-- Форма -->
+			<suki:GlassCard Width="400" HorizontalAlignment="Left">
+                <Expander
+                    Header="Контактные данные"
+                    ExpandDirection="Down"
+                    IsExpanded="True">
+
+                    <StackPanel Spacing="12">
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="Наименование:" />
+                            <TextBox
+                                MaxLength="100"
+                                Text="{Binding ItemResponse.Name}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="Эл. почта:" />
+                            <TextBox
+                                MaxLength="100"
+                                Text="{Binding ItemResponse.Email}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="Телефон:" />
+                            <MaskedTextBox
+                                MaxLength="100"
+                                Mask="0 000 000 00 00"
+                                Text="{Binding ItemResponse.Phone}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock
+                                VerticalAlignment="Top"
+                                Margin="0 8 0 0"
+                                Text="Адрес:" />
+                            <TextBox
+                                MaxLength="200"
+                                AcceptsReturn="True"
+                                TextWrapping="Wrap"
+                                Text="{Binding ItemResponse.Address}" />
+                        </DockPanel>
+
+                    </StackPanel>
+                </Expander>
+            </suki:GlassCard>
+
+		</DockPanel>
+    </suki:BusyArea>
+
+</UserControl>

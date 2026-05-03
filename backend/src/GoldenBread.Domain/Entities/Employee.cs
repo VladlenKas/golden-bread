@@ -1,4 +1,6 @@
-﻿namespace GoldenBread.Domain.Entities;
+﻿using GoldenBread.Domain.Extensions;
+
+namespace GoldenBread.Domain.Entities;
 
 public class Employee
 {
@@ -25,9 +27,9 @@ public class Employee
         return new Employee
         {
             EmployeeId = employeeId,
-            Firstname = firstname,
-            Lastname = lastname,
-            Patronymic = patronymic,
+            Firstname = firstname.ToUpperFirstChar()!,
+            Lastname = lastname.ToUpperFirstChar()!,
+            Patronymic = patronymic.ToUpperFirstChar(),
             Birthday = birthday,
             EmployeeTasks = employeeTasks ?? new List<EmployeeTask>()
         };
@@ -39,9 +41,9 @@ public class Employee
         string? patronymic,
         DateOnly birthday)
     {
-        Firstname = firstname;
-        Lastname = lastname;
-        Patronymic = patronymic;
+        Firstname = firstname.ToUpperFirstChar()!;
+        Lastname = lastname.ToUpperFirstChar()!;
+        Patronymic = patronymic.ToUpperFirstChar();
         Birthday = birthday;
     }
 
