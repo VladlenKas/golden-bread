@@ -1,24 +1,80 @@
 <sukiUI:SukiWindow
-xmlns="https://github.com/avaloniaui"
-xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-xmlns:suki="https://github.com/kikipoulet/SukiUI"
-xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
-xmlns:vm="using:GoldenBread.Desktop.Features.Menu"
-x:Class="GoldenBread.Desktop.Features.Menu.MenuWindowView"
-x:DataType="vm:MenuWindowViewModel"
-Icon="/Assets/Icons/logo.ico"
-Title="GoldenBread UI - Меню"
-WindowStartupLocation="CenterScreen"
-Width="1300" Height="850">
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:suki="https://github.com/kikipoulet/SukiUI"
+	xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+	xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+	xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+	xmlns:vm="using:GoldenBread.Desktop.Features.Menu"
+	xmlns:local="clr-namespace:GoldenBread.Desktop.UI.Helpers"
+	x:Class="GoldenBread.Desktop.Features.Menu.MenuWindowView"
+	x:DataType="vm:MenuWindowViewModel"
+	Icon="/Assets/Icons/logo.ico"
+	Title="GoldenBread UI - Меню"
+	WindowStartupLocation="CenterScreen"
+	Width="1300" Height="850"
+	CanPin="True"
+	CanFullScreen="True"
+	IsMenuVisible="True"
+	BackgroundStyle="{Binding BackgroundStyle}">
 
 	<sukiUI:SukiWindow.Hosts>
 		<sukiUI:SukiDialogHost Manager="{Binding SukiDialogManager}"/>
 		<sukiUI:SukiToastHost Manager="{Binding SukiToastManager}"/>
 	</sukiUI:SukiWindow.Hosts>
+
+	<suki:SukiWindow.LogoContent>
+		<Image Width="20" Source="avares://GoldenBread.Desktop/Assets/Icons/logo.ico"/>
+	</suki:SukiWindow.LogoContent>
+
+	<suki:SukiWindow.RightWindowTitleBarControls>
+
+		<!-- Переключение Light/Dark -->
+		<Button Classes="WindowControlsButton" Command="{Binding ToggleBaseThemeCommand}">
+			<icon:MaterialIcon 
+				Width="16" Height="16"
+				Foreground="{DynamicResource SukiText}"
+				Kind="{Binding BaseTheme, Converter={StaticResource ThemeToIconConverter}}"/>
+		</Button>
+
+	</suki:SukiWindow.RightWindowTitleBarControls>
+
+	<suki:SukiWindow.MenuItems>
+
+		<!-- Цветовая тема -->
+		<MenuItem 
+			Click="ThemeMenuItem_OnClick"
+			Header="Цветовая тема"
+			ItemsSource="{Binding LocalizedThemes}">
+
+			<MenuItem.DataTemplates>
+				<DataTemplate DataType="{x:Type local:LocalizedTheme}">
+					<StackPanel Orientation="Horizontal" Spacing="8">
+						<Ellipse Width="12" Height="12" Fill="{Binding Theme.PrimaryBrush}"/>
+						<TextBlock Text="{Binding DisplayName}"/>
+					</StackPanel>
+				</DataTemplate>
+			</MenuItem.DataTemplates>
+
+		</MenuItem>
+
+		<!-- Фон -->
+		<MenuItem 
+			Header="Фон" 
+			Click="BackgroundMenuItem_OnClick" 
+			ItemsSource="{Binding LocalizedBackgrounds}">
+
+			<MenuItem.DataTemplates>
+				<DataTemplate DataType="{x:Type local:LocalizedBackground}">
+					<TextBlock Text="{Binding DisplayName}"/>
+				</DataTemplate>
+			</MenuItem.DataTemplates>
+
+		</MenuItem>
+
+	</suki:SukiWindow.MenuItems>
 
 	<Grid ColumnDefinitions="Auto *">
 
@@ -28,6 +84,7 @@ Width="1300" Height="850">
 			ItemsSource="{Binding SidebarSections}"
 			SelectedItem="{Binding SelectedSection}">
 
+			<!-- Разделы --> 
 			<suki:SukiSideMenu.ItemTemplate>
 				<DataTemplate>
 					<suki:SukiSideMenuItem
@@ -43,8 +100,9 @@ Width="1300" Height="850">
 				</DataTemplate>
 			</suki:SukiSideMenu.ItemTemplate>
 
+			<!-- Выход --> 
 			<suki:SukiSideMenu.FooterContent>
-				<Button 
+				<Button
 					Margin="36 4"
 					Classes="Basic"
 					FontWeight="Regular"
@@ -58,7 +116,7 @@ Width="1300" Height="850">
 
 		<!-- Основной контент справа от меню -->
 		<TabControl
-			Grid.Column="1" 
+			Grid.Column="1"
 			Margin="24"
 			ItemsSource="{Binding SectionPages}"
 			SelectedItem="{Binding ActivePage}">

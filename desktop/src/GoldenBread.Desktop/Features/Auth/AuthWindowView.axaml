@@ -19,6 +19,10 @@
 		<sukiUI:SukiDialogHost Manager="{Binding SukiDialogManager}"/>
 	</sukiUI:SukiWindow.Hosts>
         
+    <suki:SukiWindow.LogoContent>
+		<Image Width="20" Source="avares://GoldenBread.Desktop/Assets/Icons/logo.ico"/>
+	</suki:SukiWindow.LogoContent>
+
     <StackPanel 
         HorizontalAlignment="Center"
         Orientation="Horizontal"

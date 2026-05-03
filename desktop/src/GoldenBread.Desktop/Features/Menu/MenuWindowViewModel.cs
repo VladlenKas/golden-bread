@@ -1,13 +1,19 @@
-﻿using GoldenBread.Desktop.Configuration.Services;
+﻿using Avalonia.Collections;
+using Avalonia.Styling;
+using GoldenBread.Desktop.Configuration.Services;
 using GoldenBread.Desktop.Features.Auth;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
+using GoldenBread.Desktop.UI.Helpers;
 using GoldenBread.Desktop.UI.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using SukiUI;
 using SukiUI.Dialogs;
+using SukiUI.Enums;
+using SukiUI.Models;
 using SukiUI.Toasts;
 using System.Collections.ObjectModel;
 
@@ -15,6 +21,7 @@ namespace GoldenBread.Desktop.Features.Menu;
 
 public partial class MenuWindowViewModel : ViewModelBase
 {
+    private readonly SukiTheme _theme = SukiTheme.GetInstance();
     private readonly IAuthApi _authApi;
     private readonly SessionStorage _sessionStorage;
     private readonly CurrentUserStore _userStore;
@@ -26,7 +33,16 @@ public partial class MenuWindowViewModel : ViewModelBase
     [Reactive] private SectionMenuItem? _selectedSection;
     [Reactive] private HostPageViewModel? _activePage;
     [Reactive] private bool _isLoading = false;
+    [Reactive] public ThemeVariant _baseTheme = ThemeVariant.Dark;
+    [Reactive] public SukiBackgroundStyle _backgroundStyle = SukiBackgroundStyle.GradientSoft;
 
+    public IAvaloniaReadOnlyList<SukiColorTheme> Themes => _theme.ColorThemes;
+    public IAvaloniaReadOnlyList<SukiBackgroundStyle> BackgroundStyles { get; } =
+        new AvaloniaList<SukiBackgroundStyle>(Enum.GetValues<SukiBackgroundStyle>());
+    public IEnumerable<LocalizedBackground> LocalizedBackgrounds =>
+        BackgroundStyles.Select(s => new LocalizedBackground(s));
+    public IEnumerable<LocalizedTheme> LocalizedThemes =>
+        Themes.Select(t => new LocalizedTheme(t));
     public ISukiDialogManager SukiDialogManager { get; } 
     public ISukiToastManager SukiToastManager { get; }
     public ObservableCollection<SectionMenuItem> SidebarSections { get; } = new();
@@ -53,6 +69,9 @@ public partial class MenuWindowViewModel : ViewModelBase
         SukiToastManager = sukiToastManager;
         _dialogService = dialogService;
 
+        BaseTheme = _theme.ActiveBaseTheme;
+        _theme.OnBaseThemeChanged += variant => BaseTheme = variant;
+
         // При смене выбранного раздела – загружаем его страницы и выбираем первую
         this.WhenAnyValue(x => x.SelectedSection)
             .WhereNotNull()
@@ -67,6 +86,8 @@ public partial class MenuWindowViewModel : ViewModelBase
 
         SelectedSection = SidebarSections.FirstOrDefault();
     }
+
+    public void ChangeTheme(SukiColorTheme theme) => _theme.ChangeColorTheme(theme);
 
     private void LoadSectionPages(SectionMenuItem section)
     {
@@ -84,6 +105,9 @@ public partial class MenuWindowViewModel : ViewModelBase
 
         ActivePage = SectionPages.FirstOrDefault();
     }
+
+    [ReactiveCommand]
+    private void ToggleBaseTheme() => _theme.SwitchBaseTheme();
 
     [ReactiveCommand]
     private async Task LogoutAsync()
