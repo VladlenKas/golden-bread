@@ -36,7 +36,4 @@ public sealed class User
             Account = account
         };
     }
-
-    public string GetFullName()
-        => $"{Lastname} {Firstname} {Patronymic}".Trim();
 }

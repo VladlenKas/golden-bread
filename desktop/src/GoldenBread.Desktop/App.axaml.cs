@@ -3,20 +3,15 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using GoldenBread.Desktop.Configuration.Files;
 using GoldenBread.Desktop.Configuration.Services;
-using GoldenBread.Desktop.Features.Administration.Accounts;
 using GoldenBread.Desktop.Features.Administration.Companies;
 using GoldenBread.Desktop.Features.Administration.SystemUsers;
 using GoldenBread.Desktop.Features.Auth;
 using GoldenBread.Desktop.Features.Main;
 using GoldenBread.Desktop.Features.Menu;
-using GoldenBread.Desktop.Features.Orders.OrdersList;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
-using GoldenBread.Desktop.Features.Production.EmployeeTasks;
-using GoldenBread.Desktop.Features.Production.ProductBatches;
-using GoldenBread.Desktop.Features.Production.Recipes;
+using GoldenBread.Desktop.Features.Production.OrdersList;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
-using GoldenBread.Desktop.Features.References.Ingredients;
 using GoldenBread.Desktop.Features.References.Products;
 using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.Infrastructure.Api;
@@ -115,17 +110,12 @@ public partial class App : Application, IDisposable
         services.AddTransient<SupplierEditorPageViewModel>();
 
         // Other Pages
+        services.AddTransient<CompaniesHostPageViewModel>();
+        services.AddTransient<SystemUsersHostPageViewModel>();
         services.AddTransient<ProductsHostPageViewModel>();
-        services.AddTransient<IngredientsHostPageViewModel>();
         services.AddTransient<PurchasePositionsHostPageViewModel>();
         services.AddTransient<WarehouseHostPageViewModel>();
-        services.AddTransient<RecipesHostPageViewModel>();
-        services.AddTransient<ProductBatchesHostPageViewModel>();
-        services.AddTransient<EmployeeTasksHostPageViewModel>();
         services.AddTransient<OrdersHostPageViewModel>();
-        services.AddTransient<SystemUsersHostPageViewModel>();
-        services.AddTransient<CompaniesHostPageViewModel>();
-        services.AddTransient<AccountsHostPageViewModel>();
 
         return services.BuildServiceProvider();
     }
@@ -158,7 +148,7 @@ public static class RefitServiceExtensions
             .ConfigureHttpClient(client =>
             {
                 client.BaseAddress = new Uri(AppSettings.ApiUrl);
-                client.Timeout = TimeSpan.FromSeconds(10);
+                client.Timeout = TimeSpan.FromSeconds(20);
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
             })

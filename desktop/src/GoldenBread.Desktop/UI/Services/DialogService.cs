@@ -53,7 +53,7 @@ public class DialogService(ISukiDialogManager manager)
         manager.CreateDialog()
             .WithTitle("Подтверждение")
             .WithContent(message)
-            .OfType(NotificationType.Information)
+            .OfType(NotificationType.Warning)
             .WithActionButton("Нет", _ =>
             {
                 tcs.TrySetResult(false);

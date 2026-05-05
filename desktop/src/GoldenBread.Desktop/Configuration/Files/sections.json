@@ -8,12 +8,12 @@
       "pages": [
         {
           "key": "products",
-          "title": "Продукция",
+          "title": "Продукция", 
           "order": 0
         },
         {
-          "key": "ingredients",
-          "title": "Ингредиенты",
+          "key": "accounts",
+          "title": "Аккаунты", 
           "order": 10
         },
         {
@@ -30,7 +30,7 @@
     },
     {
       "key": "procurement",
-      "title": "Закупки",
+      "title": "Склад",
       "icon": "PackageVariant",
       "order": 20,
       "pages": [
@@ -49,36 +49,18 @@
     {
       "key": "production",
       "title": "Работа",
-      "icon": "AccountMultipleOutline",
+      "icon": "InvoiceTextPlusOutline",
       "order": 30,
       "pages": [
         {
-          "key": "recipes",
-          "title": "Рецептуры",
+          "key": "orders",
+          "title": "Заказы",
           "order": 0
         },
         {
-          "key": "product_batches",
-          "title": "Производственные партии",
+          "key": "analytics",
+          "title": "Аналитика",
           "order": 10
-        },
-        {
-          "key": "employee_tasks",
-          "title": "Задачи сотрудников",
-          "order": 20
-        }
-      ]
-    },
-    {
-      "key": "orders",
-      "title": "Заказы",
-      "icon": "InvoiceTextPlusOutline",
-      "order": 40,
-      "pages": [
-        {
-          "key": "orders_list",
-          "title": "Список заказов",
-          "order": 0
         }
       ]
     },
@@ -86,7 +68,7 @@
       "key": "administration",
       "title": "Аккаунты",
       "icon": "ShieldAccountOutline",
-      "order": 50,
+      "order": 40,
       "pages": [
         {
           "key": "system_users",
@@ -97,11 +79,6 @@
           "key": "companies",
           "title": "Компании",
           "order": 10
-        },
-        {
-          "key": "accounts",
-          "title": "Аккаунты",
-          "order": 20
         }
       ]
     }

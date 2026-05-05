@@ -12,7 +12,7 @@
 	x:Class="GoldenBread.Desktop.Features.Menu.MenuWindowView"
 	x:DataType="vm:MenuWindowViewModel"
 	Icon="/Assets/Icons/logo.ico"
-	Title="GoldenBread UI - Меню"
+	Title="Golden Bread UI - Меню"
 	WindowStartupLocation="CenterScreen"
 	Width="1300" Height="850"
 	CanPin="True"

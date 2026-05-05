@@ -9,11 +9,6 @@
           "update": true,
           "delete": true
         },
-        "ingredients": {
-          "create": true,
-          "update": true,
-          "delete": true
-        },
         "suppliers": {
           "create": true,
           "update": true,
@@ -34,40 +29,25 @@
           "update": true,
           "delete": true
         },
-        "recipes": {
+        "orders": {
           "create": true,
           "update": true,
           "delete": true
         },
-        "product_batches": {
-          "create": true,
-          "update": true,
-          "delete": true
-        },
-        "employee_tasks": {
-          "create": true,
-          "update": true,
-          "delete": true
-        },
-        "orders_list": {
+        "analytics": {
           "create": true,
           "update": true,
           "delete": true
         },
         "system_users": {
-          "create": false,
+          "create": true,
           "update": true,
-          "delete": false
+          "delete": true
         },
         "companies": {
-          "create": false,
+          "create": true,
           "update": true,
-          "delete": false
-        },
-        "accounts": {
-          "create": false,
-          "update": true,
-          "delete": false
+          "delete": true
         }
       }
     },
@@ -77,11 +57,6 @@
       "pages": {
         "products": {
           "create": false,
-          "update": true,
-          "delete": false
-        },
-        "ingredients": {
-          "create": true,
           "update": true,
           "delete": false
         },
@@ -95,18 +70,13 @@
           "update": true,
           "delete": false
         },
-        "recipes": {
+        "orders": {
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "analytics": {
           "create": false,
-          "update": true,
-          "delete": false
-        },
-        "product_batches": {
-          "create": true,
-          "update": true,
-          "delete": false
-        },
-        "orders_list": {
-          "create": true,
           "update": true,
           "delete": false
         }

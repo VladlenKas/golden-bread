@@ -1,15 +1,10 @@
 ﻿using GoldenBread.Desktop.Configuration.Models;
-using GoldenBread.Desktop.Features.Administration.Accounts;
 using GoldenBread.Desktop.Features.Administration.Companies;
 using GoldenBread.Desktop.Features.Administration.SystemUsers;
-using GoldenBread.Desktop.Features.Orders.OrdersList;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
-using GoldenBread.Desktop.Features.Production.EmployeeTasks;
-using GoldenBread.Desktop.Features.Production.ProductBatches;
-using GoldenBread.Desktop.Features.Production.Recipes;
+using GoldenBread.Desktop.Features.Production.OrdersList;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
-using GoldenBread.Desktop.Features.References.Ingredients;
 using GoldenBread.Desktop.Features.References.Products;
 using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.UI.Common;
@@ -21,18 +16,14 @@ public sealed class PageFactory(IServiceProvider provider)
     private static readonly Dictionary<string, Type> _pageTypes = new()
     {
         ["products"] = typeof(ProductsHostPageViewModel),
-        ["ingredients"] = typeof(IngredientsHostPageViewModel),
+        ["system_users"] = typeof(SystemUsersHostPageViewModel),
+        ["companies"] = typeof(CompaniesHostPageViewModel),
         ["suppliers"] = typeof(SuppliersHostPageViewModel),
         ["employees"] = typeof(EmployeesHostPageViewModel),
         ["purchase_positions"] = typeof(PurchasePositionsHostPageViewModel),
         ["warehouse"] = typeof(WarehouseHostPageViewModel),
-        ["recipes"] = typeof(RecipesHostPageViewModel),
-        ["product_batches"] = typeof(ProductBatchesHostPageViewModel),
-        ["employee_tasks"] = typeof(EmployeeTasksHostPageViewModel),
-        ["orders_list"] = typeof(OrdersHostPageViewModel),
-        ["system_users"] = typeof(SystemUsersHostPageViewModel),
-        ["companies"] = typeof(CompaniesHostPageViewModel),
-        ["accounts"] = typeof(AccountsHostPageViewModel),
+        ["orders"] = typeof(OrdersHostPageViewModel),
+        //["analytics"] = typeof(AnalyticsHostPageViewModel),
     };
 
     public HostPageViewModel? GetHostPage(

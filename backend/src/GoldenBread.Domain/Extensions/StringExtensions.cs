@@ -6,5 +6,5 @@ public static class StringExtensions
         string.IsNullOrWhiteSpace(str) ? null : str.Trim();
 
     public static string? ToUpperFirstChar(this string? str) =>
-        string.IsNullOrWhiteSpace(str) ? null : char.ToUpper(str[0]) + str[1..].ToLower();
+        string.IsNullOrWhiteSpace(str) ? null : char.ToUpper(str[0]) + str[1..];
 }

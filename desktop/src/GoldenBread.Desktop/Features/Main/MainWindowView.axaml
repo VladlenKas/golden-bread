@@ -11,7 +11,7 @@
         x:Class="GoldenBread.Desktop.Features.Main.MainWindowView"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/Icons/logo.ico"
-        Title="GoldenBread UI - Загрузка"
+        Title="Golden Bread UI - Загрузка"
         WindowStartupLocation="CenterScreen"
         Width="600" Height="400">
     

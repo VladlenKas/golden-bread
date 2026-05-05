@@ -11,7 +11,7 @@
         x:Class="GoldenBread.Desktop.Features.Auth.AuthWindowView"
         x:DataType="vm:AuthWindowViewModel"
         Icon="/Assets/Icons/logo.ico"
-        Title="GoldenBread UI - Вход в систему"
+        Title="Golden Bread UI - Вход в систему"
         WindowStartupLocation="CenterScreen"
         Width="1000" Height="650">
 
@@ -71,7 +71,7 @@
                         Width="40"/>
                     <TextBlock 
                         VerticalAlignment="Center" 
-                        Text="Golden Bread UI for Desktop"
+                        Text="Golden Bread UI Desktop"
                         FontWeight="Bold"
                         Classes="h3" />
                 </StackPanel>

@@ -52,7 +52,7 @@
                         AutoGenerateColumns="False"
                         CanUserResizeColumns="True"
                         >
-                        <DataGrid.Columns >
+                        <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" />
                             <DataGridTextColumn Header="ФИО" Binding="{Binding Fullname}" />
                             <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}" />
@@ -66,12 +66,14 @@
                                             <MenuItem 
                                                 Header="Изменить"
                                                 Icon="{icon:MaterialIconExt Kind=Edit}"
+                                                IsVisible="{Binding $parent[DataGrid].DataContext.Permissions.Update}"
                                                 Command="{Binding $parent[DataGrid].DataContext.EditCommand}"
                                                 CommandParameter="{Binding}">
                                             </MenuItem>
                                             <MenuItem 
                                                 Header="Уволить"
                                                 Icon="{icon:MaterialIconExt Kind=Delete}"
+                                                IsVisible="{Binding $parent[DataGrid].DataContext.Permissions.Delete}"
                                                 Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}"
                                                 >
                                             </MenuItem>
