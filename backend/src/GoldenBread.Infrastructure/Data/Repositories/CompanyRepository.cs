@@ -70,7 +70,9 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
             (!excludeId.HasValue || c.CompanyId != excludeId.Value), ct);
     }
 
-    public async Task<Company> AddAsync(Company company, CancellationToken ct)
+    public async Task<Company> AddAsync(
+        Company company,
+        CancellationToken ct = default)
     {
         await context.Companies.AddAsync(company, ct);
         return company;

@@ -19,21 +19,39 @@ public sealed class User
     private User() { }
 
     public static User Create(
+        int userId,
+        int accountId,
         string lastname,
         string firstname,
+        string? patronymic,
         DateOnly birthay,
-        UserRole role,
-        Account account,
-        string? patronymic = null)
+        UserRole role)
     {
         return new User
         {
+            UserId = userId,
+            AccountId = accountId,
             Lastname = lastname,
             Firstname = firstname,
             Patronymic = patronymic,
             Birthday = birthay,
             Role = role,
-            Account = account
         };
     }
+
+    public void Update(
+        string firstname,
+        string lastname,
+        string? patronymic,
+        DateOnly birthday,
+        UserRole role)
+    {
+        Firstname = firstname;
+        Lastname = lastname;
+        Patronymic = patronymic;
+        Birthday = birthday;
+        Role = role;
+    }
+
+    public string Fullname => $"{Lastname} {Firstname} {Patronymic}".Trim();
 }

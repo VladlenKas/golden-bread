@@ -1,6 +1,6 @@
 ﻿using GoldenBread.Desktop.Configuration.Models;
 using GoldenBread.Desktop.Features.Administration.Companies;
-using GoldenBread.Desktop.Features.Administration.SystemUsers;
+using GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
 using GoldenBread.Desktop.Features.Production.OrdersList;
@@ -16,7 +16,7 @@ public sealed class PageFactory(IServiceProvider provider)
     private static readonly Dictionary<string, Type> _pageTypes = new()
     {
         ["products"] = typeof(ProductsHostPageViewModel),
-        ["system_users"] = typeof(SystemUsersHostPageViewModel),
+        ["system_users"] = typeof(UsersHostPageViewModel),
         ["companies"] = typeof(CompaniesHostPageViewModel),
         ["suppliers"] = typeof(SuppliersHostPageViewModel),
         ["employees"] = typeof(EmployeesHostPageViewModel),

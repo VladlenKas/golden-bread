@@ -25,7 +25,8 @@ public sealed class RegisterCompanyCommandHandler(
         {
             string passwordHash = passwordHasher.Create(command.Password);
 
-            var account = Account.Create(
+            var account = DbEntities.Account.Create(
+                0,
                 command.Email,
                 passwordHash,
                 AccountType.Company
@@ -37,6 +38,7 @@ public sealed class RegisterCompanyCommandHandler(
             await unitOfWork.SaveChangesAsync(ct);
 
             var company = Company.Create(
+                0,
                 account.AccountId,
                 command.Name,
                 command.Inn,

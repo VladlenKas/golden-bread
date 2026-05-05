@@ -15,7 +15,7 @@ public sealed class LogoutCommandHandler(
         LogoutCommand command, 
         CancellationToken ct)
     {
-        Account account = await accountContext.GetAccountAsync(ct);
+        var account = await accountContext.GetAccountAsync(ct);
             
         account.ClearSession();
         await unitOfWork.SaveChangesAsync(ct);

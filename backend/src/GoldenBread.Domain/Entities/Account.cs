@@ -24,6 +24,7 @@ public sealed class Account
     private Account() { }
 
     public static Account Create(
+        int accountId,
         string email,
         string passwordHash,
         AccountType accountType,
@@ -32,6 +33,7 @@ public sealed class Account
     {
         return new Account
         {
+            AccountId = accountId,
             Email = email,
             PasswordHash = passwordHash,
             AccountType = accountType,
@@ -73,6 +75,16 @@ public sealed class Account
     { 
         Session = null;
         SessionExpiresAt = null;
+    }
+
+    public void SoftDelete()
+    {
+        DeletedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateStatus(VerificationStatus status)
+    {
+        VerificationStatus = status;
     }
 }
 

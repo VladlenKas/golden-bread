@@ -34,8 +34,9 @@ public static class ConstantMessages
     public const string ChangesSavedToast = "Изменения сохранены";
     public const string EmployeeResumedToast = "Работа сотрудника возобновлена";
     public const string EmployeeDismissedToast = "Сотрудник уволен";
+    public const string UserDeletedToast = "Пользователь уволен";
+    public const string UpdateAccountStatusToast = "Статус обновлен";
 
-    // Error
     public const string EmptySelectedItem = "Выберите данные из списка";
 
     // Exception
@@ -54,18 +55,20 @@ public static class ConstantMessages
     // For UI 
     public const string CreateTitlePage = "Добавление";
     public const string EditorTitlePage = "Редактирование";
-    public const string EmployeesTitlePage = "Список сотрудников";
+    public const string HostTitlePage = "Список данных";
 
     public const string SuppliersTitlePage = "Список поставщиков";
     public const string SupplierDeleteConfirmDialog = "Вы уверены, что хотите удалить этого поставщика?";
     public const string SupplierDeletedToast = "Поставщик удалён";
+    public const string UserDeleteConfirmDialog = "Вы уверены, что хотите уволить этого пользователя?";
+    public const string UpdateAccountStatusConfirmDialog = "Сменить статус пользователя?";
 
     // For Attributes, Validation
     public const string NameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов";
     public const string NotRequiredNameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов длиной от 2 до 35 символов";
     public const string NameLengthValidation = "Длина поля должна быть от 2 до 35 символов";
     public const string RequiredValidation = "Обязательное поле не может быть пустым";
-
+    public const string PasswordLengthValidation = "Пароль должен содержать от 6 до 100 символов";
     public const string SupplierNameLengthValidation = "Название должно содержать от 2 до 100 символов";
     public const string SupplierNameFormatValidation = "Название может содержать только буквы, пробелы, дефисы и ковычки";
     public const string EmailFormatValidation = "Некорректный формат электронной почты";

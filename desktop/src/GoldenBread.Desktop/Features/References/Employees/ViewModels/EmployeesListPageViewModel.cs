@@ -24,7 +24,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public EmployeeListItem? _selectedItem;
 
-    public string Title { get; set; } = ConstantMessages.EmployeesTitlePage;
+    public string Title { get; set; } = ConstantMessages.HostTitlePage;
     public ReadOnlyObservableCollection<EmployeeListItem> FilteredItems { get; }
 
     public EmployeesListPageViewModel(
@@ -90,7 +90,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     [ReactiveCommand]
     private async Task DeleteAsync()
     {
-        var tcs = _dialogService.ShowQustion(ConstantMessages.EmployeeDismissConfirmDialog);
+        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.EmployeeDismissConfirmDialog);
 
         bool confirmed = await tcs.Task;
 

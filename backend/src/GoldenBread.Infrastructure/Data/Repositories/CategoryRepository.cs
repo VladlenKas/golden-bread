@@ -6,7 +6,7 @@ namespace GoldenBread.Infrastructure.Data.Repositories;
 
 public sealed class CategoryRepository(IGoldenBreadContext context) : ICategoryRepository
 {
-    public async Task<List<ProductCategory>> GetAll(CancellationToken ct)
+    public async Task<List<ProductCategory>> GetAll(CancellationToken ct = default)
     {
         return await context.ProductCategories
             .AsNoTracking()

@@ -1,9 +1,10 @@
 ﻿using SukiUI.Models;
+
 namespace GoldenBread.Desktop.UI.Helpers;
 
-public class LocalizedTheme
+public class LocalizedTheme(SukiColorTheme theme)
 {
-    public SukiColorTheme Theme { get; }
+    public SukiColorTheme Theme => theme;
     public string DisplayName => Theme.DisplayName switch
     {
         "Red" => "Красная",
@@ -14,6 +15,4 @@ public class LocalizedTheme
         "Pink" => "Розовая",
         _ => Theme.DisplayName
     };
-
-    public LocalizedTheme(SukiColorTheme theme) => Theme = theme;
 }

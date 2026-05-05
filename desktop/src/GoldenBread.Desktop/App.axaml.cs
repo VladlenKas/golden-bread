@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 using GoldenBread.Desktop.Configuration.Files;
 using GoldenBread.Desktop.Configuration.Services;
 using GoldenBread.Desktop.Features.Administration.Companies;
-using GoldenBread.Desktop.Features.Administration.SystemUsers;
+using GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 using GoldenBread.Desktop.Features.Auth;
 using GoldenBread.Desktop.Features.Main;
 using GoldenBread.Desktop.Features.Menu;
@@ -79,6 +79,8 @@ public partial class App : Application, IDisposable
 
         // Refit 
         services.AddApiClient<IAuthApi>();
+        services.AddApiClient<IAccountApi>();
+        services.AddApiClient<IUsersApi>();
         services.AddApiClient<IEmployeesApi>();
         services.AddApiClient<ISuppliersApi>();
 
@@ -109,12 +111,24 @@ public partial class App : Application, IDisposable
         services.AddSingleton<SuppliersListPageViewModel>();
         services.AddTransient<SupplierEditorPageViewModel>();
 
-        // Other Pages
+        // Users Pages
+        services.AddSingleton<UsersHostPageViewModel>();
+        services.AddSingleton<UsersListPageViewModel>();
+        services.AddTransient<UserEditorPageViewModel>();
+
+        // Companies Pages
         services.AddTransient<CompaniesHostPageViewModel>();
-        services.AddTransient<SystemUsersHostPageViewModel>();
+
+        // Product Pages
         services.AddTransient<ProductsHostPageViewModel>();
-        services.AddTransient<PurchasePositionsHostPageViewModel>();
+
+        // Warehouse Pages
         services.AddTransient<WarehouseHostPageViewModel>();
+
+        // Purchase Positions Pages
+        services.AddTransient<PurchasePositionsHostPageViewModel>();
+
+        // Orders Pages
         services.AddTransient<OrdersHostPageViewModel>();
 
         return services.BuildServiceProvider();

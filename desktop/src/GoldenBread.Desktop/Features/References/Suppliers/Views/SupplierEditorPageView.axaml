@@ -36,7 +36,7 @@
                                 Text="Наименование:" />
                             <TextBox
                                 MaxLength="100"
-                                Text="{Binding ItemResponse.Name}" />
+                                Text="{Binding ItemEditable.Name}" />
                         </DockPanel>
 
                         <DockPanel HorizontalSpacing="8">
@@ -45,7 +45,7 @@
                                 Text="Эл. почта:" />
                             <TextBox
                                 MaxLength="100"
-                                Text="{Binding ItemResponse.Email}" />
+                                Text="{Binding ItemEditable.Email}" />
                         </DockPanel>
 
                         <DockPanel HorizontalSpacing="8">
@@ -55,7 +55,7 @@
                             <MaskedTextBox
                                 MaxLength="100"
                                 Mask="0 000 000 00 00"
-                                Text="{Binding ItemResponse.Phone}" />
+                                Text="{Binding ItemEditable.Phone}" />
                         </DockPanel>
 
                         <DockPanel HorizontalSpacing="8">
@@ -67,7 +67,7 @@
                                 MaxLength="200"
                                 AcceptsReturn="True"
                                 TextWrapping="Wrap"
-                                Text="{Binding ItemResponse.Address}" />
+                                Text="{Binding ItemEditable.Address}" />
                         </DockPanel>
 
                     </StackPanel>

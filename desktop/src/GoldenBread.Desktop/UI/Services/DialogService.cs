@@ -46,7 +46,7 @@ public class DialogService(ISukiDialogManager manager)
             .TryShow();
     }
 
-    public TaskCompletionSource<bool> ShowQustion(string message)
+    public TaskCompletionSource<bool> ShowWarningQustion(string message)
     {
         var tcs = new TaskCompletionSource<bool>();
 
@@ -54,6 +54,27 @@ public class DialogService(ISukiDialogManager manager)
             .WithTitle("Подтверждение")
             .WithContent(message)
             .OfType(NotificationType.Warning)
+            .WithActionButton("Нет", _ =>
+            {
+                tcs.TrySetResult(false);
+            }, dismissOnClick: true)
+            .WithActionButton("Да", _ =>
+            {
+                tcs.TrySetResult(true);
+            }, dismissOnClick: true)
+            .TryShow();
+
+        return tcs;
+    }
+
+    public TaskCompletionSource<bool> ShowInfoQustion(string message)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+
+        manager.CreateDialog()
+            .WithTitle("Подтверждение")
+            .WithContent(message)
+            .OfType(NotificationType.Information)
             .WithActionButton("Нет", _ =>
             {
                 tcs.TrySetResult(false);

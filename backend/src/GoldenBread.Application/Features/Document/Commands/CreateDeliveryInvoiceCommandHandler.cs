@@ -14,12 +14,13 @@ public class GenerateDeliveryInvoiceCommandHandler(
         GenerateDeliveryInvoiceCommand command,
         CancellationToken ct)
     {
-        // 1. Получить заказ со всеми связями (ОБЯЗАТЕЛЬНО Include)
+        // 1. Получить заказ со всеми связями
         var order = await orderRepository.GetByIdAsync(command.OrderId, ct) 
             ?? throw new InvalidOperationException("Заказ не найден");
 
-        // 2. Получить данные продавца (твоей компании)
-        Company company = Company.Create(
+        // 2. Получить данные продавца 
+        var company = Company.Create(
+            0,
             0,
             "GoldenBred",
             "529402859238",
@@ -27,7 +28,7 @@ public class GenerateDeliveryInvoiceCommandHandler(
             "89377888090",
             "г. Уфа, Кирова 65/2, УКСИВТ");
 
-        // 3. Генерируем Excel (синхронно, так как ClosedXML не async)
+        // 3. Генерируем Excel 
         var fileBytes = invoiceGenerator.Generate(order, company);
 
         return new GenerateDeliveryInvoiceResponse

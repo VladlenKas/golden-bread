@@ -6,7 +6,9 @@ namespace GoldenBread.Infrastructure.Data.Repositories;
 
 public class CartRepository(IGoldenBreadContext context) : ICartRepository
 {
-    public async Task<IReadOnlyList<CartItem>> GetByCompanyIdAsync(int companyId, CancellationToken ct = default)
+    public async Task<IReadOnlyList<CartItem>> GetByCompanyIdAsync(
+        int companyId, 
+        CancellationToken ct = default)
     {
         return await context.CartItems
             .Where(ci => ci.CompanyId == companyId)
@@ -19,7 +21,9 @@ public class CartRepository(IGoldenBreadContext context) : ICartRepository
             .ToListAsync(ct);
     }
 
-    public async Task ClearAsync(int companyId, CancellationToken ct = default)
+    public async Task ClearAsync(
+        int companyId, 
+        CancellationToken ct = default)
     {
         var items = await context.CartItems
             .Where(ci => ci.CompanyId == companyId)
@@ -28,7 +32,10 @@ public class CartRepository(IGoldenBreadContext context) : ICartRepository
         context.CartItems.RemoveRange(items);
     }
 
-    public async Task ToggleSelectedAsync(int productId, int companyId, CancellationToken ct)
+    public async Task ToggleSelectedAsync(
+        int productId, 
+        int companyId,
+        CancellationToken ct = default)
     {
         var product = await context.CartItems
             .FirstOrDefaultAsync(f =>

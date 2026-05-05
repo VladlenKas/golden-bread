@@ -38,7 +38,7 @@
                             <TextBox
                                 Grid.Row="1"
                                 MaxLength="50"
-                                Text="{Binding ItemResponse.LastName}" />
+                                Text="{Binding ItemEditable.LastName}" />
                         </DockPanel>
 
                         <DockPanel HorizontalSpacing="8">
@@ -49,7 +49,7 @@
                             <TextBox
                                 Grid.Row="1"
                                 MaxLength="50"
-                                Text="{Binding ItemResponse.FirstName}" />
+                                Text="{Binding ItemEditable.FirstName}" />
                         </DockPanel>
 
                         <DockPanel HorizontalSpacing="8">
@@ -60,7 +60,7 @@
                             <TextBox
                                 Grid.Row="1"
                                 MaxLength="50"
-                                Text="{Binding ItemResponse.Patronymic}" />
+                                Text="{Binding ItemEditable.Patronymic}" />
                         </DockPanel>
 
                         <DockPanel HorizontalSpacing="8">
@@ -71,7 +71,7 @@
                             <DatePicker
                                 Grid.Row="1"
                                 HorizontalAlignment="Right"
-                                SelectedDate="{Binding ItemResponse.Birthday}" />
+                                SelectedDate="{Binding ItemEditable.Birthday}" />
                         </DockPanel>
 
                     </StackPanel>

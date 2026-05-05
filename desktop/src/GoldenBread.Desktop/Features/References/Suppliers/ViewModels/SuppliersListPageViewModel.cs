@@ -90,7 +90,7 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
     [ReactiveCommand]
     private async Task DeleteAsync()
     {
-        var tcs = _dialogService.ShowQustion(ConstantMessages.SupplierDeleteConfirmDialog);
+        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.SupplierDeleteConfirmDialog);
 
         bool confirmed = await tcs.Task;
 

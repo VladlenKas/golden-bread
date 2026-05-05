@@ -9,7 +9,7 @@ public sealed record AuthResponse(
     UserRole? Role,
     VerificationStatus VerificationStatus)
 {
-    public static AuthResponse Response(Account account)
+    public static AuthResponse Response(DbEntities.Account account)
     {
         if (account.AccountType == AccountType.Company)
         {

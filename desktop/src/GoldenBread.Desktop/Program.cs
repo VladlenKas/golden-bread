@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using ReactiveUI.Avalonia;
-using System;
 
 namespace GoldenBread.Desktop;
 

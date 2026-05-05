@@ -16,11 +16,11 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private EmployeeForm? _itemResponse;
+    [Reactive] private EmployeeForm? _ItemEditable;
     [Reactive] private EmployeeListItem? _selectedItem;
     [Reactive] private bool _isBusy;
 
-    private EmployeeForm? ItemResponseCache { get; set; }
+    private EmployeeForm? ItemEditableCache { get; set; }
     public string Title { get; set; } = ConstantMessages.CreateTitlePage;
 
     public EmployeeEditorPageViewModel(
@@ -37,8 +37,8 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
             {
                 if (item == null)
                 {
-                    ItemResponse = new EmployeeForm();
-                    ItemResponseCache = null;
+                    ItemEditable = new EmployeeForm();
+                    ItemEditableCache = null;
                     return;
                 }
 
@@ -50,14 +50,14 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
     [ReactiveCommand]
     public async Task<bool> SaveAsync()
     {
-        if (ItemResponse!.HasErrors)
+        if (ItemEditable!.HasErrors)
         {
-            _toastService.ShowError(ItemResponse.GetFirstError());
+            _toastService.ShowError(ItemEditable.GetFirstError());
             return false;
         }
 
-        if (ItemResponseCache is not null && 
-            ItemResponseCache.EqualsValues(ItemResponse))
+        if (ItemEditableCache is not null && 
+            ItemEditableCache.EqualsValues(ItemEditable))
         {
             _toastService.ShowInfo(ConstantMessages.NoChangesToast);
             return false;
@@ -67,9 +67,9 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
         try
         {
             // Создание
-            if (ItemResponse.EmployeeId == 0)
+            if (ItemEditable.EmployeeId == 0)
             {
-                var command = ItemResponse.ToDto();
+                var command = ItemEditable.ToDto();
                 var response = await _api.Create(command);
 
                 if (response.IsSuccessStatusCode)
@@ -86,7 +86,7 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
             // Обновление
             else
             {
-                var command = ItemResponse.ToDto();
+                var command = ItemEditable.ToDto();
                 var response = await _api.Update(command);
 
                 if (response.IsSuccessStatusCode)
@@ -129,8 +129,8 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
                 return;
             }
 
-            ItemResponse = EmployeeForm.FromDto(response.Content);
-            ItemResponseCache = ItemResponse.Clone();
+            ItemEditable = EmployeeForm.FromDto(response.Content);
+            ItemEditableCache = ItemEditable.Clone();
         }
         finally
         {

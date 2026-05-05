@@ -15,11 +15,11 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private SupplierForm? _itemResponse;
+    [Reactive] private SupplierForm? _ItemEditable;
     [Reactive] private SupplierListItem? _selectedItem;
     [Reactive] private bool _isBusy;
 
-    private SupplierForm? ItemResponseCache { get; set; }
+    private SupplierForm? ItemEditableCache { get; set; }
     public string Title { get; set; } = ConstantMessages.CreateTitlePage;
 
     public SupplierEditorPageViewModel(
@@ -36,8 +36,8 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
             {
                 if (item == null)
                 {
-                    ItemResponse = new SupplierForm();
-                    ItemResponseCache = null;
+                    ItemEditable = new SupplierForm();
+                    ItemEditableCache = null;
                     return;
                 }
 
@@ -49,14 +49,14 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
     [ReactiveCommand]
     public async Task<bool> SaveAsync()
     {
-        if (ItemResponse!.HasErrors)
+        if (ItemEditable!.HasErrors)
         {
-            _toastService.ShowError(ItemResponse.GetFirstError());
+            _toastService.ShowError(ItemEditable.GetFirstError());
             return false;
         }
 
-        if (ItemResponseCache is not null &&
-            ItemResponseCache.EqualsValues(ItemResponse))
+        if (ItemEditableCache is not null &&
+            ItemEditableCache.EqualsValues(ItemEditable))
         {
             _toastService.ShowInfo(ConstantMessages.NoChangesToast);
             return false;
@@ -65,9 +65,9 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
         IsBusy = true;
         try
         {
-            if (ItemResponse.SupplierId == 0)
+            if (ItemEditable.SupplierId == 0)
             {
-                var command = ItemResponse.ToDto();
+                var command = ItemEditable.ToDto();
                 var response = await _api.Create(command);
 
                 if (response.IsSuccessStatusCode)
@@ -83,7 +83,7 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
             }
             else
             {
-                var command = ItemResponse.ToDto();
+                var command = ItemEditable.ToDto();
                 var response = await _api.Update(command);
 
                 if (response.IsSuccessStatusCode)
@@ -125,8 +125,8 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
                 return;
             }
 
-            ItemResponse = SupplierForm.FromDto(response.Content);
-            ItemResponseCache = ItemResponse.Clone();
+            ItemEditable = SupplierForm.FromDto(response.Content);
+            ItemEditableCache = ItemEditable.Clone();
         }
         finally
         {

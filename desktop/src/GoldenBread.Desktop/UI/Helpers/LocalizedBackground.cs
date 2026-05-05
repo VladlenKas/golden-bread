@@ -2,9 +2,9 @@
 
 namespace GoldenBread.Desktop.UI.Helpers;
 
-public class LocalizedBackground
+public class LocalizedBackground(SukiBackgroundStyle style)
 {
-    public SukiBackgroundStyle Style { get; }
+    public SukiBackgroundStyle Style { get; } = style;
     public string DisplayName => Style switch
     {
         SukiBackgroundStyle.GradientDarker => "Темный градиент",
@@ -14,6 +14,4 @@ public class LocalizedBackground
         SukiBackgroundStyle.Bubble => "Пузырьки",
         _ => Style.ToString()
     };
-
-    public LocalizedBackground(SukiBackgroundStyle style) => Style = style;
 }

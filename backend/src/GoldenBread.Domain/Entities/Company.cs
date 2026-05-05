@@ -23,6 +23,7 @@ public sealed class Company
     private Company() { }
 
     public static Company Create(
+        int companyId,
         int accountId,
         string name,
         string inn,
@@ -32,6 +33,7 @@ public sealed class Company
     {
         return new Company
         {       
+            CompanyId = companyId,
             AccountId = accountId,
             Name = name.ToUpperFirstChar()!,
             Inn = inn,

@@ -1,0 +1,97 @@
+<UserControl
+	xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:suki="https://github.com/kikipoulet/SukiUI"
+	xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+	xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+	xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+	xmlns:vm="using:GoldenBread.Desktop.Features.Administration.Users.ViewModels"
+    xmlns:local="using:GoldenBread.Desktop.UI.Helpers"
+	x:Class="GoldenBread.Desktop.Features.Administration.Users.Views.UserEditorPageView"
+	x:DataType="vm:UserEditorPageViewModel">
+
+    <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+			<!-- Кнопки -->
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="Сохранить" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<!-- Форма -->
+			<suki:GlassCard Width="450" HorizontalAlignment="Left">
+                <StackPanel Spacing="12">
+                    <Expander
+                        Header="Персональные данные"
+                        ExpandDirection="Down"
+                        IsExpanded="True">
+
+                    <StackPanel Spacing="8">
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock VerticalAlignment="Center" Text="Фамилия:" />
+                            <TextBox MaxLength="35" Text="{Binding ItemEditable.LastName}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock VerticalAlignment="Center" Text="Имя:" />
+                            <TextBox MaxLength="35" Text="{Binding ItemEditable.FirstName}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock VerticalAlignment="Center" Text="Отчество:" />
+                            <TextBox MaxLength="35" Text="{Binding ItemEditable.Patronymic}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock VerticalAlignment="Center" Text="Дата рождения:" />
+                            <DatePicker HorizontalAlignment="Right" SelectedDate="{Binding ItemEditable.Birthday}" />
+                        </DockPanel>
+
+                        <DockPanel HorizontalSpacing="8">
+                            <TextBlock VerticalAlignment="Center" Text="Должность:" />
+                            <ComboBox ItemsSource="{Binding Roles}"
+                                      SelectedIndex="0"
+                                      SelectedValue="{Binding ItemEditable.Role}"
+                                      SelectedValueBinding="{Binding Key}"
+                                      DisplayMemberBinding="{Binding Value}"
+                                      HorizontalAlignment="Stretch" />
+                        </DockPanel>
+
+                    </StackPanel>
+
+                </Expander>
+					<Expander
+                        IsVisible="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNull}}"
+                        Header="Учетные данные"
+                        ExpandDirection="Down"
+                        IsExpanded="True">
+
+                        <StackPanel Spacing="12">
+                            <DockPanel HorizontalSpacing="8">
+                                <TextBlock VerticalAlignment="Center" Text="Email:" />
+                                <TextBox Text="{Binding ItemEditable.Email}" Watermark="example@mail.com" />
+                            </DockPanel>
+
+                            <DockPanel HorizontalSpacing="8"
+                                       IsVisible="{Binding SelectedItem, Converter={x:Static ObjectConverters.IsNull}}">
+                                <TextBlock VerticalAlignment="Center" Text="Пароль:" />
+                                <TextBox MaxLength="100"
+                                         Text="{Binding ItemEditable.Password}"
+                                         Classes="revealPasswordButton"
+                                         PasswordChar="•"
+                                         Watermark="Минимум 6 символов" />
+                            </DockPanel>
+                        </StackPanel>
+                    </Expander>
+                </StackPanel>
+            </suki:GlassCard>
+
+		</DockPanel>
+    </suki:BusyArea>
+
+</UserControl>
