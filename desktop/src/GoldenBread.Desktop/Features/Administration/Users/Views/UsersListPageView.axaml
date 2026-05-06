@@ -68,36 +68,43 @@
                                                 CommandParameter="{Binding}">
                                             </MenuItem>
                                             <MenuItem 
-                                                Header="Удалить"
+                                                Header="Уволить"
                                                 Icon="{icon:MaterialIconExt Kind=Delete}"
-                                                Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}">
+                                                Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}"
+                                                CommandParameter="{Binding}">
                                             </MenuItem>
                                             <MenuItem 
                                                 Header="Сменить статус"
                                                 Icon="{icon:MaterialIconExt Kind=ToggleSwitch}">
     
                                                 <MenuItem Header="На рассмотрении"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusPendingCommand}"/>
+                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusPendingCommand}"
+                                                          CommandParameter="{Binding}"/>
     
                                                 <MenuItem Header="Подтверждён"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusApprovedCommand}"/>
+                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusApprovedCommand}"
+                                                          CommandParameter="{Binding}"/>
     
                                                 <MenuItem Header="Отклонён"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusRejectedCommand}"/>
+                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusRejectedCommand}"
+                                                          CommandParameter="{Binding}"/>
     
                                                 <MenuItem Header="Приостановлен"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusSuspendedCommand}"/>
+                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusSuspendedCommand}"
+                                                          CommandParameter="{Binding}"/>
                                             </MenuItem>
                                             <MenuItem Header="Учётные данные"
                                                       Icon="{icon:MaterialIconExt Kind=ShieldAccount}">
     
                                                 <MenuItem Header="Сменить пароль"
                                                           Icon="{icon:MaterialIconExt Kind=Key}"
-                                                          Command="{Binding $parent[DataGrid].DataContext.ChangePasswordCommand}"/>
+                                                          Command="{Binding $parent[DataGrid].DataContext.ChangePasswordCommand}"
+                                                          CommandParameter="{Binding}"/>
     
                                                 <MenuItem Header="Сменить email"
                                                           Icon="{icon:MaterialIconExt Kind=EmailEdit}"
-                                                          Command="{Binding $parent[DataGrid].DataContext.ChangeEmailCommand}"/>
+                                                          Command="{Binding $parent[DataGrid].DataContext.ChangeEmailCommand}"
+                                                          CommandParameter="{Binding}"/>
                                             </MenuItem>
                                         </MenuItem>
                                     </Menu>

@@ -19,6 +19,8 @@ public partial class UsersHostPageViewModel : HostPageViewModel
 
         _listPage.EditCommand.Subscribe(item => ShowEditor(item));
         _listPage.AddCommand.Subscribe(_ => ShowEditor(null));
+        _listPage.ChangeEmailCommand.Subscribe(item => ShowChangeEmail(item));
+        _listPage.ChangePasswordCommand.Subscribe(item => ShowChangePassword(item));
     }
 
     private void ShowList()
@@ -42,6 +44,44 @@ public partial class UsersHostPageViewModel : HostPageViewModel
             .Subscribe(_ => ShowList());
 
         NavigateTo(editPage);
+    }
+
+    private void ShowChangeEmail(UserListItem? user)
+    {
+        if (user == null) return;
+
+        var page = _factory.GetPage<ChangeEmailPageViewModel>();
+        page.AccountId = user.AccountId;
+
+        page.SaveCommand
+            .Where(action => action)
+            .Take(1)
+            .Subscribe(_ => ShowList());
+
+        page.GoBackCommand
+            .Take(1)
+            .Subscribe(_ => ShowList());
+
+        NavigateTo(page);
+    }
+
+    private void ShowChangePassword(UserListItem? user)
+    {
+        if (user == null) return;
+
+        var page = _factory.GetPage<ChangePasswordPageViewModel>();
+        page.AccountId = user.AccountId;
+
+        page.SaveCommand
+            .Where(action => action)
+            .Take(1)
+            .Subscribe(_ => ShowList());
+
+        page.GoBackCommand
+            .Take(1)
+            .Subscribe(_ => ShowList());
+
+        NavigateTo(page);
     }
 
     protected override void OnActivated()

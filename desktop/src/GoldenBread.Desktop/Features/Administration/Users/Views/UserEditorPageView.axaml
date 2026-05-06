@@ -55,11 +55,11 @@
                         <DockPanel HorizontalSpacing="8">
                             <TextBlock VerticalAlignment="Center" Text="Должность:" />
                             <ComboBox ItemsSource="{Binding Roles}"
-                                      SelectedIndex="0"
+                                      PlaceholderText="Выберите значение"
+                                      IsEnabled="{Binding CanChangeRole}"
                                       SelectedValue="{Binding ItemEditable.Role}"
                                       SelectedValueBinding="{Binding Key}"
-                                      DisplayMemberBinding="{Binding Value}"
-                                      HorizontalAlignment="Stretch" />
+                                      DisplayMemberBinding="{Binding Value}" />
                         </DockPanel>
 
                     </StackPanel>

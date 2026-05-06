@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Exceptions;
 
 namespace GoldenBread.Application.Features.Suppliers.Commands.UpdateSupplier;
 
@@ -15,6 +16,9 @@ public sealed class UpdateSupplierCommandHandler(
 
         if (supplier is null)
             return false;
+
+        if (await supplierRepository.ExistsByNameAsync(dto.Name, dto.SupplierId, ct))
+            throw new DuplicateEntityException(nameof(dto.Name));
 
         supplier.Update(dto.Name, dto.Email, dto.Phone, dto.Address);
         await unitOfWork.SaveChangesAsync(ct);

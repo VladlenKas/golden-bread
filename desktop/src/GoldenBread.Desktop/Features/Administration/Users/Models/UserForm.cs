@@ -34,8 +34,8 @@ public partial class UserForm : ViewModelBase
     DateTimeOffset _birthday;
 
     [Reactive]
-    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
-    UserRole _role;
+    [Required(ErrorMessage = ConstantMessages.RequiredRoleValidation)]
+    UserRole? _role;
 
     [Reactive]
     [RequiredIf(nameof(UserId), 0, ErrorMessage = ConstantMessages.RequiredValidation)]
@@ -73,7 +73,7 @@ public partial class UserForm : ViewModelBase
             LastName,
             Patronymic,
             DateOnly.FromDateTime(Birthday.DateTime),
-            Role,
+            Role!.Value,
             VerificationStatus);
     }
 

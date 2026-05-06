@@ -47,7 +47,7 @@ public static class ConstantMessages
 
     // Warning
     public const string EmployeePausedToast = "Работа сотрудника приостановлена";
-
+    public const string SelfActionNotAllowed = "Нельзя выполнить это действие над собственной учётной записью";
     #endregion
 
     #region Common
@@ -59,6 +59,8 @@ public static class ConstantMessages
 
     public const string SuppliersTitlePage = "Список поставщиков";
     public const string SupplierDeleteConfirmDialog = "Вы уверены, что хотите удалить этого поставщика?";
+    public const string UpdateEmailConfirmDialog = "Вы уверены, что хотите сменить адрес электронной почты?";
+    public const string UpdatePasswordConfirmDialog = "Вы уверены, что хотите обновить старый пароль?";
     public const string SupplierDeletedToast = "Поставщик удалён";
     public const string UserDeleteConfirmDialog = "Вы уверены, что хотите уволить этого пользователя?";
     public const string UpdateAccountStatusConfirmDialog = "Сменить статус пользователя?";
@@ -74,6 +76,8 @@ public static class ConstantMessages
     public const string EmailFormatValidation = "Некорректный формат электронной почты";
     public const string PhoneFormatValidation = "Телефон может содержать только цифры";
     public const string AddressLengthValidation = "Адрес не должен превышать 200 символов";
+    public const string PasswordsMismatchValidation = "Пароли не совпадают";
+    public const string RequiredRoleValidation = "У пользователя должна быть выбрана должность";
 
     #endregion
 
@@ -87,6 +91,20 @@ public static class ConstantMessages
             VerificationStatus.Suspended => AccountSuspendedDialog,
             _ => "Неизвестный статус"
         };
+
+    public static string GetUpdateStatusMessage(VerificationStatus status)
+    {
+        string statusText = status switch
+        {
+            VerificationStatus.Pending => "На рассмотрении",
+            VerificationStatus.Approved => "Подтверждён",
+            VerificationStatus.Rejected => "Отклонён",
+            VerificationStatus.Suspended => "Приостановлен",
+            _ => "Неизвестный статус"
+        };
+
+        return $"Статус обновлен на \"{statusText}\"";
+    }
 
     #endregion
 }

@@ -21,7 +21,6 @@ public sealed class GetUserByIdQueryHandler(
             user.Patronymic,
             user.Birthday,
             user.Role,
-            user.Account.AccountType,
             user.Account.VerificationStatus);
     }
 }

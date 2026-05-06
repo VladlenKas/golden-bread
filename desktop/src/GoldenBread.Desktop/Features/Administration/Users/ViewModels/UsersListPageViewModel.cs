@@ -2,6 +2,7 @@
 using GoldenBread.Desktop.Features.Administration.Users.Models;
 using GoldenBread.Desktop.Features.Common.Models;
 using GoldenBread.Desktop.Infrastructure.Api;
+using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Helpers;
@@ -17,6 +18,7 @@ namespace GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitleProvider
 {
     private readonly IUsersApi _usersApi;
+    private readonly CurrentUserStore _userStore;
     private readonly IAccountApi _accountsApi;
     private readonly DialogService _dialogService;
     private readonly ToastService _toastService;
@@ -32,14 +34,17 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
 
     public UsersListPageViewModel(
         IUsersApi usersApi,
+        CurrentUserStore userStore,
         IAccountApi accountsApi,
         DialogService dialogService,
         ToastService toastService)
     {
+        _userStore = userStore;
         _usersApi = usersApi;
         _accountsApi = accountsApi;
         _dialogService = dialogService;
         _toastService = toastService;
+
 
         var filter = this.WhenAnyValue(x => x.SearchText)
             .DistinctUntilChanged()
@@ -93,23 +98,35 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     }
 
     [ReactiveCommand]
-    private async Task SetStatusPendingAsync() =>
-        await ChangeStatusAsync(VerificationStatus.Pending);
+    private async Task SetStatusPendingAsync(UserListItem? item) =>
+        await ChangeStatusAsync(item, VerificationStatus.Pending);
 
     [ReactiveCommand]
-    private async Task SetStatusApprovedAsync() =>
-        await ChangeStatusAsync(VerificationStatus.Approved);
+    private async Task SetStatusApprovedAsync(UserListItem? item) =>
+        await ChangeStatusAsync(item, VerificationStatus.Approved);
 
     [ReactiveCommand]
-    private async Task SetStatusRejectedAsync() =>
-        await ChangeStatusAsync(VerificationStatus.Rejected);
+    private async Task SetStatusRejectedAsync(UserListItem? item) =>
+        await ChangeStatusAsync(item, VerificationStatus.Rejected);
 
     [ReactiveCommand]
-    private async Task SetStatusSuspendedAsync() =>
-        await ChangeStatusAsync(VerificationStatus.Suspended);
+    private async Task SetStatusSuspendedAsync(UserListItem? item) =>
+        await ChangeStatusAsync(item, VerificationStatus.Suspended);
 
-    private async Task ChangeStatusAsync(VerificationStatus status)
+    private async Task ChangeStatusAsync(UserListItem? item, VerificationStatus status)
     {
+        if (item == null)
+        {
+            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            return;
+        }
+
+        if (item.AccountId == _userStore.UserId)
+        {
+            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            return;
+        }
+
         var tcs = _dialogService.ShowInfoQustion(ConstantMessages.UpdateAccountStatusConfirmDialog);
 
         bool confirmed = await tcs.Task;
@@ -138,7 +155,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
                     _sourceList.Replace(SelectedItem, updatedItem);
                 }
 
-                _toastService.ShowSuccess(ConstantMessages.UpdateAccountStatusToast);
+                _toastService.ShowSuccess(ConstantMessages.GetUpdateStatusMessage(status));
             }
             else
             {
@@ -156,93 +173,56 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     }
 
     [ReactiveCommand]
-    private async Task DeleteAsync()
+    private async Task<UserListItem?> ChangeEmailAsync(UserListItem? item)
     {
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.UserDeleteConfirmDialog);
-
-        bool confirmed = await tcs.Task;
-
-        if (!confirmed)
-            return;
-
-        IsBusy = true;
-        try
+        if (item == null)
         {
-            if (SelectedItem == null)
-            {
-                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
-                return;
-            }
+            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            return null;
+        }
 
-            var response = await _accountsApi.Delete(SelectedItem!.AccountId);
+        if (item.AccountId == _userStore.UserId)
+        {
+            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            return null;
+        }
 
-            if (response.IsSuccessStatusCode)
-            {
-                _sourceList.Remove(SelectedItem);
-                _toastService.ShowSuccess(ConstantMessages.UserDeletedToast);
-            }
-            else
-            {
-                _toastService.ShowError();
-            }
-        }
-        catch
-        {
-            _dialogService.ShowError();
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        return item;
     }
 
-#warning Доделать обновление пароля;
     [ReactiveCommand]
-    private async Task ChangePasswordAsync()
+    private async Task<UserListItem?> ChangePasswordAsync(UserListItem? item)
     {
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.UserDeleteConfirmDialog);
-
-        bool confirmed = await tcs.Task;
-
-        if (!confirmed)
-            return;
-
-        IsBusy = true;
-        try
+        if (item == null)
         {
-            if (SelectedItem == null)
-            {
-                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
-                return;
-            }
+            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            return null;
+        }
 
-            var response = await _accountsApi.Delete(SelectedItem!.AccountId);
+        if (item.AccountId == _userStore.UserId)
+        {
+            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            return null;
+        }
 
-            if (response.IsSuccessStatusCode)
-            {
-                _sourceList.Remove(SelectedItem);
-                _toastService.ShowSuccess(ConstantMessages.UserDeletedToast);
-            }
-            else
-            {
-                _toastService.ShowError();
-            }
-        }
-        catch
-        {
-            _dialogService.ShowError();
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        return item;
     }
 
-#warning Доделать обновление почты;
-
     [ReactiveCommand]
-    private async Task ChangeEmailAsync()
+    private async Task DeleteAsync(UserListItem? item)
     {
+        if (item == null)
+        {
+            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            return;
+        }
+
+        if (item.AccountId == _userStore.UserId)
+        {
+            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            return;
+        }
+
         var tcs = _dialogService.ShowWarningQustion(ConstantMessages.UserDeleteConfirmDialog);
 
         bool confirmed = await tcs.Task;
@@ -253,12 +233,6 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         IsBusy = true;
         try
         {
-            if (SelectedItem == null)
-            {
-                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
-                return;
-            }
-
             var response = await _accountsApi.Delete(SelectedItem!.AccountId);
 
             if (response.IsSuccessStatusCode)

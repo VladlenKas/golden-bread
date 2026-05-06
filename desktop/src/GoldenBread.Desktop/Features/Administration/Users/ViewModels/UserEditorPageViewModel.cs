@@ -10,6 +10,8 @@ using System.Diagnostics;
 using ReactiveUI.SourceGenerators;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
 using GoldenBread.Desktop.UI.Helpers;
+using GoldenBread.Desktop.Infrastructure.Auth;
+using System.Text.Json;
 
 namespace GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 
@@ -24,11 +26,13 @@ public partial class UserEditorPageViewModel : PageViewModel, ISukiStackPageTitl
     [Reactive] private bool _isBusy;
 
     public Dictionary<UserRole, string> Roles => LocalizedRoles.Roles;
+    public bool CanChangeRole { get; set; } = true;
     private UserForm? ItemEditableCache { get; set; }
     public string Title { get; set; } = ConstantMessages.CreateTitlePage;
 
     public UserEditorPageViewModel(
         IUsersApi api,
+        CurrentUserStore userStore,
         DialogService dialogService,
         ToastService toastService)
     {
@@ -43,11 +47,13 @@ public partial class UserEditorPageViewModel : PageViewModel, ISukiStackPageTitl
                 {
                     ItemEditable = new UserForm();
                     ItemEditableCache = null;
-                    return;
                 }
-
-                Title = ConstantMessages.EditorTitlePage;
-                await LoadUserAsync(item.UserId);
+                else
+                {
+                    CanChangeRole = userStore.UserId != item.AccountId;
+                    Title = ConstantMessages.EditorTitlePage;
+                    await LoadUserAsync(item.UserId);
+                }
             });
     }
 
@@ -74,7 +80,7 @@ public partial class UserEditorPageViewModel : PageViewModel, ISukiStackPageTitl
             {
                 // Добавить проверку на пароль и email
 
-                var request = new CreateUserRequest(ItemEditable.ToDto(), ItemEditable.Email!, ItemEditable.Password!);
+                var request = new CreateUserCommand(ItemEditable.ToDto(), ItemEditable.Email!, ItemEditable.Password!);
                 var response = await _api.Create(request);
 
                 if (response.IsSuccessStatusCode)
@@ -84,6 +90,13 @@ public partial class UserEditorPageViewModel : PageViewModel, ISukiStackPageTitl
                 }
                 else
                 {
+                    Debug.WriteLine(response.Error);
+                    Debug.WriteLine(response.Headers);
+                    Debug.WriteLine(response.ContentHeaders);
+                    Debug.WriteLine(response.ReasonPhrase);
+                    Debug.WriteLine(response.RequestMessage);
+                    Debug.WriteLine(response.StatusCode);
+                    Debug.WriteLine(JsonSerializer.Serialize(request));
                     _toastService.ShowError();
                     return false;
                 }

@@ -22,6 +22,8 @@ using Refit;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace GoldenBread.Desktop;
 
@@ -130,6 +132,10 @@ public partial class App : Application, IDisposable
 
         // Orders Pages
         services.AddTransient<OrdersHostPageViewModel>();
+
+        // Common Pages
+        services.AddTransient<ChangePasswordPageViewModel>();
+        services.AddTransient<ChangeEmailPageViewModel>();
 
         return services.BuildServiceProvider();
     }

@@ -6,6 +6,16 @@ namespace GoldenBread.Infrastructure.Data.Repositories;
 
 public class SupplierRepository(IGoldenBreadContext context) : ISupplierRepository
 {
+    public async Task<bool> ExistsByNameAsync(
+        string name,
+        int? excludeId = null,
+        CancellationToken ct = default)
+    {
+        return await context.Suppliers.AnyAsync(a =>
+            a.Name == name &&
+            (!excludeId.HasValue || a.SupplierId != excludeId.Value), ct);
+    }
+
     public async Task<IReadOnlyList<Supplier>> GetAllAsync(CancellationToken ct = default)
     {
         return await context.Suppliers

@@ -12,7 +12,7 @@ public interface IUsersApi
     Task<IApiResponse<UserDto>> GetById(int id);
 
     [Post("/api/users")]
-    Task<IApiResponse<int>> Create([Body] CreateUserRequest request);
+    Task<IApiResponse<int>> Create([Body] CreateUserCommand command);
 
     [Put("/api/users")]
     Task<IApiResponse> Update([Body] UserDto dto);

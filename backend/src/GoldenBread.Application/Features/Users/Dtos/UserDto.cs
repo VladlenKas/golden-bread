@@ -9,5 +9,4 @@ public record class UserDto(
     string? Patronymic,
     DateOnly Birthday,
     UserRole Role,
-    AccountType AccountType,
     VerificationStatus VerificationStatus);
