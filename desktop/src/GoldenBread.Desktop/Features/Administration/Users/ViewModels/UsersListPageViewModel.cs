@@ -12,6 +12,8 @@ using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
+using static GoldenBread.Desktop.UI.Helpers.LocalizedRoles;
+using static GoldenBread.Desktop.UI.Helpers.LocalizedVerificationStatuses;
 
 namespace GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 
@@ -28,9 +30,13 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     [Reactive] public bool _isEmpty;
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public UserListItem? _selectedItem;
+    [Reactive] public RoleFilterOption? _selectedRoleFilter = LocalizedRoles.RolesFilters[0];
+    [Reactive] public StatusesFilterOption? _selectedStatusFilter = LocalizedVerificationStatuses.StatusesFilters[0];
 
-    public string Title { get; set; } = ConstantMessages.HostTitlePage;
+    public List<StatusesFilterOption> StatusFilterOptions => LocalizedVerificationStatuses.StatusesFilters;
+    public List<RoleFilterOption> RoleFilterOptions => LocalizedRoles.RolesFilters;
     public ReadOnlyObservableCollection<UserListItem> FilteredItems { get; }
+    public string Title { get; set; } = ConstantMessages.HostTitlePage;
 
     public UsersListPageViewModel(
         IUsersApi usersApi,
@@ -45,29 +51,51 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         _dialogService = dialogService;
         _toastService = toastService;
 
-
-        var filter = this.WhenAnyValue(x => x.SearchText)
+        var filter = this.WhenAnyValue(
+                x => x.SearchText,
+                x => x.SelectedRoleFilter,
+                x => x.SelectedStatusFilter)
             .DistinctUntilChanged()
-            .Select(SearchFilter);
+            .Select(tuple => CombinedFilter(
+                tuple.Item1, 
+                tuple.Item2?.Value, 
+                tuple.Item3?.Value));
 
         _sourceList.Connect()
             .Filter(filter)
             .Bind(out var filtered)
-            .Subscribe(_ =>
-            {
-                IsEmpty = filtered.Count == 0;
-            });
+            .Subscribe(_ => IsEmpty = filtered.Count == 0);
 
         FilteredItems = filtered;
     }
 
-    private static Func<UserListItem, bool> SearchFilter(string? search)
+    private static Func<UserListItem, bool> CombinedFilter(
+        string? search,
+        UserRole? role,
+        VerificationStatus? status)
     {
-        if (string.IsNullOrWhiteSpace(search))
-            return _ => true;
+        return item =>
+        {
+            if (!string.IsNullOrWhiteSpace(search) &&
+                !item.SearchText.Contains(search, StringComparison.InvariantCultureIgnoreCase))
+                return false;
 
-        var lower = search.ToLowerInvariant();
-        return item => item.SearchText.Contains(lower, StringComparison.InvariantCultureIgnoreCase);
+            if (role.HasValue && item.Role != role.Value)  
+                return false;
+
+            if (status.HasValue && item.VerificationStatus != status.Value)
+                return false;
+
+            return true;
+        };
+    }
+
+    [ReactiveCommand]
+    private void ResetFilters()
+    {
+        SearchText = string.Empty;
+        SelectedRoleFilter = RoleFilterOptions[0];
+        SelectedStatusFilter = StatusFilterOptions[0];
     }
 
     [ReactiveCommand]

@@ -6,7 +6,7 @@ namespace GoldenBread.Desktop.Infrastructure.Auth;
 public sealed class CurrentUserStore
 {
     public int? UserId { get; private set; }
-    public UserRole Role { get; private set; } = UserRole.None;
+    public UserRole? Role { get; private set; }
     public VerificationStatus? VerificationStatus { get; private set; }
     public bool IsAuthenticated => UserId.HasValue;
 
@@ -20,7 +20,7 @@ public sealed class CurrentUserStore
     public void Logout()
     {
         UserId = null;
-        Role = UserRole.None;
+        Role = null;
         VerificationStatus = null;
     }
 }

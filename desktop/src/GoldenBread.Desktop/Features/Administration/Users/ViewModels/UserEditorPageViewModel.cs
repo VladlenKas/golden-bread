@@ -11,7 +11,6 @@ using ReactiveUI.SourceGenerators;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
 using GoldenBread.Desktop.UI.Helpers;
 using GoldenBread.Desktop.Infrastructure.Auth;
-using System.Text.Json;
 
 namespace GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 
@@ -90,13 +89,6 @@ public partial class UserEditorPageViewModel : PageViewModel, ISukiStackPageTitl
                 }
                 else
                 {
-                    Debug.WriteLine(response.Error);
-                    Debug.WriteLine(response.Headers);
-                    Debug.WriteLine(response.ContentHeaders);
-                    Debug.WriteLine(response.ReasonPhrase);
-                    Debug.WriteLine(response.RequestMessage);
-                    Debug.WriteLine(response.StatusCode);
-                    Debug.WriteLine(JsonSerializer.Serialize(request));
                     _toastService.ShowError();
                     return false;
                 }

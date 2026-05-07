@@ -29,6 +29,34 @@
                     suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}"
                     />
 
+                <StackPanel DockPanel.Dock="Left" Spacing="-4" Orientation="Horizontal">
+                    <ComboBox 
+                        Margin="0 -4"
+                        MinWidth="150"
+                        SelectedIndex="0"
+                        ItemsSource="{Binding RoleFilterOptions}"
+                        SelectedItem="{Binding SelectedRoleFilter}"
+                        DisplayMemberBinding="{Binding Display}" 
+                        />
+
+                    <ComboBox 
+                        Margin="0 -4"
+                        SelectedIndex="0"
+                        ItemsSource="{Binding StatusFilterOptions}"
+                        SelectedItem="{Binding SelectedStatusFilter}"
+                        DisplayMemberBinding="{Binding Display}" 
+                        />
+                </StackPanel>
+                
+
+
+                <Button
+                    DockPanel.Dock="Left"
+                    Classes="Small"
+                    Command="{Binding ResetFiltersCommand}"
+                    suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Restore}"
+                    />
+
                 <Button 
                     DockPanel.Dock="Right"
                     Classes="Flat"

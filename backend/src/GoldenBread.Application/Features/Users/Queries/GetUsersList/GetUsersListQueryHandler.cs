@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Application.Abstractions.Data.Repositories;
-using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Application.Features.Users.Queries.GetUsersList;
 

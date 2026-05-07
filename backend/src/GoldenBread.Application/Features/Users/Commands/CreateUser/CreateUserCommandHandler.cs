@@ -4,8 +4,6 @@ using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
-using System.Security.Principal;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace GoldenBread.Application.Features.Users.Commands.CreateUser;
 
