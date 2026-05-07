@@ -7,9 +7,9 @@
     xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
     xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
     xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
-    xmlns:vm="using:GoldenBread.Desktop.Features.Administration.Users.ViewModels"
-    x:Class="GoldenBread.Desktop.Features.Administration.Users.Views.UsersListPageView"
-    x:DataType="vm:UsersListPageViewModel"
+    xmlns:vm="using:GoldenBread.Desktop.Features.Administration.Companies.ViewModels"
+    x:Class="GoldenBread.Desktop.Features.Administration.Companies.Views.CompaniesListPageView"
+    x:DataType="vm:CompaniesListPageViewModel"
     x:CompileBindings="False">
 
     <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
@@ -29,28 +29,15 @@
                     suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}"
                     />
 
-                <StackPanel DockPanel.Dock="Left" Spacing="-4" Orientation="Horizontal">
-                    <ComboBox 
-                        Margin="0 -4"
-                        MinWidth="150"
-                        SelectedIndex="0"
-                        ItemsSource="{Binding RoleFilterOptions}"
-                        SelectedItem="{Binding SelectedRoleFilter}"
-                        DisplayMemberBinding="{Binding Display}" 
-                        />
+                 <ComboBox 
+                    Margin="0 -4"
+                    SelectedIndex="0"
+                    ItemsSource="{Binding StatusFilterOptions}"
+                    SelectedItem="{Binding SelectedStatusFilter}"
+                    DisplayMemberBinding="{Binding Display}" 
+                    />
 
-                    <ComboBox 
-                        Margin="0 -4"
-                        SelectedIndex="0"
-                        ItemsSource="{Binding StatusFilterOptions}"
-                        SelectedItem="{Binding SelectedStatusFilter}"
-                        DisplayMemberBinding="{Binding Display}" 
-                        />
-                </StackPanel>
-                
-
-
-                <Button
+                 <Button
                     DockPanel.Dock="Left"
                     Classes="Small"
                     Command="{Binding ResetFiltersCommand}"
@@ -76,12 +63,14 @@
                         CanUserResizeColumns="True"
                         >
                         <DataGrid.Columns >
-                            <DataGridTextColumn Header="ID" Binding="{Binding UserId}" />
-                            <DataGridTextColumn Header="ФИО" Binding="{Binding Fullname}" />
-                            <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}" />
-                            <DataGridTextColumn Header="Должность" Binding="{Binding LocalizedRole}" />
+                            <DataGridTextColumn Header="ID" Binding="{Binding CompanyId}" />
+                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="ИНН" Binding="{Binding InnFormatted}" />
+                            <DataGridTextColumn Header="ОГРН" Binding="{Binding OgrnFormatted}" />
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding PhoneFormatted, TargetNullValue=-}" />
+                            <DataGridTextColumn Header="Адрес" Binding="{Binding Address, TargetNullValue=-}" MaxWidth="500" />
                             <DataGridTextColumn Header="Эл. почта" Binding="{Binding Email}" />
-                            <DataGridTextColumn Header="Статус верификации" Binding="{Binding LocalizedStatus}" />
+                            <DataGridTextColumn Header="Статус" Binding="{Binding LocalizedStatus}" />
                             <DataGridTemplateColumn Header="Действия" Width="Auto">
                                 <DataTemplate>
                                     <Menu Height="32" Padding="-2 0">
@@ -96,7 +85,7 @@
                                                 CommandParameter="{Binding}">
                                             </MenuItem>
                                             <MenuItem 
-                                                Header="Уволить"
+                                                Header="Удалить"
                                                 Icon="{icon:MaterialIconExt Kind=Delete}"
                                                 Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}"
                                                 CommandParameter="{Binding}">
@@ -152,5 +141,4 @@
             </suki:GlassCard>
         </DockPanel>
     </suki:BusyArea>
-
 </UserControl>

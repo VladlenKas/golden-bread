@@ -23,7 +23,7 @@
 			</StackPanel>
 
 			<!-- Форма -->
-			<suki:GlassCard Width="450" HorizontalAlignment="Left">
+			<suki:GlassCard Width="400" HorizontalAlignment="Left">
                 <StackPanel Spacing="12">
                     <Expander
                         Header="Персональные данные"

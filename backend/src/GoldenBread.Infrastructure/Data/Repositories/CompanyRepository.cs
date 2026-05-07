@@ -1,6 +1,7 @@
 using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
 using GoldenBread.Domain.Entities;
+using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Infrastructure.Data.Repositories;
 
@@ -76,5 +77,20 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
     {
         await context.Companies.AddAsync(company, ct);
         return company;
+    }
+
+    public async Task<IReadOnlyList<Account>> GetAllAsync(CancellationToken ct = default)
+    {
+        return await context.Accounts
+            .Where(a => a.AccountType == AccountType.Company)
+            .AsNoTracking()
+            .ToListAsync(ct);
+    }
+
+    public async Task<Company?> GetByIdAsync(int id, CancellationToken ct = default)
+    {
+        return await context.Companies
+            .Include(c => c.Account)
+            .FirstOrDefaultAsync(c => c.CompanyId == id, ct);
     }
 }

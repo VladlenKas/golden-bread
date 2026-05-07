@@ -3,7 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using GoldenBread.Desktop.Configuration.Files;
 using GoldenBread.Desktop.Configuration.Services;
-using GoldenBread.Desktop.Features.Administration.Companies;
+using GoldenBread.Desktop.Features.Administration.Companies.ViewModels;
 using GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 using GoldenBread.Desktop.Features.Auth;
 using GoldenBread.Desktop.Features.Main;
@@ -85,6 +85,7 @@ public partial class App : Application, IDisposable
         services.AddApiClient<IUsersApi>();
         services.AddApiClient<IEmployeesApi>();
         services.AddApiClient<ISuppliersApi>();
+        services.AddApiClient<ICompaniesApi>();
 
         return services.BuildServiceProvider();
     }
@@ -119,7 +120,9 @@ public partial class App : Application, IDisposable
         services.AddTransient<UserEditorPageViewModel>();
 
         // Companies Pages
-        services.AddTransient<CompaniesHostPageViewModel>();
+        services.AddSingleton<CompaniesHostPageViewModel>();
+        services.AddSingleton<CompaniesListPageViewModel>();
+        services.AddTransient<CompanyEditorPageViewModel>();
 
         // Product Pages
         services.AddTransient<ProductsHostPageViewModel>();

@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Desktop.Features.Common.Models;
-using static GoldenBread.Desktop.UI.Helpers.LocalizedRoles;
 
 namespace GoldenBread.Desktop.UI.Helpers;
 
@@ -8,7 +7,7 @@ public static class LocalizedVerificationStatuses
     public sealed record StatusesFilterOption(VerificationStatus? Value, string Display);
 
     /// <summary>
-    /// Используется для форм
+    /// Для форм
     /// </summary>
     public static Dictionary<VerificationStatus, string> Statuses { get; } = new()
     {
@@ -19,7 +18,7 @@ public static class LocalizedVerificationStatuses
     };
 
     /// <summary>
-    ///  Используется для фильтров
+    ///  Для фильтров
     /// </summary>
     public static List<StatusesFilterOption> StatusesFilters { get; } = new()
     {
@@ -28,5 +27,17 @@ public static class LocalizedVerificationStatuses
         new(VerificationStatus.Approved, "Подтверждён"),
         new(VerificationStatus.Rejected, "Отклонён"),
         new(VerificationStatus.Suspended, "Приостановлен"),
+    };
+
+    /// <summary>
+    /// Для таблиц и списков
+    /// </summary>
+    public static string StatusesTable(VerificationStatus status) => status switch
+    {
+        VerificationStatus.Pending => "На рассмотрении",
+        VerificationStatus.Approved => "Подтверждён",
+        VerificationStatus.Rejected => "Отклонён",
+        VerificationStatus.Suspended => "Приостановлен",
+        _ => "-"
     };
 }

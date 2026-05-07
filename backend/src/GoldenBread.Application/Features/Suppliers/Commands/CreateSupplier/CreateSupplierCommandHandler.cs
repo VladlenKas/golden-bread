@@ -16,7 +16,7 @@ public sealed class CreateSupplierCommandHandler(
         var dto = request.SupplierDto;
         var supplier = Supplier.Create(0, dto.Name, dto.Email, dto.Phone, dto.Address);
 
-        if (await supplierRepository.ExistsByNameAsync(dto.Name, dto.SupplierId, ct))
+        if (await supplierRepository.ExistsByNameAsync(dto.Name, null, ct))
             throw new DuplicateEntityException(nameof(dto.Name));
 
         await supplierRepository.AddAsync(supplier, ct);

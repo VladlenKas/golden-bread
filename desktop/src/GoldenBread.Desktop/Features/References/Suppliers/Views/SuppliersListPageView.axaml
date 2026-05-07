@@ -57,7 +57,7 @@
                             <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" />
                             <DataGridTextColumn Header="Номер" Binding="{Binding PhoneFormatted, TargetNullValue=-}" />
                             <DataGridTextColumn Header="Эл. почта" Binding="{Binding Email, TargetNullValue=-}" />
-                            <DataGridTextColumn Header="Адрес" MaxWidth="500" Binding="{Binding Address, TargetNullValue=-}" />
+                            <DataGridTextColumn Header="Адрес" Binding="{Binding Address, TargetNullValue=-}" MaxWidth="500"/>
                             <DataGridTemplateColumn Header="Действия" Width="Auto">
                                 <DataTemplate>
                                     <Menu Height="32" Padding="-2 0">

@@ -43,6 +43,20 @@ public sealed class Company
         };
     }
 
+    public void Update(
+        string name,
+        string inn,
+        string ogrn,
+        string? phone,
+        string? address)
+    {
+        Name = name;
+        Inn = inn;
+        Ogrn = ogrn;
+        Phone = phone;
+        Address = address;
+    }
+
     public void UpdateRequisites(
         string name, 
         string inn, 

@@ -1,4 +1,5 @@
 ﻿using DynamicData;
+using GoldenBread.Desktop.Features.Administration.Companies.Models;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
 using GoldenBread.Desktop.Features.Common.Models;
 using GoldenBread.Desktop.Infrastructure.Api;
@@ -12,54 +13,49 @@ using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
-using static GoldenBread.Desktop.UI.Helpers.LocalizedRoles;
 using static GoldenBread.Desktop.UI.Helpers.LocalizedVerificationStatuses;
 
-namespace GoldenBread.Desktop.Features.Administration.Users.ViewModels;
+namespace GoldenBread.Desktop.Features.Administration.Companies.ViewModels;
 
-public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitleProvider
+public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageTitleProvider
 {
-    private readonly IUsersApi _usersApi;
+    private readonly ICompaniesApi _api;
+    private readonly IAccountApi _accountApi;
     private readonly CurrentUserStore _userStore;
-    private readonly IAccountApi _accountsApi;
     private readonly DialogService _dialogService;
     private readonly ToastService _toastService;
-    private readonly SourceList<UserListItem> _sourceList = new();
+    private readonly SourceList<CompanyListItem> _sourceList = new();
 
     [Reactive] private bool _isBusy;
     [Reactive] public bool _isEmpty;
     [Reactive] private string _searchText = string.Empty;
-    [Reactive] public UserListItem? _selectedItem;
-    [Reactive] public RoleFilterOption? _selectedRoleFilter = LocalizedRoles.RolesFilters[0];
+    [Reactive] public CompanyListItem? _selectedItem;
     [Reactive] public StatusesFilterOption? _selectedStatusFilter = LocalizedVerificationStatuses.StatusesFilters[0];
 
     public List<StatusesFilterOption> StatusFilterOptions => LocalizedVerificationStatuses.StatusesFilters;
-    public List<RoleFilterOption> RoleFilterOptions => LocalizedRoles.RolesFilters;
-    public ReadOnlyObservableCollection<UserListItem> FilteredItems { get; }
+    public ReadOnlyObservableCollection<CompanyListItem> FilteredItems { get; }
     public string Title { get; set; } = ConstantMessages.HostTitlePage;
 
-    public UsersListPageViewModel(
-        IUsersApi usersApi,
+    public CompaniesListPageViewModel(
+        ICompaniesApi api,
+        IAccountApi accountApi,
         CurrentUserStore userStore,
-        IAccountApi accountsApi,
         DialogService dialogService,
         ToastService toastService)
     {
+        _api = api;
+        _accountApi = accountApi;
         _userStore = userStore;
-        _usersApi = usersApi;
-        _accountsApi = accountsApi;
         _dialogService = dialogService;
         _toastService = toastService;
 
         var filter = this.WhenAnyValue(
             x => x.SearchText,
-            x => x.SelectedRoleFilter,
             x => x.SelectedStatusFilter)
             .DistinctUntilChanged()
             .Select(tuple => CombinedFilter(
-                tuple.Item1, 
-                tuple.Item2?.Value, 
-                tuple.Item3?.Value));
+                tuple.Item1,
+                tuple.Item2?.Value));
 
         _sourceList.Connect()
             .Filter(filter)
@@ -69,18 +65,14 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         FilteredItems = filtered;
     }
 
-    private static Func<UserListItem, bool> CombinedFilter(
+    private static Func<CompanyListItem, bool> CombinedFilter(
         string? search,
-        UserRole? role,
         VerificationStatus? status)
     {
         return item =>
         {
             if (!string.IsNullOrWhiteSpace(search) &&
                 !item.SearchText.Contains(search, StringComparison.InvariantCultureIgnoreCase))
-                return false;
-
-            if (role.HasValue && item.Role != role.Value)  
                 return false;
 
             if (status.HasValue && item.VerificationStatus != status.Value)
@@ -94,7 +86,6 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     private void ResetFilters()
     {
         SearchText = string.Empty;
-        SelectedRoleFilter = RoleFilterOptions[0];
         SelectedStatusFilter = StatusFilterOptions[0];
     }
 
@@ -105,14 +96,14 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         {
             IsBusy = true;
 
-            var response = await _usersApi.GetAll();
+            var response = await _api.GetAll();
             if (!response.IsSuccessStatusCode || response.Content == null)
                 return;
 
             var data = response.Content;
 
             _sourceList.Clear();
-            foreach (var item in data.UsersList)
+            foreach (var item in data.CompaniesList)
                 _sourceList.Add(item);
         }
         catch (Exception)
@@ -125,23 +116,24 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         }
     }
 
+
     [ReactiveCommand]
-    private async Task SetStatusPendingAsync(UserListItem? item) =>
+    private async Task SetStatusPendingAsync(CompanyListItem? item) =>
         await ChangeStatusAsync(item, VerificationStatus.Pending);
 
     [ReactiveCommand]
-    private async Task SetStatusApprovedAsync(UserListItem? item) =>
+    private async Task SetStatusApprovedAsync(CompanyListItem? item) =>
         await ChangeStatusAsync(item, VerificationStatus.Approved);
 
     [ReactiveCommand]
-    private async Task SetStatusRejectedAsync(UserListItem? item) =>
+    private async Task SetStatusRejectedAsync(CompanyListItem? item) =>
         await ChangeStatusAsync(item, VerificationStatus.Rejected);
 
     [ReactiveCommand]
-    private async Task SetStatusSuspendedAsync(UserListItem? item) =>
+    private async Task SetStatusSuspendedAsync(CompanyListItem? item) =>
         await ChangeStatusAsync(item, VerificationStatus.Suspended);
 
-    private async Task ChangeStatusAsync(UserListItem? item, VerificationStatus status)
+    private async Task ChangeStatusAsync(CompanyListItem? item, VerificationStatus status)
     {
         if (item == null)
         {
@@ -172,7 +164,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
             }
 
             var request = new UpdateAccountStatusRequest(SelectedItem.AccountId, status);
-            var response = await _accountsApi.UpdateStatus(request);
+            var response = await _accountApi.UpdateStatus(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -201,7 +193,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     }
 
     [ReactiveCommand]
-    private async Task<UserListItem?> ChangeEmailAsync(UserListItem? item)
+    private async Task<CompanyListItem?> ChangeEmailAsync(CompanyListItem? item)
     {
         if (item == null)
         {
@@ -219,7 +211,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     }
 
     [ReactiveCommand]
-    private async Task<UserListItem?> ChangePasswordAsync(UserListItem? item)
+    private async Task<CompanyListItem?> ChangePasswordAsync(CompanyListItem? item)
     {
         if (item == null)
         {
@@ -237,7 +229,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     }
 
     [ReactiveCommand]
-    private async Task DeleteAsync(UserListItem? item)
+    private async Task DeleteAsync(CompanyListItem? item)
     {
         if (item == null)
         {
@@ -245,13 +237,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
             return;
         }
 
-        if (item.AccountId == _userStore.UserId)
-        {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
-            return;
-        }
-
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.UserDeleteConfirmDialog);
+        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.CompanyDeleteConfirmDialog);
 
         bool confirmed = await tcs.Task;
 
@@ -261,12 +247,12 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         IsBusy = true;
         try
         {
-            var response = await _accountsApi.Delete(SelectedItem!.AccountId);
+            var response = await _accountApi.Delete(item.AccountId);
 
             if (response.IsSuccessStatusCode)
             {
-                _sourceList.Remove(SelectedItem);
-                _toastService.ShowSuccess(ConstantMessages.UserDeletedToast);
+                _sourceList.Remove(item);
+                _toastService.ShowSuccess(ConstantMessages.DeletedToast);
             }
             else
             {
@@ -287,5 +273,5 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     private async Task AddAsync() { }
 
     [ReactiveCommand]
-    private async Task<UserListItem?> EditAsync(UserListItem? selectedItem) => selectedItem;
+    private async Task<CompanyListItem?> EditAsync(CompanyListItem? selectedItem) => selectedItem;
 }

@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.UI.Helpers;
 
 namespace GoldenBread.Desktop.Features.Administration.Users.Models;
 
@@ -14,19 +15,6 @@ public record UserListItem(
     VerificationStatus VerificationStatus)
 {
     public string SearchText = $"{UserId}{Fullname}{Birthday}{Role}{Email}{VerificationStatus}";
-    public string LocalizedRole => Role switch
-    {
-        UserRole.Technologist => "Технолог",
-        UserRole.CommercialManager => "Коммерческий менеджер",
-        _ => "-"
-    };
-
-    public string LocalizedStatus => VerificationStatus switch
-    {
-        VerificationStatus.Pending => "На рассмотрении",
-        VerificationStatus.Approved => "Подтверждён",
-        VerificationStatus.Rejected => "Отклонён",
-        VerificationStatus.Suspended => "Приостановлен",
-        _ => "-"
-    };
+    public string LocalizedRole => LocalizedRoles.RolesTable(Role);
+    public string LocalizedStatus => LocalizedVerificationStatuses.StatusesTable(VerificationStatus);
 };

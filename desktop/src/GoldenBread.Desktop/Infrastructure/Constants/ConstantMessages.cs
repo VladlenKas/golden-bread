@@ -64,6 +64,7 @@ public static class ConstantMessages
     public const string SupplierDeletedToast = "Поставщик удалён";
     public const string UserDeleteConfirmDialog = "Вы уверены, что хотите уволить этого пользователя?";
     public const string UpdateAccountStatusConfirmDialog = "Сменить статус пользователя?";
+    public const string CompanyDeleteConfirmDialog = "Вы уверены, что хотите удалить эту компанию?";
 
     // For Attributes, Validation
     public const string NameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов";
@@ -78,7 +79,9 @@ public static class ConstantMessages
     public const string AddressLengthValidation = "Адрес не должен превышать 200 символов";
     public const string PasswordsMismatchValidation = "Пароли не совпадают";
     public const string RequiredRoleValidation = "У пользователя должна быть выбрана должность";
-
+    public const string InnFormatValidation = "ИНН должен содержать 10 цифр и не может состоять только из нулей";
+    public const string OgrnFormatValidation = "ОГРН должен содержать 13 цифр, начинаться с 1 или 5, содержать год регистрации не ранее 2002 и корректный код субъекта РФ";
+    public const string CompanyNameLengthValidation = "Название должно содержать от 2 до 100 символов";
     #endregion
 
     #region Helper Methods

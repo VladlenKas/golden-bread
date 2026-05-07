@@ -1,5 +1,5 @@
 ﻿using GoldenBread.Desktop.Configuration.Models;
-using GoldenBread.Desktop.Features.Administration.Companies;
+using GoldenBread.Desktop.Features.Administration.Companies.ViewModels;
 using GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
