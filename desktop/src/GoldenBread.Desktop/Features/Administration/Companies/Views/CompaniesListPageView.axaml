@@ -61,6 +61,7 @@
                         SelectedItem="{Binding SelectedItem}"
                         AutoGenerateColumns="False"
                         CanUserResizeColumns="True"
+                        SelectionMode="Single"
                         >
                         <DataGrid.Columns >
                             <DataGridTextColumn Header="ID" Binding="{Binding CompanyId}" />
@@ -71,63 +72,57 @@
                             <DataGridTextColumn Header="Адрес" Binding="{Binding Address, TargetNullValue=-}" MaxWidth="500" />
                             <DataGridTextColumn Header="Эл. почта" Binding="{Binding Email}" />
                             <DataGridTextColumn Header="Статус" Binding="{Binding LocalizedStatus}" />
-                            <DataGridTemplateColumn Header="Действия" Width="Auto">
-                                <DataTemplate>
-                                    <Menu Height="32" Padding="-2 0">
-                                        <MenuItem Height="36" Width="36">
-                                            <MenuItem.Header>
-                                                <icon:MaterialIcon Kind="DotsVertical" Width="16" />
-                                            </MenuItem.Header>
-                                            <MenuItem 
-                                                Header="Изменить"
-                                                Icon="{icon:MaterialIconExt Kind=Edit}"
-                                                Command="{Binding $parent[DataGrid].DataContext.EditCommand}"
-                                                CommandParameter="{Binding}">
-                                            </MenuItem>
-                                            <MenuItem 
-                                                Header="Удалить"
-                                                Icon="{icon:MaterialIconExt Kind=Delete}"
-                                                Command="{Binding $parent[DataGrid].DataContext.DeleteCommand}"
-                                                CommandParameter="{Binding}">
-                                            </MenuItem>
-                                            <MenuItem 
-                                                Header="Сменить статус"
-                                                Icon="{icon:MaterialIconExt Kind=ToggleSwitch}">
-    
-                                                <MenuItem Header="На рассмотрении"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusPendingCommand}"
-                                                          CommandParameter="{Binding}"/>
-    
-                                                <MenuItem Header="Подтверждён"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusApprovedCommand}"
-                                                          CommandParameter="{Binding}"/>
-    
-                                                <MenuItem Header="Отклонён"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusRejectedCommand}"
-                                                          CommandParameter="{Binding}"/>
-    
-                                                <MenuItem Header="Приостановлен"
-                                                          Command="{Binding $parent[DataGrid].DataContext.SetStatusSuspendedCommand}"
-                                                          CommandParameter="{Binding}"/>
-                                            </MenuItem>
-                                            <MenuItem Header="Учётные данные"
-                                                      Icon="{icon:MaterialIconExt Kind=ShieldAccount}">
-    
-                                                <MenuItem Header="Сменить пароль"
-                                                          Icon="{icon:MaterialIconExt Kind=Key}"
-                                                          Command="{Binding $parent[DataGrid].DataContext.ChangePasswordCommand}"
-                                                          CommandParameter="{Binding}"/>
-    
-                                                <MenuItem Header="Сменить эл. почту"
-                                                          Icon="{icon:MaterialIconExt Kind=EmailEdit}"
-                                                          Command="{Binding $parent[DataGrid].DataContext.ChangeEmailCommand}"
-                                                          CommandParameter="{Binding}"/>
-                                            </MenuItem>
-                                        </MenuItem>
-                                    </Menu>
-                                </DataTemplate>
-                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
+
+                        <DataGrid.ContextMenu>
+							<ContextMenu>
+								<MenuItem 
+                                    Header="Изменить"
+                                    Icon="{icon:MaterialIconExt Kind=Edit}"
+                                    Command="{Binding EditCommand}"
+                                    CommandParameter="{Binding SelectedItem}">
+                                </MenuItem>
+                                <MenuItem 
+                                    Header="Удалить"
+                                    Icon="{icon:MaterialIconExt Kind=Delete}"
+                                    Command="{Binding DeleteCommand}"
+                                    CommandParameter="{Binding SelectedItem}">
+                                </MenuItem>
+                                <MenuItem 
+                                    Header="Сменить статус"
+                                    Icon="{icon:MaterialIconExt Kind=ToggleSwitch}">
+    
+                                    <MenuItem Header="На рассмотрении"
+                                                Command="{Binding SetStatusPendingCommand}"
+                                                CommandParameter="{Binding SelectedItem}"/>
+    
+                                    <MenuItem Header="Подтверждён"
+                                                Command="{Binding SetStatusApprovedCommand}"
+                                                CommandParameter="{Binding SelectedItem}"/>
+    
+                                    <MenuItem Header="Отклонён"
+                                                Command="{Binding SetStatusRejectedCommand}"
+                                                CommandParameter="{Binding SelectedItem}"/>
+    
+                                    <MenuItem Header="Приостановлен"
+                                                Command="{Binding SetStatusSuspendedCommand}"
+                                                CommandParameter="{Binding SelectedItem}"/>
+                                </MenuItem>
+                                <MenuItem Header="Учётные данные"
+                                            Icon="{icon:MaterialIconExt Kind=ShieldAccount}">
+    
+                                    <MenuItem Header="Сменить пароль"
+                                                Icon="{icon:MaterialIconExt Kind=Key}"
+                                                Command="{Binding ChangePasswordCommand}"
+                                                CommandParameter="{Binding SelectedItem}"/>
+    
+                                    <MenuItem Header="Сменить эл. почту"
+                                                Icon="{icon:MaterialIconExt Kind=EmailEdit}"
+                                                Command="{Binding ChangeEmailCommand}"
+                                                CommandParameter="{Binding SelectedItem}"/>
+                                </MenuItem>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
                     </DataGrid>
 
                     <TextBlock
