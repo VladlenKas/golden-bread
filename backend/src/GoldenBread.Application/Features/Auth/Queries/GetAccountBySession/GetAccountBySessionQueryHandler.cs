@@ -1,10 +1,13 @@
-﻿using GoldenBread.Application.Abstractions.Services;
+﻿using GoldenBread.Application.Abstractions.Data;
+using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Application.Features.Auth.Queries.GetAccountBySession;
 
-public sealed class GetAccountBySessionQueryHandler(ICurrentAccountContext accountContext) : 
+public sealed class GetAccountBySessionQueryHandler(
+    IUnitOfWork unitOfWork,
+    ICurrentAccountContext accountContext) : 
     IRequestHandler<GetAccountBySessionQuery, AuthResponse?>
 {
     public async Task<AuthResponse?> Handle(
@@ -20,7 +23,10 @@ public sealed class GetAccountBySessionQueryHandler(ICurrentAccountContext accou
 
         // Если вошел пользователь, обновляем сессию
         if (account.AccountType == AccountType.User)
+        {
             account.SetSession();
+            await unitOfWork.SaveChangesAsync(ct);
+        }
 
         // Всё ок? Возвращем код 200
         return AuthResponse.Response(account);

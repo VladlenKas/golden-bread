@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace GoldenBread.Desktop.Features.Common.Views;
 
-public partial class ChangePasswordPageView : UserControl
+public partial class DetailDialogView : UserControl
 {
-    public ChangePasswordPageView()
+    public DetailDialogView()
     {
         InitializeComponent();
     }

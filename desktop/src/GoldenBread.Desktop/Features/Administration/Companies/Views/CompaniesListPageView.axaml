@@ -50,8 +50,7 @@
                     Content="Добавить"
                     suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
                     Command="{Binding AddCommand}"
-                    IsVisible="{Binding Permissions.Create}"
-                    />
+                    IsVisible="{Binding Permissions.Create}"/>
             </DockPanel>
 
             <suki:GlassCard>
@@ -62,14 +61,14 @@
                         AutoGenerateColumns="False"
                         CanUserResizeColumns="True"
                         SelectionMode="Single"
+                        DoubleTapped="DataGrid_DoubleTapped"
                         >
                         <DataGrid.Columns >
                             <DataGridTextColumn Header="ID" Binding="{Binding CompanyId}" />
                             <DataGridTextColumn Header="Название" Binding="{Binding Name}" />
                             <DataGridTextColumn Header="ИНН" Binding="{Binding InnFormatted}" />
                             <DataGridTextColumn Header="ОГРН" Binding="{Binding OgrnFormatted}" />
-                            <DataGridTextColumn Header="Телефон" Binding="{Binding PhoneFormatted, TargetNullValue=-}" />
-                            <DataGridTextColumn Header="Адрес" Binding="{Binding Address, TargetNullValue=-}" MaxWidth="500" />
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding PhoneFormatted}" />
                             <DataGridTextColumn Header="Эл. почта" Binding="{Binding Email}" />
                             <DataGridTextColumn Header="Статус" Binding="{Binding LocalizedStatus}" />
                         </DataGrid.Columns>
@@ -123,6 +122,7 @@
                                 </MenuItem>
                             </ContextMenu>
                         </DataGrid.ContextMenu>
+
                     </DataGrid>
 
                     <TextBlock

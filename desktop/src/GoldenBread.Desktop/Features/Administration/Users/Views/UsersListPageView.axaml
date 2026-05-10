@@ -75,6 +75,7 @@
                         AutoGenerateColumns="False"
                         CanUserResizeColumns="True"
                         SelectionMode="Single"
+                        DoubleTapped="DataGrid_DoubleTapped"
                         >
                         <DataGrid.Columns >
                             <DataGridTextColumn Header="ID" Binding="{Binding UserId}" />

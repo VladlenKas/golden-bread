@@ -20,7 +20,9 @@ public sealed class GetCompaniesListQueryHandler(ICompanyRepository companyRepos
                 a.Company!.Phone,
                 a.Company!.Address,
                 a.Email,
-                a.VerificationStatus))
+                a.VerificationStatus,
+                a.CreatedAt,
+                a.SessionExpiresAt))
             .ToList();
 
         return new CompaniesListResponse(list);

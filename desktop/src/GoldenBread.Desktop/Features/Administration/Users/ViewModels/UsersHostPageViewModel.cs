@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.Administration.Users.Models;
+using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
 using System.Reactive.Linq;

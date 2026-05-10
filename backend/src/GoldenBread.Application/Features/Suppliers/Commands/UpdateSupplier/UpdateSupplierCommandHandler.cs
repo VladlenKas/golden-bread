@@ -19,6 +19,12 @@ public sealed class UpdateSupplierCommandHandler(
 
         if (await supplierRepository.ExistsByNameAsync(dto.Name, dto.SupplierId, ct))
             throw new DuplicateEntityException(nameof(dto.Name));
+        else if (await supplierRepository.ExistsByEmailAsync(dto.Email, dto.SupplierId, ct))
+            throw new DuplicateEntityException(nameof(dto.Email));
+        else if (await supplierRepository.ExistsByPhoneAsync(dto.Phone, dto.SupplierId, ct))
+            throw new DuplicateEntityException(nameof(dto.Phone));
+        else if (await supplierRepository.ExistsByAddressAsync(dto.Address, dto.SupplierId, ct))
+            throw new DuplicateEntityException(nameof(dto.Address));
 
         supplier.Update(dto.Name, dto.Email, dto.Phone, dto.Address);
         await unitOfWork.SaveChangesAsync(ct);

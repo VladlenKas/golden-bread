@@ -4,13 +4,13 @@ namespace GoldenBread.Desktop.Infrastructure.Constants;
 
 public static class ConstantMessages
 {
-    #region For Dialogs
+    #region Dialog Messages
 
     // Error
     public const string UserNotFoundDialog = "Пользователь не найден";
     public const string RequiredFieldsDialog = "Заполните все обязательные поля";
 
-    // Exception
+    // Exception  
     public const string ExceptionDialog = "Не удалось выполнить запрос";
 
     // Warning
@@ -19,12 +19,17 @@ public static class ConstantMessages
     public const string AccountSuspendedDialog = "В настоящее время аккаунт временно заморожен. Попробуйте войти позже или свяжитесь со службой поддержки";
 
     // Confirm
-    public const string LogoutConfirmDialog = "Вы действительно хотите выйти?";
-    public const string EmployeeDismissConfirmDialog = "Вы уверены, что хотите уволить сотрудника?";
+    public const string LogoutConfirmDialog = "Вы уверены, что хотите выйти из учетной записи? Текущая сессия будет завершена";
+    public const string SupplierDeleteConfirmDialog = "Вы уверены, что хотите удалить выбранного поставщика?";
+    public const string CompanyDeleteConfirmDialog = "Вы уверены, что хотите удалить выбранную компанию?";
+    public const string EmployeeDismissConfirmDialog = "Вы уверены, что хотите уволить выбранного сотрудника?";
+    public const string UpdateEmailConfirmDialog = "Вы уверены, что хотите сменить адрес электронной почты?";
+    public const string UpdatePasswordConfirmDialog = "Вы уверены, что хотите обновить старый пароль?";
+    public const string UpdateAccountStatusConfirmDialog = "Сменить статус пользователя?";
 
     #endregion
 
-    #region For Toasts
+    #region Toast Messages
 
     // Success
     public const string CreatedToast = "Запись добавлена";
@@ -32,56 +37,54 @@ public static class ConstantMessages
     public const string DeletedToast = "Запись удалена";
     public const string SavedToast = "Данные сохранены";
     public const string ChangesSavedToast = "Изменения сохранены";
-    public const string EmployeeResumedToast = "Работа сотрудника возобновлена";
     public const string EmployeeDismissedToast = "Сотрудник уволен";
-    public const string UserDeletedToast = "Пользователь уволен";
     public const string UpdateAccountStatusToast = "Статус обновлен";
 
+    // Info
     public const string EmptySelectedItem = "Выберите данные из списка";
+    public const string NoChangesToast = "Вы не внесли изменений";
 
     // Exception
     public const string ExceptionToast = "Не удалось выполнить действие";
 
-    // Info
-    public const string NoChangesToast = "Вы не внесли изменений";
-
     // Warning
-    public const string EmployeePausedToast = "Работа сотрудника приостановлена";
     public const string SelfActionNotAllowed = "Нельзя выполнить это действие над собственной учётной записью";
+
     #endregion
 
-    #region Common
+    #region UI Titles
 
-    // For UI 
     public const string CreateTitlePage = "Добавление";
     public const string EditorTitlePage = "Редактирование";
     public const string HostTitlePage = "Список данных";
 
-    public const string SuppliersTitlePage = "Список поставщиков";
-    public const string SupplierDeleteConfirmDialog = "Вы уверены, что хотите удалить этого поставщика?";
-    public const string UpdateEmailConfirmDialog = "Вы уверены, что хотите сменить адрес электронной почты?";
-    public const string UpdatePasswordConfirmDialog = "Вы уверены, что хотите обновить старый пароль?";
-    public const string SupplierDeletedToast = "Поставщик удалён";
-    public const string UserDeleteConfirmDialog = "Вы уверены, что хотите уволить этого пользователя?";
-    public const string UpdateAccountStatusConfirmDialog = "Сменить статус пользователя?";
-    public const string CompanyDeleteConfirmDialog = "Вы уверены, что хотите удалить эту компанию?";
+    #endregion
 
-    // For Attributes, Validation
-    public const string NameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов";
-    public const string NotRequiredNameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов длиной от 2 до 35 символов";
-    public const string NameLengthValidation = "Длина поля должна быть от 2 до 35 символов";
+    #region Validation Messages
+
+    // Required
     public const string RequiredValidation = "Обязательное поле не может быть пустым";
+
+    // Length
+    public const string NameLengthValidation = "Длина поля должна быть от 2 до 35 символов";
     public const string PasswordLengthValidation = "Пароль должен содержать от 6 до 100 символов";
     public const string SupplierNameLengthValidation = "Название должно содержать от 2 до 100 символов";
+    public const string CompanyNameLengthValidation = "Название должно содержать от 2 до 100 символов";
+    public const string AddressLengthValidation = "Адрес не должен превышать 200 символов";
+
+    // Format
+    public const string NameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов";
+    public const string NotRequiredNameFormatValidation = "Поле должно содержать только кириллицу и разделительные знаки без повторов длиной от 2 до 35 символов";
     public const string SupplierNameFormatValidation = "Название может содержать только буквы, пробелы, дефисы и ковычки";
     public const string EmailFormatValidation = "Некорректный формат электронной почты";
     public const string PhoneFormatValidation = "Телефон может содержать только цифры";
-    public const string AddressLengthValidation = "Адрес не должен превышать 200 символов";
-    public const string PasswordsMismatchValidation = "Пароли не совпадают";
-    public const string RequiredRoleValidation = "У пользователя должна быть выбрана должность";
     public const string InnFormatValidation = "ИНН должен содержать 10 цифр и не может состоять только из нулей";
     public const string OgrnFormatValidation = "ОГРН должен содержать 13 цифр, начинаться с 1 или 5, содержать год регистрации не ранее 2002 и корректный код субъекта РФ";
-    public const string CompanyNameLengthValidation = "Название должно содержать от 2 до 100 символов";
+
+    // Other
+    public const string PasswordsMismatchValidation = "Пароли не совпадают";
+    public const string RequiredRoleValidation = "У пользователя должна быть выбрана должность";
+
     #endregion
 
     #region Helper Methods

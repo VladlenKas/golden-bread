@@ -11,8 +11,50 @@ public class SupplierRepository(IGoldenBreadContext context) : ISupplierReposito
         int? excludeId = null,
         CancellationToken ct = default)
     {
+        name = name.Trim().ToLower();
+
         return await context.Suppliers.AnyAsync(a =>
-            a.Name == name &&
+            a.Name != null &&
+            a.Name.Trim().ToLower() == name &&
+            (!excludeId.HasValue || a.SupplierId != excludeId.Value), ct);
+    }
+    public async Task<bool> ExistsByEmailAsync(
+        string? email,
+        int? excludeId = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(email)) 
+            return false;
+
+        return await context.Suppliers.AnyAsync(a =>
+            a.Email == email &&
+            (!excludeId.HasValue || a.SupplierId != excludeId.Value), ct);
+    }
+    public async Task<bool> ExistsByPhoneAsync(
+        string? phone,
+        int? excludeId = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) 
+            return false;
+
+        return await context.Suppliers.AnyAsync(a =>
+            a.Phone == phone &&
+            (!excludeId.HasValue || a.SupplierId != excludeId.Value), ct);
+    }
+    public async Task<bool> ExistsByAddressAsync(
+        string? address,
+        int? excludeId = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(address))
+            return false;
+
+        address = address.Trim().ToLower();
+
+        return await context.Suppliers.AnyAsync(a =>
+            a.Address != null && 
+            a.Address.Trim().ToLower() == address &&
             (!excludeId.HasValue || a.SupplierId != excludeId.Value), ct);
     }
 

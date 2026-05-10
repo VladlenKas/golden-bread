@@ -11,4 +11,6 @@ public record UserListItem(
     DateOnly Birthday,
     UserRole Role,
     string Email,
-    VerificationStatus VerificationStatus);
+    VerificationStatus VerificationStatus,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? SessionExpiresAt);

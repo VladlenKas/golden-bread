@@ -24,7 +24,7 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public SupplierListItem? _selectedItem;
 
-    public string Title { get; set; } = ConstantMessages.SuppliersTitlePage;
+    public string Title { get; set; } = ConstantMessages.HostTitlePage;
     public ReadOnlyObservableCollection<SupplierListItem> FilteredItems { get; }
 
     public SuppliersListPageViewModel(
@@ -102,7 +102,7 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
         {
             if (SelectedItem == null)
             {
-                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+                _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
                 return;
             }
 
@@ -111,7 +111,7 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
             if (response.IsSuccessStatusCode)
             {
                 _sourceList.Remove(SelectedItem);
-                _toastService.ShowSuccess(ConstantMessages.SupplierDeletedToast);
+                _toastService.ShowSuccess(ConstantMessages.DeletedToast);
             }
             else
             {
@@ -127,6 +127,15 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
             IsBusy = false;
         }
     }
+
+
+    [ReactiveCommand]
+    private async Task ShowDetail()
+    {
+        var vm = DetailDialogFactory.FromSupplier(SelectedItem!);
+        _dialogService.ShowDetailViewModel(vm);
+    }
+
 
     [ReactiveCommand]
     private async Task AddAsync() { }

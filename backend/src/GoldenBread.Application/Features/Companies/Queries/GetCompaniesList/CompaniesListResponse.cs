@@ -13,4 +13,6 @@ public record CompanyListItem(
     string? Phone,
     string? Address,
     string Email,
-    VerificationStatus VerificationStatus);
+    VerificationStatus VerificationStatus,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? SessionExpiresAt);

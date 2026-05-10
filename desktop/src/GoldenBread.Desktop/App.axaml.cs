@@ -6,6 +6,7 @@ using GoldenBread.Desktop.Configuration.Services;
 using GoldenBread.Desktop.Features.Administration.Companies.ViewModels;
 using GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 using GoldenBread.Desktop.Features.Auth;
+using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.Features.Main;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions;

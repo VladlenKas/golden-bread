@@ -10,14 +10,16 @@ public sealed class GetUsersListQueryHandler(IUserRepository userRepository)
         var usersAccounts = await userRepository.GetAllAsync(ct);
 
         var list = usersAccounts
-            .Select(u => new UserListItem(
-                u.AccountId,
-                u.User!.UserId,
-                u.User.Fullname,
-                u.User.Birthday,
-                u.User.Role,
-                u.User.Account!.Email,
-                u.VerificationStatus))
+            .Select(a => new UserListItem(
+                a.AccountId,
+                a.User!.UserId,
+                a.User.Fullname,
+                a.User.Birthday,
+                a.User.Role,
+                a.User.Account!.Email,
+                a.VerificationStatus,
+                a.CreatedAt,
+                a.SessionExpiresAt))
             .ToList();
 
         return new UsersListResponse(list);

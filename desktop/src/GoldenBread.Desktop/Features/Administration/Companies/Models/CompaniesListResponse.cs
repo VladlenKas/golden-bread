@@ -15,11 +15,18 @@ public record CompanyListItem(
     string? Phone,
     string? Address,
     string Email,
-    VerificationStatus VerificationStatus)
+    VerificationStatus VerificationStatus,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? SessionExpiresAt)
 {
     public string SearchText = $"{CompanyId}{Name}{Inn}{Ogrn}{Phone}{Address}{Email}{VerificationStatus}";
     public string LocalizedStatus => LocalizedVerificationStatuses.StatusesTable(VerificationStatus);
-    public string? PhoneFormatted => InputFormatter.FormatPhone(Phone);
-    public string? OgrnFormatted => InputFormatter.FormatOgrn(Ogrn);
-    public string? InnFormatted => InputFormatter.FormatInn(Inn);
+    public string PhoneFormatted => InputFormatter.FormatPhone(Phone) ?? "-";
+    public string AddressFormatted => Address ?? "-";
+    public string OgrnFormatted => InputFormatter.FormatOgrn(Ogrn) ?? "-";
+    public string InnFormatted => InputFormatter.FormatInn(Inn) ?? "-";
+    public string CreatedAtFormatted =>
+        CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
+    public string SessionExpiresAtFormatted => 
+        SessionExpiresAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "Нет активной";
 };

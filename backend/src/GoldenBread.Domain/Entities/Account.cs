@@ -11,9 +11,9 @@ public sealed class Account
     public string Email { get; private set; } = null!;
     public string PasswordHash { get; private set; } = null!;
     public string? Session { get; private set; }
-    public DateTime? SessionExpiresAt { get; private set; }
-    public DateTime? DeletedAt { get; private set; }
-    public DateTime CreatedAt { get; private set; }
+    public DateTimeOffset? SessionExpiresAt { get; private set; }
+    public DateTimeOffset? DeletedAt { get; private set; }
+    public DateTimeOffset CreatedAt { get; private set; }
 
     public AccountType AccountType { get; private set; }
     public VerificationStatus VerificationStatus { get; private set; }
@@ -29,7 +29,7 @@ public sealed class Account
         string passwordHash,
         AccountType accountType,
         string? session = null,
-        DateTime? sessionExpiresAt = null)
+        DateTimeOffset? sessionExpiresAt = null)
     {
         return new Account
         {
@@ -40,7 +40,8 @@ public sealed class Account
             VerificationStatus = VerificationStatus.Pending,
             Session = session,
             SessionExpiresAt = sessionExpiresAt,
-            DeletedAt = null
+            DeletedAt = null,
+            CreatedAt = DateTime.UtcNow
         };
     }
 

@@ -137,13 +137,13 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return;
         }
 
         if (item.AccountId == _userStore.UserId)
         {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            _toastService.ShowWarning(ConstantMessages.SelfActionNotAllowed);
             return;
         }
 
@@ -159,7 +159,7 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
         {
             if (SelectedItem == null)
             {
-                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+                _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
                 return;
             }
 
@@ -197,13 +197,13 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return null;
         }
 
         if (item.AccountId == _userStore.UserId)
         {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            _toastService.ShowWarning(ConstantMessages.SelfActionNotAllowed);
             return null;
         }
 
@@ -215,13 +215,13 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return null;
         }
 
         if (item.AccountId == _userStore.UserId)
         {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            _toastService.ShowWarning(ConstantMessages.SelfActionNotAllowed);
             return null;
         }
 
@@ -233,7 +233,7 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return;
         }
 
@@ -274,4 +274,11 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
 
     [ReactiveCommand]
     private async Task<CompanyListItem?> EditAsync(CompanyListItem? selectedItem) => selectedItem;
+
+    [ReactiveCommand]
+    private async Task ShowDetail()
+    {
+        var vm = DetailDialogFactory.FromCompany(SelectedItem!);
+        _dialogService.ShowDetailViewModel(vm);
+    }
 }

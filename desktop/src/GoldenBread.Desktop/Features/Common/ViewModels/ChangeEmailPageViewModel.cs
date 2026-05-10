@@ -8,7 +8,7 @@ using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
 using System.ComponentModel.DataAnnotations;
 
-namespace GoldenBread.Desktop.Features.Administration.Users.ViewModels;
+namespace GoldenBread.Desktop.Features.Common.ViewModels;
 
 public partial class ChangeEmailPageViewModel(
     IAccountApi api,

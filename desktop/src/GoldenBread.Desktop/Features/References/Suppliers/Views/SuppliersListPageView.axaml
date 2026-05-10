@@ -52,13 +52,14 @@
                         AutoGenerateColumns="False"
                         CanUserResizeColumns="True"
                         SelectionMode="Single"
+                        DoubleTapped="DataGrid_DoubleTapped"
                         >
                         <DataGrid.Columns >
                             <DataGridTextColumn Header="ID" Binding="{Binding SupplierId}"/>
                             <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" />
-                            <DataGridTextColumn Header="Номер" Binding="{Binding PhoneFormatted, TargetNullValue=-}" />
-                            <DataGridTextColumn Header="Эл. почта" Binding="{Binding Email, TargetNullValue=-}" />
-                            <DataGridTextColumn Header="Адрес" Binding="{Binding Address, TargetNullValue=-}" MaxWidth="500"/>
+                            <DataGridTextColumn Header="Номер" Binding="{Binding PhoneFormatted}" />
+                            <DataGridTextColumn Header="Эл. почта" Binding="{Binding EmailFormatted}" />
+                            <DataGridTextColumn Header="Адрес" Binding="{Binding AddressFormatted}" MaxWidth="500"/>
                         </DataGrid.Columns>
 
                         <DataGrid.ContextMenu>

@@ -102,7 +102,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
         {
             if (SelectedItem == null)
             {
-                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+                _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
                 return;
             }
 
@@ -126,6 +126,13 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
         {
             IsBusy = false;
         }
+    }
+
+    [ReactiveCommand]
+    private async Task ShowDetail()
+    {
+        var vm = DetailDialogFactory.FromEmployee(SelectedItem!);
+        _dialogService.ShowDetailViewModel(vm);
     }
 
     [ReactiveCommand] // Оповещение оркестартора

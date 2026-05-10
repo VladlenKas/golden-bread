@@ -1,4 +1,6 @@
 ﻿using Avalonia.Controls.Notifications;
+using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using SukiUI.Dialogs;
@@ -87,5 +89,14 @@ public class DialogService(ISukiDialogManager manager)
             .TryShow();
 
         return tcs;
+    }
+
+    public void ShowDetailViewModel(DetailDialogData data)
+    {
+        manager.CreateDialog()
+            .WithTitle("Подробная информация")
+            .WithViewModel(_ => new DetailDialogViewModel(data), false)
+            .Dismiss().ByClickingBackground()
+            .TryShow();
     }
 }

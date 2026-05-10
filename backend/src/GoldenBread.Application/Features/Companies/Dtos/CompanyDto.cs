@@ -1,4 +1,6 @@
-﻿namespace GoldenBread.Application.Features.Companies.Dtos;
+﻿using GoldenBread.Domain.Entities;
+
+namespace GoldenBread.Application.Features.Companies.Dtos;
 
 public record class CompanyDto(
     int CompanyId,

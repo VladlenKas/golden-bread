@@ -12,5 +12,7 @@ public record SupplierListItem(
     string? Address)
 {
     public string SearchText => $"{Name}{Email}{Phone}{Address}";
-    public string? PhoneFormatted => InputFormatter.FormatPhone(Phone);
+    public string PhoneFormatted => InputFormatter.FormatPhone(Phone) ?? "-";
+    public string EmailFormatted => Email ?? "-";
+    public string AddressFormatted => Address ?? "-";
 };

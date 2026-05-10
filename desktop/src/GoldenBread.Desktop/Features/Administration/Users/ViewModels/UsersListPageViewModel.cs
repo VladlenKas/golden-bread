@@ -145,13 +145,13 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return;
         }
 
         if (item.AccountId == _userStore.UserId)
         {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            _toastService.ShowWarning(ConstantMessages.SelfActionNotAllowed);
             return;
         }
 
@@ -167,7 +167,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         {
             if (SelectedItem == null)
             {
-                _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+                _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
                 return;
             }
 
@@ -205,13 +205,13 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return null;
         }
 
         if (item.AccountId == _userStore.UserId)
         {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            _toastService.ShowWarning(ConstantMessages.SelfActionNotAllowed);
             return null;
         }
 
@@ -223,13 +223,13 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return null;
         }
 
         if (item.AccountId == _userStore.UserId)
         {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            _toastService.ShowWarning(ConstantMessages.SelfActionNotAllowed);
             return null;
         }
 
@@ -241,17 +241,17 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     {
         if (item == null)
         {
-            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return;
         }
 
         if (item.AccountId == _userStore.UserId)
         {
-            _toastService.ShowError(ConstantMessages.SelfActionNotAllowed);
+            _toastService.ShowWarning(ConstantMessages.SelfActionNotAllowed);
             return;
         }
 
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.UserDeleteConfirmDialog);
+        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.EmployeeDismissedToast);
 
         bool confirmed = await tcs.Task;
 
@@ -266,7 +266,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
             if (response.IsSuccessStatusCode)
             {
                 _sourceList.Remove(SelectedItem);
-                _toastService.ShowSuccess(ConstantMessages.UserDeletedToast);
+                _toastService.ShowSuccess(ConstantMessages.EmployeeDismissedToast);
             }
             else
             {
@@ -281,6 +281,13 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
         {
             IsBusy = false;
         }
+    }
+
+    [ReactiveCommand]
+    private async Task ShowDetail()
+    {
+        var vm = DetailDialogFactory.FromUser(SelectedItem!);
+        _dialogService.ShowDetailViewModel(vm);
     }
 
     [ReactiveCommand]

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
+using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.UI.Common;
 
 namespace GoldenBread.Desktop;
@@ -25,6 +26,9 @@ public class ViewLocator : IDataTemplate
 
     public bool Match(object? data)
     {
-        return data is ViewModelBase || data is HostPageViewModel;
+        return 
+                data is ViewModelBase ||
+                data is HostPageViewModel || 
+                data is DetailDialogViewModel;
     }
 }

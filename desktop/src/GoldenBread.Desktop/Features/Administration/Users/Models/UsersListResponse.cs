@@ -12,9 +12,15 @@ public record UserListItem(
     DateOnly Birthday,
     UserRole Role,
     string Email,
-    VerificationStatus VerificationStatus)
+    VerificationStatus VerificationStatus,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? SessionExpiresAt)
 {
     public string SearchText = $"{UserId}{Fullname}{Birthday}{Role}{Email}{VerificationStatus}";
     public string LocalizedRole => LocalizedRoles.RolesTable(Role);
     public string LocalizedStatus => LocalizedVerificationStatuses.StatusesTable(VerificationStatus);
+    public string CreatedAtFormatted =>
+        CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
+    public string SessionExpiresAtFormatted =>
+        SessionExpiresAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm") ?? "Нет активной";
 };

@@ -28,7 +28,8 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
         int? excludeId = null,
         CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(phone)) return false;
+        if (string.IsNullOrWhiteSpace(phone)) 
+            return false;
 
         return await context.Companies.AnyAsync(c =>
             c.Phone == phone &&
