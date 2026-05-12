@@ -11,6 +11,7 @@ public class UserRepository(IGoldenBreadContext context) : IUserRepository
     {
         return await context.Accounts
             .Where(a => a.AccountType == AccountType.User)
+            .Include(a => a.User)
             .AsNoTracking()
             .ToListAsync(ct);
     }

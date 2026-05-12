@@ -5,4 +5,5 @@ public enum IngredientBatchStatus
     Available,
     Expired,
     OutOfStock,
+    Archived
 }

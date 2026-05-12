@@ -1,4 +1,5 @@
-﻿using GoldenBread.Desktop.Features.Common.Models;
+﻿using GoldenBread.Desktop.Features.Common;
+using GoldenBread.Desktop.Features.Common.Auth;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;

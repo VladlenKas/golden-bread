@@ -1,4 +1,5 @@
-﻿using GoldenBread.Desktop.Features.Common.Models;
+﻿using GoldenBread.Desktop.Features.Common;
+using GoldenBread.Desktop.Features.Common.Account;
 using GoldenBread.Desktop.UI.Helpers;
 
 namespace GoldenBread.Desktop.Features.Administration.Users.Models;
@@ -16,7 +17,7 @@ public record UserListItem(
     DateTimeOffset CreatedAt,
     DateTimeOffset? SessionExpiresAt)
 {
-    public string SearchText = $"{UserId}{Fullname}{Birthday}{Role}{Email}{VerificationStatus}";
+    public string SearchText = $"{UserId}{Fullname}{Birthday}{Role}{Email}{VerificationStatus}".ToLowerInvariant();
     public string LocalizedRole => LocalizedRoles.RolesTable(Role);
     public string LocalizedStatus => LocalizedVerificationStatuses.StatusesTable(VerificationStatus);
     public string CreatedAtFormatted =>

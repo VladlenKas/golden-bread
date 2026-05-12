@@ -16,9 +16,6 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .HasFilter("deleted_at IS NULL")
             .IsUnique();
 
-        builder.Navigation(e => e.User).AutoInclude();
-        builder.Navigation(e => e.Company).AutoInclude();
-
         builder.Property(e => e.Email).HasMaxLength(255).IsRequired();
         builder.Property(e => e.PasswordHash).HasMaxLength(255).IsRequired();
         builder.Property(e => e.Session).HasMaxLength(512);

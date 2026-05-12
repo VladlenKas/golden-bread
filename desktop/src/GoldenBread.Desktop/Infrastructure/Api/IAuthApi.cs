@@ -1,4 +1,4 @@
-﻿using GoldenBread.Desktop.Features.Common.Models;
+﻿using GoldenBread.Desktop.Features.Common.Auth;
 using Refit;
 
 namespace GoldenBread.Desktop.Infrastructure.Api;

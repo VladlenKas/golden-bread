@@ -9,6 +9,7 @@ public class EmployeeRepository(IGoldenBreadContext context) : IEmployeeReposito
     public async Task<IReadOnlyList<Employee>> GetAllAsync(CancellationToken ct = default)
     {
         return await context.Employees
+            .Include(e => e.EmployeeTasks)
             .AsNoTracking()
             .ToListAsync(ct);
     }

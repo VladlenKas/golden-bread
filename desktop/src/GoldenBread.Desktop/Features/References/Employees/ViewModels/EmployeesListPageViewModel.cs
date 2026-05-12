@@ -20,7 +20,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     private readonly SourceList<EmployeeListItem> _sourceList = new();
 
     [Reactive] private bool _isBusy;
-    [Reactive] public bool _isEmpty;
+    [Reactive] public bool _isEmpty = true;
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public EmployeeListItem? _selectedItem;
 
@@ -90,7 +90,13 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     [ReactiveCommand]
     private async Task DeleteAsync()
     {
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.EmployeeDismissConfirmDialog);
+        if (!SelectedItem!.CanDelete)
+        {
+            _toastService.ShowWarning(ConstantMessages.EmployeeCannotBeDeleted);
+            return;
+        }
+
+        var tcs = _dialogService.ShowWarningQuestion(ConstantMessages.EmployeeDismissConfirmDialog);
 
         bool confirmed = await tcs.Task;
 

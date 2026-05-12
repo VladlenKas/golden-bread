@@ -38,6 +38,11 @@ public class IngredientBatch
         };
     }
 
+    public void SetArchivedStatus()
+    {
+        Status = IngredientBatchStatus.Archived;
+    }
+
     public decimal TryWriteOff(decimal amount)
     {
         var toWriteOff = Math.Min(RemainingQuantity, amount);

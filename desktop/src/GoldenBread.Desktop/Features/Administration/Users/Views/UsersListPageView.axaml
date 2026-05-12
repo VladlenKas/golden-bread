@@ -1,152 +1,138 @@
-<UserControl 
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:suki="https://github.com/kikipoulet/SukiUI"
-    xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-    xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-    xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
-    xmlns:vm="using:GoldenBread.Desktop.Features.Administration.Users.ViewModels"
-    x:Class="GoldenBread.Desktop.Features.Administration.Users.Views.UsersListPageView"
-    x:DataType="vm:UsersListPageViewModel"
-    x:CompileBindings="False">
+<UserControl
+xmlns="https://github.com/avaloniaui"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:suki="https://github.com/kikipoulet/SukiUI"
+xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+xmlns:vm="using:GoldenBread.Desktop.Features.Administration.Users.ViewModels"
+x:Class="GoldenBread.Desktop.Features.Administration.Users.Views.UsersListPageView"
+x:DataType="vm:UsersListPageViewModel"
+x:CompileBindings="False">
 
-    <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
-        <DockPanel VerticalSpacing="12">
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel VerticalSpacing="12">
 
-            <DockPanel 
-                DockPanel.Dock="Top" 
-                HorizontalSpacing="8"
-                LastChildFill="False">
+			<DockPanel DockPanel.Dock="Top"
+					   HorizontalSpacing="8"
+					   LastChildFill="False">
 
-                <TextBox
-                    DockPanel.Dock="Left"
-                    Width="300" 
-                    MaxLength="50"
-                    Text="{Binding SearchText}"
-                    Watermark="{Binding FilteredItems.Count, StringFormat='Искать среди {0} записей...'}"
-                    suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}"
-                    />
+				<TextBox DockPanel.Dock="Left"
+						 Width="300"
+						 MaxLength="50"
+						 Text="{Binding SearchText}"
+						 Watermark="{Binding FilteredItems.Count, StringFormat='Искать среди {0} записей...'}"
+						 suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}"
+						 />
 
-                <StackPanel DockPanel.Dock="Left" Spacing="-4" Orientation="Horizontal">
-                    <ComboBox 
-                        Margin="0 -4"
-                        MinWidth="150"
-                        SelectedIndex="0"
-                        ItemsSource="{Binding RoleFilterOptions}"
-                        SelectedItem="{Binding SelectedRoleFilter}"
-                        DisplayMemberBinding="{Binding Display}" 
-                        />
+				<ComboBox DockPanel.Dock="Left"
+						  Margin="-5"
+						  MinWidth="150"
+						  SelectedIndex="0"
+						  ItemsSource="{Binding RoleFilterOptions}"
+						  SelectedItem="{Binding SelectedRoleFilter}"
+						  DisplayMemberBinding="{Binding Display}"
+						  />
 
-                    <ComboBox 
-                        Margin="0 -4"
-                        SelectedIndex="0"
-                        ItemsSource="{Binding StatusFilterOptions}"
-                        SelectedItem="{Binding SelectedStatusFilter}"
-                        DisplayMemberBinding="{Binding Display}" 
-                        />
-                </StackPanel>
-                
+				<ComboBox DockPanel.Dock="Left"
+						  Margin="-5"
+						  SelectedIndex="0"
+						  ItemsSource="{Binding StatusFilterOptions}"
+						  SelectedItem="{Binding SelectedStatusFilter}"
+						  DisplayMemberBinding="{Binding Display}"
+						  />
 
+				<Button DockPanel.Dock="Left"
+						Classes="Basic Small"
+						Command="{Binding ResetFiltersCommand}"
+						suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Restore}"/>
 
-                <Button
-                    DockPanel.Dock="Left"
-                    Classes="Small"
-                    Command="{Binding ResetFiltersCommand}"
-                    suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Restore}"
-                    />
+				<Button DockPanel.Dock="Right"
+						Classes="Flat"
+						Content="Добавить"
+						suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
+						Command="{Binding AddCommand}"
+						IsVisible="{Binding Permissions.Create}"
+						/>
+			</DockPanel>
 
-                <Button 
-                    DockPanel.Dock="Right"
-                    Classes="Flat"
-                    Content="Добавить"
-                    suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
-                    Command="{Binding AddCommand}"
-                    IsVisible="{Binding Permissions.Create}"
-                    />
-            </DockPanel>
+			<suki:GlassCard>
+				<Grid>
+					<DataGrid ItemsSource="{Binding FilteredItems}"
+							  SelectedItem="{Binding SelectedItem}"
+							  AutoGenerateColumns="False"
+							  CanUserResizeColumns="True"
+							  SelectionMode="Single"
+							  DoubleTapped="DataGrid_DoubleTapped"
+							  >
+						<DataGrid.Columns >
+							<DataGridTextColumn Header="ID" Binding="{Binding UserId}" />
+							<DataGridTextColumn Header="ФИО" Binding="{Binding Fullname}" />
+							<DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}" />
+							<DataGridTextColumn Header="Должность" Binding="{Binding LocalizedRole}" />
+							<DataGridTextColumn Header="Эл. почта" Binding="{Binding Email}" />
+							<DataGridTextColumn Header="Статус верификации" Binding="{Binding LocalizedStatus}" />
+						</DataGrid.Columns>
 
-            <suki:GlassCard>
-                <Grid>
-                    <DataGrid 
-                        ItemsSource="{Binding FilteredItems}"
-                        SelectedItem="{Binding SelectedItem}"
-                        AutoGenerateColumns="False"
-                        CanUserResizeColumns="True"
-                        SelectionMode="Single"
-                        DoubleTapped="DataGrid_DoubleTapped"
-                        >
-                        <DataGrid.Columns >
-                            <DataGridTextColumn Header="ID" Binding="{Binding UserId}" />
-                            <DataGridTextColumn Header="ФИО" Binding="{Binding Fullname}" />
-                            <DataGridTextColumn Header="Дата рождения" Binding="{Binding Birthday}" />
-                            <DataGridTextColumn Header="Должность" Binding="{Binding LocalizedRole}" />
-                            <DataGridTextColumn Header="Эл. почта" Binding="{Binding Email}" />
-                            <DataGridTextColumn Header="Статус верификации" Binding="{Binding LocalizedStatus}" />
-                        </DataGrid.Columns>
-
-                        <DataGrid.ContextMenu>
+						<DataGrid.ContextMenu>
 							<ContextMenu>
-								<MenuItem 
-                                    Header="Изменить"
-                                    Icon="{icon:MaterialIconExt Kind=Edit}"
-                                    Command="{Binding EditCommand}"
-                                    CommandParameter="{Binding SelectedItem}">
-                                </MenuItem>
-                                <MenuItem 
-                                    Header="Уволить"
-                                    Icon="{icon:MaterialIconExt Kind=Delete}"
-                                    Command="{Binding DeleteCommand}"
-                                    CommandParameter="{Binding SelectedItem}">
-                                </MenuItem>
-                                <MenuItem 
-                                    Header="Сменить статус"
-                                    Icon="{icon:MaterialIconExt Kind=ToggleSwitch}">
-    
-                                    <MenuItem Header="На рассмотрении"
-                                                Command="{Binding SetStatusPendingCommand}"
-                                                CommandParameter="{Binding SelectedItem}"/>
-    
-                                    <MenuItem Header="Подтверждён"
-                                                Command="{Binding SetStatusApprovedCommand}"
-                                                CommandParameter="{Binding SelectedItem}"/>
-    
-                                    <MenuItem Header="Отклонён"
-                                                Command="{Binding SetStatusRejectedCommand}"
-                                                CommandParameter="{Binding SelectedItem}"/>
-    
-                                    <MenuItem Header="Приостановлен"
-                                                Command="{Binding SetStatusSuspendedCommand}"
-                                                CommandParameter="{Binding SelectedItem}"/>
-                                </MenuItem>
-                                <MenuItem Header="Учётные данные"
-                                            Icon="{icon:MaterialIconExt Kind=ShieldAccount}">
-    
-                                    <MenuItem Header="Сменить пароль"
-                                                Icon="{icon:MaterialIconExt Kind=Key}"
-                                                Command="{Binding ChangePasswordCommand}"
-                                                CommandParameter="{Binding SelectedItem}"/>
-    
-                                    <MenuItem Header="Сменить эл. почту"
-                                                Icon="{icon:MaterialIconExt Kind=EmailEdit}"
-                                                Command="{Binding ChangeEmailCommand}"
-                                                CommandParameter="{Binding SelectedItem}"/>
-                                </MenuItem>
-                            </ContextMenu>
-                        </DataGrid.ContextMenu>
-                    </DataGrid>
+								<MenuItem Header="Изменить"
+										  Icon="{icon:MaterialIconExt Kind=Edit}"
+										  Command="{Binding EditCommand}"
+										  CommandParameter="{Binding SelectedItem}">
+								</MenuItem>
+								<MenuItem Header="Уволить"
+										  Icon="{icon:MaterialIconExt Kind=Delete}"
+										  Command="{Binding DeleteCommand}"
+										  CommandParameter="{Binding SelectedItem}">
+								</MenuItem>
+								<MenuItem Header="Сменить статус"
+										  Icon="{icon:MaterialIconExt Kind=ToggleSwitch}">
 
-                    <TextBlock
-                        Text="Данные отсутствуют"
-                        Margin="8 54 0 0"
-                        Classes="h6"
-                        IsHitTestVisible="False"
-                        IsVisible="{Binding IsEmpty}"
-                        />
-                </Grid>
-            </suki:GlassCard>
-        </DockPanel>
-    </suki:BusyArea>
+									<MenuItem Header="На рассмотрении"
+											  Command="{Binding SetStatusPendingCommand}"
+											  CommandParameter="{Binding SelectedItem}"/>
+
+									<MenuItem Header="Подтверждён"
+											  Command="{Binding SetStatusApprovedCommand}"
+											  CommandParameter="{Binding SelectedItem}"/>
+
+									<MenuItem Header="Отклонён"
+											  Command="{Binding SetStatusRejectedCommand}"
+											  CommandParameter="{Binding SelectedItem}"/>
+
+									<MenuItem Header="Приостановлен"
+											  Command="{Binding SetStatusSuspendedCommand}"
+											  CommandParameter="{Binding SelectedItem}"/>
+								</MenuItem>
+								<MenuItem Header="Учётные данные"
+										  Icon="{icon:MaterialIconExt Kind=ShieldAccount}">
+
+									<MenuItem Header="Сменить пароль"
+											  Icon="{icon:MaterialIconExt Kind=Key}"
+											  Command="{Binding ChangePasswordCommand}"
+											  CommandParameter="{Binding SelectedItem}"/>
+
+									<MenuItem Header="Сменить эл. почту"
+											  Icon="{icon:MaterialIconExt Kind=EmailEdit}"
+											  Command="{Binding ChangeEmailCommand}"
+											  CommandParameter="{Binding SelectedItem}"/>
+								</MenuItem>
+							</ContextMenu>
+						</DataGrid.ContextMenu>
+					</DataGrid>
+
+					<TextBlock Text="Данные отсутствуют"
+							   Margin="8 54 0 0"
+							   Classes="h6"
+							   IsHitTestVisible="False"
+							   IsVisible="{Binding IsEmpty}"
+							   />
+				</Grid>
+			</suki:GlassCard>
+		</DockPanel>
+	</suki:BusyArea>
 
 </UserControl>

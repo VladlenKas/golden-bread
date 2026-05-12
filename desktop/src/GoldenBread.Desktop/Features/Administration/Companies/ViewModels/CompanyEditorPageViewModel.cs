@@ -16,7 +16,7 @@ public partial class CompanyEditorPageViewModel : PageViewModel, ISukiStackPageT
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private CompanyForm? _itemEditable;
+    [Reactive] private CompanyForm? _itemEditable = new();
     [Reactive] private CompanyListItem? _selectedItem;
     [Reactive] private bool _isBusy;
 
@@ -35,16 +35,12 @@ public partial class CompanyEditorPageViewModel : PageViewModel, ISukiStackPageT
         this.WhenAnyValue(x => x.SelectedItem)
             .Subscribe(async item =>
             {
-                if (item == null)
-                {
-                    ItemEditable = new CompanyForm();
-                    ItemEditableCache = null;
-                }
-                else
-                {
-                    Title = ConstantMessages.EditorTitlePage;
+                Title = item == null
+                  ? ConstantMessages.CreateTitlePage
+                  : ConstantMessages.EditorTitlePage;
+
+                if (item != null)
                     await LoadCompanyAsync(item.CompanyId);
-                }
             });
     }
 
@@ -83,10 +79,6 @@ public partial class CompanyEditorPageViewModel : PageViewModel, ISukiStackPageT
                 }
                 else
                 {
-                    Debug.WriteLine(response.RequestMessage);
-                    Debug.WriteLine(response.Content);
-                    Debug.WriteLine(response.StatusCode);
-                    Debug.WriteLine(request);
                     _toastService.ShowError();
                     return false;
                 }
@@ -103,7 +95,6 @@ public partial class CompanyEditorPageViewModel : PageViewModel, ISukiStackPageT
                 }
                 else
                 {
-                    Debug.WriteLine(response.Error);
                     _toastService.ShowError();
                     return false;
                 }

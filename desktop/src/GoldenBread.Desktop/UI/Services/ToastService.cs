@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls.Notifications;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using SukiUI.Toasts;
+using Tmds.DBus.Protocol;
 
 namespace GoldenBread.Desktop.UI.Services;
 
@@ -48,5 +49,26 @@ public class ToastService(ISukiToastManager manager)
             .Dismiss().After(TimeSpan.FromSeconds(3))
             .Dismiss().ByClicking()
             .Queue();
+    }
+
+    public TaskCompletionSource<bool> ShowWarningQuestion(string message)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+
+        manager.CreateToast()
+            .WithTitle("Подтверждение")
+            .WithContent(message)
+            .OfType(NotificationType.Warning)
+            .WithActionButton("Нет", _ =>
+            {
+                tcs.TrySetResult(false);
+            }, dismissOnClick: true)
+            .WithActionButton("Да", _ =>
+            {
+                tcs.TrySetResult(true);
+            }, dismissOnClick: true)
+            .Queue();
+
+        return tcs;
     }
 }

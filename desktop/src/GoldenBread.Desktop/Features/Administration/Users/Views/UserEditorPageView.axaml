@@ -59,7 +59,8 @@
                                       IsEnabled="{Binding CanChangeRole}"
                                       SelectedValue="{Binding ItemEditable.Role}"
                                       SelectedValueBinding="{Binding Key}"
-                                      DisplayMemberBinding="{Binding Value}" />
+                                      DisplayMemberBinding="{Binding Value}" 
+                                      Margin="-5"/>
                         </DockPanel>
 
                     </StackPanel>

@@ -112,7 +112,7 @@ public partial class MenuWindowViewModel : ViewModelBase
     [ReactiveCommand]
     private async Task LogoutAsync()
     {
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.LogoutConfirmDialog);
+        var tcs = _dialogService.ShowWarningQuestion(ConstantMessages.LogoutConfirmDialog);
 
         bool confirmed = await tcs.Task;
 

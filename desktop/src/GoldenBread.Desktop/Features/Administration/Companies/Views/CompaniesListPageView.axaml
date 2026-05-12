@@ -30,7 +30,7 @@
                     />
 
                  <ComboBox 
-                    Margin="0 -4"
+                    Margin="-5"
                     SelectedIndex="0"
                     ItemsSource="{Binding StatusFilterOptions}"
                     SelectedItem="{Binding SelectedStatusFilter}"
@@ -39,7 +39,7 @@
 
                  <Button
                     DockPanel.Dock="Left"
-                    Classes="Small"
+                    Classes="Basic Small"
                     Command="{Binding ResetFiltersCommand}"
                     suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Restore}"
                     />

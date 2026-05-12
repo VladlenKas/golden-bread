@@ -1,4 +1,4 @@
-﻿using GoldenBread.Desktop.Features.Common.Models;
+﻿using GoldenBread.Desktop.Features.Common.Account;
 
 namespace GoldenBread.Desktop.UI.Helpers;
 

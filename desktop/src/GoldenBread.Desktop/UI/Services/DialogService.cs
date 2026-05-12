@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls.Notifications;
-using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Common.DetailData;
 using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
@@ -49,7 +49,7 @@ public class DialogService(ISukiDialogManager manager)
             .TryShow();
     }
 
-    public TaskCompletionSource<bool> ShowWarningQustion(string message)
+    public TaskCompletionSource<bool> ShowWarningQuestion(string message)
     {
         var tcs = new TaskCompletionSource<bool>();
 
@@ -70,7 +70,7 @@ public class DialogService(ISukiDialogManager manager)
         return tcs;
     }
 
-    public TaskCompletionSource<bool> ShowInfoQustion(string message)
+    public TaskCompletionSource<bool> ShowInfoQuestion(string message)
     {
         var tcs = new TaskCompletionSource<bool>();
 
@@ -98,5 +98,22 @@ public class DialogService(ISukiDialogManager manager)
             .WithViewModel(_ => new DetailDialogViewModel(data), false)
             .Dismiss().ByClickingBackground()
             .TryShow();
+    }
+
+    public TaskCompletionSource<bool> ShowDialogAsync(ViewModelBase vm, string title)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+        var builder = manager.CreateDialog()
+            .WithTitle(title)
+            .WithViewModel(_ => vm, false);
+
+        if (vm is IDialogAware aware)
+        {
+            aware.SetDialogCompletionSource(tcs);
+            aware.SetDismissAction(() => manager.TryDismissDialog(builder.Dialog));
+        }
+
+        builder.TryShow();
+        return tcs;
     }
 }

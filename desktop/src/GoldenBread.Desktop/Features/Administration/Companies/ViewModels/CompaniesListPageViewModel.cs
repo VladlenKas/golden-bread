@@ -1,7 +1,8 @@
 ﻿using DynamicData;
 using GoldenBread.Desktop.Features.Administration.Companies.Models;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
-using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Common;
+using GoldenBread.Desktop.Features.Common.Account;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.Infrastructure.Constants;
@@ -27,7 +28,7 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
     private readonly SourceList<CompanyListItem> _sourceList = new();
 
     [Reactive] private bool _isBusy;
-    [Reactive] public bool _isEmpty;
+    [Reactive] public bool _isEmpty = true;
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public CompanyListItem? _selectedItem;
     [Reactive] public StatusesFilterOption? _selectedStatusFilter = LocalizedVerificationStatuses.StatusesFilters[0];
@@ -147,7 +148,7 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
             return;
         }
 
-        var tcs = _dialogService.ShowInfoQustion(ConstantMessages.UpdateAccountStatusConfirmDialog);
+        var tcs = _dialogService.ShowInfoQuestion(ConstantMessages.UpdateAccountStatusConfirmDialog);
 
         bool confirmed = await tcs.Task;
 
@@ -236,8 +237,13 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
             _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
             return;
         }
+        else if (!item.CanDelete)
+        {
+            _toastService.ShowWarning(ConstantMessages.CompanyCannotBeDeleted);
+            return;
+        }
 
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.CompanyDeleteConfirmDialog);
+        var tcs = _dialogService.ShowWarningQuestion(ConstantMessages.CompanyDeleteConfirmDialog);
 
         bool confirmed = await tcs.Task;
 

@@ -68,12 +68,14 @@
                                     Header="Изменить"
                                     Icon="{icon:MaterialIconExt Kind=Edit}"
                                     Command="{Binding EditCommand}"
-                                    CommandParameter="{Binding SelectedItem}">
+                                    CommandParameter="{Binding SelectedItem}"
+                                    >
                                 </MenuItem>
                                 <MenuItem 
                                     Header="Удалить"
                                     Icon="{icon:MaterialIconExt Kind=Delete}"
                                     Command="{Binding DeleteCommand}"
+                                    CommandParameter="{Binding SelectedItem}"
                                     >
                                 </MenuItem>
                             </ContextMenu>

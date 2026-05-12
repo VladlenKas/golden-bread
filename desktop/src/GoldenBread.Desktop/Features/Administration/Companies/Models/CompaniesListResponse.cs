@@ -1,4 +1,4 @@
-﻿using GoldenBread.Desktop.Features.Common.Models;
+﻿using GoldenBread.Desktop.Features.Common;
 using GoldenBread.Desktop.Infrastructure.Helpers;
 using GoldenBread.Desktop.UI.Helpers;
 
@@ -17,9 +17,10 @@ public record CompanyListItem(
     string Email,
     VerificationStatus VerificationStatus,
     DateTimeOffset CreatedAt,
-    DateTimeOffset? SessionExpiresAt)
+    DateTimeOffset? SessionExpiresAt,
+    bool CanDelete)
 {
-    public string SearchText = $"{CompanyId}{Name}{Inn}{Ogrn}{Phone}{Address}{Email}{VerificationStatus}";
+    public string SearchText = $"{CompanyId}{Name}{Inn}{Ogrn}{Phone}{Address}{Email}{VerificationStatus}".ToLowerInvariant();
     public string LocalizedStatus => LocalizedVerificationStatuses.StatusesTable(VerificationStatus);
     public string PhoneFormatted => InputFormatter.FormatPhone(Phone) ?? "-";
     public string AddressFormatted => Address ?? "-";

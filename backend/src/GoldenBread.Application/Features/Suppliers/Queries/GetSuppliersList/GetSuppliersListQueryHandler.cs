@@ -15,7 +15,8 @@ public sealed class GetSuppliersListQueryHandler(ISupplierRepository supplierRep
             s.Name,
             s.Email,
             s.Phone,
-            s.Address))
+            s.Address,
+            s.SupplierIngredients.Count == 0))
             .ToList();
 
         return new SuppliersListResponse(list);

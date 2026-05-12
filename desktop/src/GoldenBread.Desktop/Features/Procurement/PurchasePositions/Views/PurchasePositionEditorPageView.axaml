@@ -1,0 +1,94 @@
+<UserControl
+xmlns="https://github.com/avaloniaui"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:suki="https://github.com/kikipoulet/SukiUI"
+xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+xmlns:vm="using:GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels"
+xmlns:models="clr-namespace:GoldenBread.Desktop.Features.References.Suppliers.Models"
+x:Class="GoldenBread.Desktop.Features.Procurement.PurchasePositions.Views.PurchasePositionEditorPageView"
+x:DataType="vm:PurchasePositionEditorPageViewModel">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+			<!-- Кнопки -->
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="Сохранить" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<DockPanel HorizontalSpacing="8" HorizontalAlignment="Left">
+
+				<!-- Форма -->
+				<suki:GlassCard Width="400">
+					<StackPanel Spacing="12">
+						<Expander
+						Header="Данные позиции"
+						ExpandDirection="Down"
+						IsExpanded="True">
+
+							<StackPanel Spacing="8">
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock VerticalAlignment="Center" Text="Наименование:" />
+									<TextBox MaxLength="100" Text="{Binding ItemEditable.Name}" />
+								</DockPanel>
+
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock VerticalAlignment="Center" Text="Поставщик:" />
+									<AutoCompleteBox
+										ItemsSource="{Binding SupplierAutocompleteItems}"
+										SelectedItem="{Binding SelectedSupplierItem}"
+										FilterMode="Contains"
+										MinimumPrefixLength="0"
+										Watermark="Выберите поставщика"/>
+								</DockPanel>
+
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock VerticalAlignment="Center" Text="Ингредиент:" />
+									<AutoCompleteBox
+										ItemsSource="{Binding IngredientsAutocompleteItems}"
+										SelectedItem="{Binding SelectedIngredientItem}"
+										FilterMode="Contains"
+										MinimumPrefixLength="0"
+										Watermark="Выберите ингредиент"/>	
+								</DockPanel>
+
+								<DockPanel HorizontalSpacing="8">
+								<TextBlock VerticalAlignment="Center" Text="Ед. измерения:" />
+									<ComboBox
+										ItemsSource="{Binding FilteredUnits}"
+										PlaceholderText="{Binding UnitComboBoxPlaceholder}"
+										SelectedValue="{Binding ItemEditable.Unit}"
+										SelectedValueBinding="{Binding Key}"
+										DisplayMemberBinding="{Binding Value}"
+										IsEnabled="{Binding UnitComboBoxIsEnabled}"
+										Margin="-5"/>
+								</DockPanel>
+
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock VerticalAlignment="Center" Text="Вес/Объем:" />
+									<NumericUpDown Increment="10" Value="{Binding ItemEditable.Weight}" Watermark="0,00" />
+								</DockPanel>
+
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock VerticalAlignment="Center" Text="Цена закупки (₽):" />
+									<NumericUpDown Increment="10" Value="{Binding ItemEditable.Price}" Watermark="0,00" />
+								</DockPanel>
+
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock VerticalAlignment="Center" Text="Срок хранения (дней):" />
+									<NumericUpDown Increment="10" Value="{Binding ItemEditable.ShelfLifeDays}" Watermark="0" />
+								</DockPanel>
+							</StackPanel>
+						</Expander>
+					</StackPanel>
+				</suki:GlassCard>
+			</DockPanel>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

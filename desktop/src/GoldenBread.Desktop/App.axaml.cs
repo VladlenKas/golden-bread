@@ -9,7 +9,7 @@ using GoldenBread.Desktop.Features.Auth;
 using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.Features.Main;
 using GoldenBread.Desktop.Features.Menu;
-using GoldenBread.Desktop.Features.Procurement.PurchasePositions;
+using GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
 using GoldenBread.Desktop.Features.Production.OrdersList;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
@@ -23,8 +23,6 @@ using Refit;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace GoldenBread.Desktop;
 
@@ -87,6 +85,8 @@ public partial class App : Application, IDisposable
         services.AddApiClient<IEmployeesApi>();
         services.AddApiClient<ISuppliersApi>();
         services.AddApiClient<ICompaniesApi>();
+        services.AddApiClient<IIngredientsApi>();
+        services.AddApiClient<ISupplierIngredientsApi>();
 
         return services.BuildServiceProvider();
     }
@@ -132,7 +132,9 @@ public partial class App : Application, IDisposable
         services.AddTransient<WarehouseHostPageViewModel>();
 
         // Purchase Positions Pages
-        services.AddTransient<PurchasePositionsHostPageViewModel>();
+        services.AddSingleton<PurchasePositionsHostPageViewModel>();
+        services.AddSingleton<PurchasePositionsListPageViewModel>();
+        services.AddTransient<PurchasePositionEditorPageViewModel>();
 
         // Orders Pages
         services.AddTransient<OrdersHostPageViewModel>();

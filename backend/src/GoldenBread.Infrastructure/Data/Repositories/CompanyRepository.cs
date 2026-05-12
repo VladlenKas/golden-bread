@@ -80,10 +80,11 @@ internal class CompanyRepository(IGoldenBreadContext context) : ICompanyReposito
         return company;
     }
 
-    public async Task<IReadOnlyList<Account>> GetAllAsync(CancellationToken ct = default)
+    public async Task<IReadOnlyList<Company>> GetAllAsync(CancellationToken ct = default)
     {
-        return await context.Accounts
-            .Where(a => a.AccountType == AccountType.Company)
+        return await context.Companies
+            .Include(c => c.Account)
+            .Include(c => c.Orders)
             .AsNoTracking()
             .ToListAsync(ct);
     }

@@ -20,7 +20,7 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
     private readonly SourceList<SupplierListItem> _sourceList = new();
 
     [Reactive] private bool _isBusy;
-    [Reactive] public bool _isEmpty;
+    [Reactive] public bool _isEmpty = true;
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public SupplierListItem? _selectedItem;
 
@@ -88,9 +88,21 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
     }
 
     [ReactiveCommand]
-    private async Task DeleteAsync()
+    private async Task DeleteAsync(SupplierListItem item)
     {
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.SupplierDeleteConfirmDialog);
+        if (item == null)
+        {
+            _toastService.ShowError(ConstantMessages.EmptySelectedItem);
+            return;
+        }
+
+        if (!item.CanDelete)
+        {
+            _toastService.ShowWarning(ConstantMessages.SupplierCannotBeDeleted);
+            return;
+        }
+
+        var tcs = _dialogService.ShowWarningQuestion(ConstantMessages.SupplierDeleteConfirmDialog);
 
         bool confirmed = await tcs.Task;
 
@@ -100,17 +112,17 @@ public partial class SuppliersListPageViewModel : PageViewModel, ISukiStackPageT
         IsBusy = true;
         try
         {
-            if (SelectedItem == null)
+            if (item == null)
             {
                 _toastService.ShowInfo(ConstantMessages.EmptySelectedItem);
                 return;
             }
 
-            var response = await _api.Delete(SelectedItem!.SupplierId);
+            var response = await _api.Delete(item.SupplierId);
 
             if (response.IsSuccessStatusCode)
             {
-                _sourceList.Remove(SelectedItem);
+                _sourceList.Remove(item);
                 _toastService.ShowSuccess(ConstantMessages.DeletedToast);
             }
             else

@@ -1,6 +1,7 @@
 ﻿using GoldenBread.Desktop.Features.Administration.Companies.Models;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
-using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Common.DetailData;
+using GoldenBread.Desktop.Features.Procurement.PurchasePositions.Models;
 using GoldenBread.Desktop.Features.References.Employees.Models;
 using GoldenBread.Desktop.Features.References.Suppliers.Models;
 
@@ -20,7 +21,7 @@ public static class DetailDialogFactory
                     [
                         new("ФИО", item.Fullname),
                         new("Дата рождения", item.Birthday.ToString("dd.MM.yyyy")),
-                        new("Роль", item.LocalizedRole),
+                        new("Должность", item.LocalizedRole),
                     ]),
                 new DetailSectionData(
                     Header: "Учётные данные",
@@ -89,6 +90,40 @@ public static class DetailDialogFactory
                         new("Телефон", item.PhoneFormatted),
                         new("Эл. почта", item.EmailFormatted),
                         new("Адрес", item.AddressFormatted)
+                    ])
+            ]);
+    }
+
+    public static DetailDialogData FromPurchasePosition(SupplierIngredientListItem item)
+    {
+        return new DetailDialogData(
+            Sections:
+            [
+                new DetailSectionData(
+                    Header: "Информация о товаре",
+                    Fields:
+                    [
+                        new("Наименование", item.Name),
+                        new("Поставщик", item.SupplierName),
+                        new("Тип ингредиента", item.IngredientName)
+                    ]),
+
+                new DetailSectionData(
+                    Header: "Характеристики",
+                    Fields:
+                    [
+                        new("Вес/Объем", item.WeightFormatted),
+                        new("Ед. измерения", item.UnitFormatted),
+                        new("Цена закупки", item.PriceFormatted),
+                        new("Срок хранения", item.ShelfLifeFormatted)
+                    ]),
+
+                new DetailSectionData(
+                    Header: "Складские остатки",
+                    Fields:
+                    [
+                        new("Количество партий", item.QuantityBatchesFormatted),
+                        new("Остаток на складе", item.QuantityUnitInBatchesFormatted)
                     ])
             ]);
     }

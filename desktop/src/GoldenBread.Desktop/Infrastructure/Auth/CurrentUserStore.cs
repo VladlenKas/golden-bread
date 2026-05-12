@@ -1,5 +1,6 @@
 ﻿using DynamicData;
-using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Common;
+using GoldenBread.Desktop.Features.Common.Account;
 
 namespace GoldenBread.Desktop.Infrastructure.Auth;
 

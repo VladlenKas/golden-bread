@@ -5,6 +5,7 @@ public record SupplierListItem(
     string Name,
     string? Email,
     string? Phone,
-    string? Address);
+    string? Address,
+    bool CanDelete);
 
 public record SuppliersListResponse(List<SupplierListItem> SuppliersList);

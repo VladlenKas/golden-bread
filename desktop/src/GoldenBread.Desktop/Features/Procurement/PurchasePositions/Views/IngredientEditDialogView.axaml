@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels"
+			 xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+			 x:Class="GoldenBread.Desktop.Features.Procurement.PurchasePositions.Views.IngredientEditDialogView"
+			 x:DataType="vm:IngredientEditDialogViewModel">
+
+	<StackPanel Spacing="24">
+
+		<suki:GlassCard>
+			<Expander Header="Данные ингредиента"
+					  ExpandDirection="Down"
+					  IsExpanded="True">
+
+				<StackPanel Spacing="12">
+					<DockPanel HorizontalSpacing="8">
+						<TextBlock VerticalAlignment="Center" Text="Ингредиент:" />
+						<AutoCompleteBox ItemsSource="{Binding Ingredients}"
+										 SelectedItem="{Binding SelectedIngredient}"
+										 FilterMode="Contains"
+										 MinimumPrefixLength="0"
+										 Watermark="Выберите ингредиент"/>
+					</DockPanel>
+
+					<DockPanel HorizontalSpacing="8">
+						<TextBlock VerticalAlignment="Center" Text="Наименование:" />
+						<TextBox MaxLength="100" Text="{Binding Name}" />
+					</DockPanel>
+
+					<DockPanel HorizontalSpacing="8">
+						<TextBlock VerticalAlignment="Center" Text="Ед. измерения:" />
+						<ComboBox ItemsSource="{Binding Units}"
+								  SelectedValue="{Binding BaseUnit}"
+								  SelectedValueBinding="{Binding Key}"
+								  DisplayMemberBinding="{Binding Value}"
+								  Margin="-5"/>
+					</DockPanel>
+				</StackPanel>
+			</Expander>
+		</suki:GlassCard>
+
+		<StackPanel Orientation="Horizontal"
+					HorizontalAlignment="Right"
+					Spacing="8">
+			<Button Content="Отмена" Command="{Binding CancelCommand}" />
+			<Button Content="Сохранить"
+					Command="{Binding SaveCommand}"
+					Classes="Flat"/>
+		</StackPanel>
+	</StackPanel>
+
+</UserControl>

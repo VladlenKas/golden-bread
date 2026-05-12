@@ -1,6 +1,7 @@
 ﻿using DynamicData;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
-using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Common;
+using GoldenBread.Desktop.Features.Common.Account;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.Infrastructure.Constants;
@@ -27,7 +28,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     private readonly SourceList<UserListItem> _sourceList = new();
 
     [Reactive] private bool _isBusy;
-    [Reactive] public bool _isEmpty;
+    [Reactive] public bool _isEmpty = true;
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public UserListItem? _selectedItem;
     [Reactive] public RoleFilterOption? _selectedRoleFilter = LocalizedRoles.RolesFilters[0];
@@ -155,7 +156,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
             return;
         }
 
-        var tcs = _dialogService.ShowInfoQustion(ConstantMessages.UpdateAccountStatusConfirmDialog);
+        var tcs = _dialogService.ShowInfoQuestion(ConstantMessages.UpdateAccountStatusConfirmDialog);
 
         bool confirmed = await tcs.Task;
 
@@ -251,7 +252,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
             return;
         }
 
-        var tcs = _dialogService.ShowWarningQustion(ConstantMessages.EmployeeDismissedToast);
+        var tcs = _dialogService.ShowWarningQuestion(ConstantMessages.EmployeeDismissConfirmDialog);
 
         bool confirmed = await tcs.Task;
 

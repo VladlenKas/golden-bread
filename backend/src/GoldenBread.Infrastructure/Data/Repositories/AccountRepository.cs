@@ -23,9 +23,9 @@ internal class AccountRepository
         string? session,
         CancellationToken ct = default)
     {
-        Debug.WriteLine($"Get Session from Api: {session}");
-
         return await context.Accounts
+            .Include(a => a.Company)
+            .Include(a => a.User)
             .FirstOrDefaultAsync(a =>
                 a.Session == session &&
                 a.SessionExpiresAt > DateTime.UtcNow,
@@ -37,6 +37,8 @@ internal class AccountRepository
         CancellationToken ct = default)
     {
         return await context.Accounts
+            .Include(a => a.Company)
+            .Include(a => a.User)
             .FirstOrDefaultAsync(a => a.AccountId == id, ct);
     }
 
@@ -45,6 +47,8 @@ internal class AccountRepository
         CancellationToken ct = default)
     {
         return await context.Accounts
+            .Include(a => a.Company)
+            .Include(a => a.User)
             .FirstOrDefaultAsync(a => a.Email == email, ct);
     }
 

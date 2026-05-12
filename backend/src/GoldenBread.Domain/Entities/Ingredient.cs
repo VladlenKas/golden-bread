@@ -13,4 +13,9 @@ public class Ingredient
 
     public ICollection<SupplierIngredient> SupplierIngredients { get; set; } = new List<SupplierIngredient>();
     public ICollection<Recipe> Recipes { get; set; } = new List<Recipe>();
+
+    public void SoftDelete()
+    {
+        DeletedAt = DateTime.UtcNow;
+    }
 }

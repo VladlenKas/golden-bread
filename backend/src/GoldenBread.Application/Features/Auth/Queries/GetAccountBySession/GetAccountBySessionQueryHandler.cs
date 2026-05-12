@@ -21,12 +21,9 @@ public sealed class GetAccountBySessionQueryHandler(
         // Если нет или сессия истекла, выбрасываем исключение с кодом 401
         var account = await accountContext.GetAccountAsync(ct);
 
-        // Если вошел пользователь, обновляем сессию
-        if (account.AccountType == AccountType.User)
-        {
-            account.SetSession();
-            await unitOfWork.SaveChangesAsync(ct);
-        }
+        // Обновляем сессию
+        account.SetSession();
+        await unitOfWork.SaveChangesAsync(ct);
 
         // Всё ок? Возвращем код 200
         return AuthResponse.Response(account);

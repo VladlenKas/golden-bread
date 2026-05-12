@@ -1,5 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.Auth;
-using GoldenBread.Desktop.Features.Common.Models;
+using GoldenBread.Desktop.Features.Common;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
@@ -52,6 +52,7 @@ public partial class MainWindowViewModel(
                     return;
                 }
 
+                sessionStorage.SaveSession(data.Session!);
                 userStore.Authenticate(data.Id, data.Role!.Value, data.VerificationStatus);
 
                 StatusText = "Открытие главного меню...";

@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Desktop.Features.Administration.SystemUsers.Models;
-using GoldenBread.Desktop.Features.Common.Models;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
@@ -11,6 +10,7 @@ using ReactiveUI.SourceGenerators;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
 using GoldenBread.Desktop.UI.Helpers;
 using GoldenBread.Desktop.Infrastructure.Auth;
+using GoldenBread.Desktop.Features.Common.Account;
 
 namespace GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 
@@ -20,7 +20,7 @@ public partial class UserEditorPageViewModel : PageViewModel, ISukiStackPageTitl
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private UserForm? _itemEditable;
+    [Reactive] private UserForm? _itemEditable = new();
     [Reactive] private UserListItem? _selectedItem;
     [Reactive] private bool _isBusy;
 
@@ -42,15 +42,13 @@ public partial class UserEditorPageViewModel : PageViewModel, ISukiStackPageTitl
         this.WhenAnyValue(x => x.SelectedItem)
             .Subscribe(async item =>
             {
-                if (item == null)
-                {
-                    ItemEditable = new UserForm();
-                    ItemEditableCache = null;
-                }
-                else
+                Title = item == null
+                  ? ConstantMessages.CreateTitlePage
+                  : ConstantMessages.EditorTitlePage;
+
+                if (item != null)
                 {
                     CanChangeRole = userStore.UserId != item.AccountId;
-                    Title = ConstantMessages.EditorTitlePage;
                     await LoadUserAsync(item.UserId);
                 }
             });

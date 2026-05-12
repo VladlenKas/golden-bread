@@ -61,6 +61,7 @@ public class SupplierRepository(IGoldenBreadContext context) : ISupplierReposito
     public async Task<IReadOnlyList<Supplier>> GetAllAsync(CancellationToken ct = default)
     {
         return await context.Suppliers
+            .Include(s => s.SupplierIngredients)
             .AsNoTracking()
             .ToListAsync(ct);
     }

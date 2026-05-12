@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Features.Users.Dtos;
 
 namespace GoldenBread.Application.Features.Users.Queries.GetUsersList;
 

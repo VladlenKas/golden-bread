@@ -15,7 +15,7 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private SupplierForm? _ItemEditable;
+    [Reactive] private SupplierForm? _ItemEditable = new();
     [Reactive] private SupplierListItem? _selectedItem;
     [Reactive] private bool _isBusy;
 
@@ -34,15 +34,12 @@ public partial class SupplierEditorPageViewModel : PageViewModel, ISukiStackPage
         this.WhenAnyValue(x => x.SelectedItem)
             .Subscribe(async item =>
             {
-                if (item == null)
-                {
-                    ItemEditable = new SupplierForm();
-                    ItemEditableCache = null;
-                    return;
-                }
+                Title = item == null
+                   ? ConstantMessages.CreateTitlePage
+                   : ConstantMessages.EditorTitlePage;
 
-                Title = ConstantMessages.EditorTitlePage;
-                await LoadSupplierAsync(item.SupplierId);
+                if (item != null)
+                    await LoadSupplierAsync(item.SupplierId);
             });
     }
 

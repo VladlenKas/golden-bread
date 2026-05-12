@@ -16,7 +16,7 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private EmployeeForm? _ItemEditable;
+    [Reactive] private EmployeeForm? _ItemEditable = new();
     [Reactive] private EmployeeListItem? _selectedItem;
     [Reactive] private bool _isBusy;
 
@@ -35,15 +35,12 @@ public partial class EmployeeEditorPageViewModel : PageViewModel, ISukiStackPage
         this.WhenAnyValue(x => x.SelectedItem)
             .Subscribe(async item =>
             {
-                if (item == null)
-                {
-                    ItemEditable = new EmployeeForm();
-                    ItemEditableCache = null;
-                    return;
-                }
+                Title = item == null
+                    ? ConstantMessages.CreateTitlePage
+                    : ConstantMessages.EditorTitlePage;
 
-                Title = ConstantMessages.EditorTitlePage;
-                await LoadEmployeeAsync(item.EmployeeId);
+                if (item != null)
+                    await LoadEmployeeAsync(item.EmployeeId);
             });
     }
 
