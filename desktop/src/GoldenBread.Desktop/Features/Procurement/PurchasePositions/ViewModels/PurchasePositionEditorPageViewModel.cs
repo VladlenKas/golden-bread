@@ -1,6 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.Common;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions.Models;
-using GoldenBread.Desktop.Features.References.Suppliers.Models;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
@@ -8,8 +7,11 @@ using GoldenBread.Desktop.UI.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Reactive.Linq;
+using static GoldenBread.Desktop.UI.Helpers.LocalizedIngredientUnits;
 
 namespace GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
 
@@ -21,13 +23,15 @@ public partial class PurchasePositionEditorPageViewModel : PageViewModel, ISukiS
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
 
-    [Reactive] private SupplierIngredientForm _itemEditable = new();
-    [Reactive] private SupplierIngredientListItem? _selectedItem;
     [Reactive] private bool _isBusy;
-    [Reactive] private List<ItemsAutoCompleteBox> _supplierAutocompleteItems = new();
-    [Reactive] private List<IngredientAutoCompleteItem> _ingredientsAutocompleteItems = new();
     [Reactive] private bool _unitComboBoxIsEnabled = false;
     [Reactive] private string _unitComboBoxPlaceholder = string.Empty;
+    [Reactive] private SupplierIngredientForm _itemEditable = new();
+    [Reactive] private SupplierIngredientListItem? _selectedItem;
+    [Reactive] private List<ItemsAutoCompleteBox> _supplierAutocompleteItems = new();
+    [Reactive] private List<IngredientAutoCompleteItem> _ingredientsAutocompleteItems = new();
+    [Reactive] private ObservableCollection<UnitFilterOption> _filteredUnits = new();
+    [Reactive] private UnitFilterOption? _selectedUnitItem;
 
     [Reactive]
     [Required(ErrorMessage = ConstantMessages.IngredientRequiredValidation)]
@@ -37,7 +41,6 @@ public partial class PurchasePositionEditorPageViewModel : PageViewModel, ISukiS
     [Required(ErrorMessage = ConstantMessages.SupplierRequiredValidation)]
     ItemsAutoCompleteBox? _selectedSupplierItem;
 
-    public Dictionary<IngredientUnit, string> FilteredUnits => GetFilteredUnits();
     private SupplierIngredientForm? ItemEditableCache { get; set; } = null;
     public string Title { get; set; } = ConstantMessages.CreateTitlePage;
 
@@ -68,25 +71,49 @@ public partial class PurchasePositionEditorPageViewModel : PageViewModel, ISukiS
                     await LoadItemAsync(item.SupplierIngredientId);
             });
 
-        this.WhenAnyValue(
-            x => x.SelectedIngredientItem,
-            x => x.ItemEditable.Unit)
-            .Subscribe(_ =>
+        this.WhenAnyValue(x => x.SelectedIngredientItem)
+            .Subscribe(item =>
             {
-                this.RaisePropertyChanged(nameof(FilteredUnits));
-
-                if (SelectedIngredientItem != null)
+                if (item != null)
                 {
-                    ItemEditable.Unit = SelectedIngredientItem.BaseUnit;
-                    ItemEditable.IngredientId = SelectedIngredientItem.Id;
+                    ItemEditable.IngredientId = item.Id;
+                    UpdateFilteredUnits();
+
+                    // Сбрасываем Unit только если текущий не входит в новый список
+                    if (!FilteredUnits.Any(u => u.Value == ItemEditable.Unit))
+                    {
+                        ItemEditable.Unit = item.BaseUnit;
+                    }
+
+                    SelectedUnitItem = FilteredUnits.FirstOrDefault(u => u.Value == ItemEditable.Unit);
+                }
+                else
+                {
+                    FilteredUnits.Clear();
+                    SelectedUnitItem = null;
                 }
 
-                UnitComboBoxPlaceholder = SelectedIngredientItem != null
+                UnitComboBoxPlaceholder = item != null
                     ? "Выберите ед. измерения"
                     : "Сначала выберите ингредиент";
+                UnitComboBoxIsEnabled = item != null;
+            });
 
-                UnitComboBoxIsEnabled = SelectedIngredientItem != null;
-                this.RaisePropertyChanged(nameof(FilteredUnits));
+        // Пишем выбор в форму
+        this.WhenAnyValue(x => x.SelectedUnitItem)
+            .Where(x => x != null)
+            .Subscribe(item =>
+            {
+                if (ItemEditable.Unit != item!.Value)
+                    ItemEditable.Unit = item.Value.Value;
+            });
+
+        // Синхронизируем ComboBox, НЕ трогая FilteredUnits
+        this.WhenAnyValue(x => x.ItemEditable.Unit)
+            .Subscribe(unit =>
+            {
+                if (SelectedUnitItem?.Value != unit)
+                    SelectedUnitItem = FilteredUnits.FirstOrDefault(u => u.Value == unit);
             });
 
         this.WhenAnyValue(x => x.SelectedSupplierItem)
@@ -228,27 +255,27 @@ public partial class PurchasePositionEditorPageViewModel : PageViewModel, ISukiS
         }
     }
 
-    private Dictionary<IngredientUnit, string> GetFilteredUnits()
+    private void UpdateFilteredUnits()
     {
         var baseUnit = SelectedIngredientItem?.BaseUnit ?? ItemEditable.Unit;
 
-        return baseUnit switch
+        FilteredUnits.Clear();
+
+        switch (baseUnit)
         {
-            IngredientUnit.Kg or IngredientUnit.G => new Dictionary<IngredientUnit, string>
-            {
-                [IngredientUnit.Kg] = "Килограмм",
-                [IngredientUnit.G] = "Грамм"
-            },
-            IngredientUnit.L or IngredientUnit.Ml => new Dictionary<IngredientUnit, string>
-            {
-                [IngredientUnit.L] = "Литр",
-                [IngredientUnit.Ml] = "Миллилитр"
-            },
-            IngredientUnit.Pcs => new Dictionary<IngredientUnit, string>
-            {
-                [IngredientUnit.Pcs] = "Штук"
-            },
-            _ => new Dictionary<IngredientUnit, string>()
-        };
+            case IngredientUnit.Kg:
+            case IngredientUnit.G:
+                FilteredUnits.Add(new(IngredientUnit.Kg, "Килограмм"));
+                FilteredUnits.Add(new(IngredientUnit.G, "Грамм"));
+                break;
+            case IngredientUnit.L:
+            case IngredientUnit.Ml:
+                FilteredUnits.Add(new(IngredientUnit.L, "Литр"));
+                FilteredUnits.Add(new(IngredientUnit.Ml, "Миллилитр"));
+                break;
+            case IngredientUnit.Pcs:
+                FilteredUnits.Add(new(IngredientUnit.Pcs, "Штук"));
+                break;
+        }
     }
 }

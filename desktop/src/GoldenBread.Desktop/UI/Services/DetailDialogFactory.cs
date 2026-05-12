@@ -113,7 +113,6 @@ public static class DetailDialogFactory
                     Fields:
                     [
                         new("Вес/Объем", item.WeightFormatted),
-                        new("Ед. измерения", item.UnitFormatted),
                         new("Цена закупки", item.PriceFormatted),
                         new("Срок хранения", item.ShelfLifeFormatted)
                     ]),

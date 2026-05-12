@@ -63,9 +63,8 @@ x:DataType="vm:PurchasePositionEditorPageViewModel">
 									<ComboBox
 										ItemsSource="{Binding FilteredUnits}"
 										PlaceholderText="{Binding UnitComboBoxPlaceholder}"
-										SelectedValue="{Binding ItemEditable.Unit}"
-										SelectedValueBinding="{Binding Key}"
-										DisplayMemberBinding="{Binding Value}"
+										SelectedItem="{Binding SelectedUnitItem}"
+										DisplayMemberBinding="{Binding Display}"
 										IsEnabled="{Binding UnitComboBoxIsEnabled}"
 										Margin="-5"/>
 								</DockPanel>
