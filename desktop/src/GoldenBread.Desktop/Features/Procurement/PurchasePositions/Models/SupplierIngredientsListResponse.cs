@@ -17,7 +17,7 @@ public record SupplierIngredientListItem(
     int QuantityBatches,
     decimal QuantityUnitInBatches)
 {
-    public string SearchText = $"{Name}{SupplierName}{IngredientName}{Unit}{Weight}{Price}".ToLowerInvariant();
+    public string SearchText = $"{Name}{SupplierName}{IngredientName}{Unit}{Weight}{Price}{ShelfLifeMonths}".ToLowerInvariant();
     public string UnitFormatted => LocalizedIngredientUnits.UnitsTable(Unit);
     public string WeightFormatted => $"{Weight:F3} {LocalizedIngredientUnits.UnitsTable(Unit)}";
     public string PriceFormatted => $"{Price:C2}";

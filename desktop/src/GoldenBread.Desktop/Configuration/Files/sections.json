@@ -12,11 +12,6 @@
           "order": 0
         },
         {
-          "key": "accounts",
-          "title": "Аккаунты", 
-          "order": 10
-        },
-        {
           "key": "suppliers",
           "title": "Поставщики",
           "order": 20
@@ -37,12 +32,12 @@
         {
           "key": "purchase_positions",
           "title": "Закупочные позиции",
-          "order": 0
+          "order": 10
         },
         {
           "key": "warehouse",
           "title": "Складской учет",
-          "order": 10
+          "order": 0
         }
       ]
     },
@@ -73,12 +68,12 @@
         {
           "key": "system_users",
           "title": "Системные пользователи",
-          "order": 0
+          "order": 10
         },
         {
           "key": "companies",
           "title": "Компании",
-          "order": 10
+          "order": 0
         }
       ]
     }

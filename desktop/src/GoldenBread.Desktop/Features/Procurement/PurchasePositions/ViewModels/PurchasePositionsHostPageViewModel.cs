@@ -2,7 +2,6 @@
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 
 namespace GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
 
@@ -20,7 +19,6 @@ public partial class PurchasePositionsHostPageViewModel : HostPageViewModel
 
         _listPage.EditCommand.Subscribe(item => ShowEditor(item));
         _listPage.AddCommand.Subscribe(_ => ShowEditor(null));
-        _listPage.ShowCreateIngredientDialogCommand.Subscribe(_ => ShowList());
         _listPage.ShowEditIngredientDialogCommand.Where(action => action).Subscribe(_ => ShowList());
         _listPage.ShowDeleteIngredientDialogCommand.Where(action => action).Subscribe(_ => ShowList());
     }
