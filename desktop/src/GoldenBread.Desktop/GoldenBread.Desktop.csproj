@@ -43,6 +43,9 @@
     <Compile Update="Features\References\Employees\Views\EmployeesHostPageView.axaml.cs">
       <DependentUpon>EmployeesHostPageView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Features\References\Products\Views\ProductEditorPageView.axaml.cs">
+      <DependentUpon>ProductEditorPageView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

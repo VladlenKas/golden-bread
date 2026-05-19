@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.UI.Common;
 using Microsoft.Extensions.DependencyInjection;
 using SukiUI.Controls;
@@ -9,6 +10,8 @@ namespace GoldenBread.Desktop.UI.Services;
 public class WindowService(IServiceProvider serviceProvider)
 {
     private readonly Dictionary<ViewModelBase, SukiWindow> _openedWindows = new();
+
+    public MenuWindowView? GetMenuWindow() => serviceProvider.GetRequiredService<MenuWindowView>();
 
     public void RegisterWindow(ViewModelBase viewModel, SukiWindow window)
     {

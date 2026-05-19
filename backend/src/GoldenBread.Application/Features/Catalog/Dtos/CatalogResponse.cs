@@ -6,6 +6,7 @@ public record ProductListItemResponse(
     string Name,
     string Description,
     int ProductionTimeMinutes,
+    decimal CostPrice,
 
     // Категория
     int CategoryId,

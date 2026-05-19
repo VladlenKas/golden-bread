@@ -6,11 +6,24 @@ namespace GoldenBread.Infrastructure.Data.Repositories;
 
 public sealed class CategoryRepository(IGoldenBreadContext context) : ICategoryRepository
 {
-    public async Task<List<ProductCategory>> GetAll(CancellationToken ct = default)
+    public async Task<List<ProductCategory>> GetAllAsync(CancellationToken ct = default)
     {
         return await context.ProductCategories
-            .AsNoTracking()
+            .Where(c => c.DeletedAt == null)
             .Include(c => c.Products)
+            .AsNoTracking()
             .ToListAsync(ct);
+    }
+
+
+    public async Task<ProductCategory?> GetByIdAsync(int id, CancellationToken ct = default)
+    {
+        return await context.ProductCategories
+            .FirstOrDefaultAsync(c => c.ProductCategoryId == id, ct);
+    }
+
+    public async Task AddAsync(ProductCategory category, CancellationToken ct = default)
+    {
+        await context.ProductCategories.AddAsync(category, ct);
     }
 }

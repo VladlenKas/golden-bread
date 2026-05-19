@@ -1,4 +1,4 @@
-﻿namespace GoldenBread.Desktop.UI.Services;
+﻿namespace GoldenBread.Desktop.UI.Common;
 
 public interface IDialogAware
 {

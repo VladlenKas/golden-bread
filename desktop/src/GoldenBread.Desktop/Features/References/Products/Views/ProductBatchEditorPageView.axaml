@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+			 x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductBatchEditorPageView"
+			 x:DataType="vm:ProductBatchEditorPageViewModel"
+			 x:CompileBindings="False">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="{Binding SaveButtonContent}" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<DockPanel HorizontalSpacing="8" HorizontalAlignment="Left">
+				<ScrollViewer>
+					<suki:GlassCard Width="520">
+						<StackPanel Spacing="12">
+							<Expander Header="Добавить партию" IsExpanded="False">
+								<DockPanel HorizontalSpacing="8">
+									<Button DockPanel.Dock="Right"
+											Classes="Small"
+											suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
+											Command="{Binding AddBatchCommand}"/>
+									<TextBlock Text="Нажмите + для добавления новой партии"
+											   VerticalAlignment="Center" Opacity="0.6"/>
+								</DockPanel>
+							</Expander>
+
+							<Expander Header="Партии продажи" IsExpanded="True" ExpandDirection="Down">
+								<Grid>
+									<suki:InfoBar VerticalContentAlignment="Center"
+												  Title="Добавьте партию"
+												  Severity="Error"
+												  IsClosable="False"
+												  IsOpen="True"
+												  IsVisible="{Binding IsEmpty}"/>
+
+									<StackPanel Spacing="8">
+										<ScrollViewer>
+											<ItemsControl x:Name="BatchesList" ItemsSource="{Binding Batches}">
+												<ItemsControl.ItemTemplate>
+													<DataTemplate>
+														<suki:GlassCard Margin="0 8" Padding="16">
+															<Grid ColumnDefinitions="*, Auto">
+																<!-- Поля партии -->
+																<StackPanel Grid.Column="0" Spacing="12">
+																	<Grid ColumnDefinitions="Auto,*,Auto,*" RowSpacing="8">
+																		<TextBlock Text="Кол-во:" VerticalAlignment="Center" Grid.Column="0"/>
+																		<NumericUpDown Value="{Binding QuantityUnits}"
+																					   Increment="1"
+																					   Width="100"
+																					   Grid.Column="1"/>
+
+																		<TextBlock Text="Наценка (%):" VerticalAlignment="Center" Grid.Column="2"/>
+																		<NumericUpDown Value="{Binding MarkupPercent}"
+																					   Increment="1"
+																					   Width="100"
+																					   Grid.Column="3"/>
+																	</Grid>
+
+																	<!-- Цены в две колонки -->
+																	<Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+																		<StackPanel Grid.Column="0" Spacing="8" Orientation="Horizontal">
+																			<TextBlock Text="Цена за 1 шт:" Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
+																			<TextBlock Text="{Binding FinalUnitPrice, StringFormat='{}{0:N2} ₽'}"
+																					   FontWeight="Bold"
+																					   FontSize="16"/>
+																		</StackPanel>
+
+																		<StackPanel Grid.Column="1" Spacing="8" Orientation="Horizontal">
+																			<TextBlock Text="Общая сумма:" Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
+																			<TextBlock Text="{Binding BatchTotalPrice, StringFormat='{}{0:N2} ₽'}"
+																					   FontWeight="Bold"
+																					   FontSize="16"
+																					   Foreground="{DynamicResource SukiPrimaryColor}"/>
+																		</StackPanel>
+																	</Grid>
+																</StackPanel>
+
+																<!-- Кнопка удаления -->
+																<Button Grid.Column="1"
+																		Classes="Small"
+																		VerticalAlignment="Top"
+																		Margin="16 0 0 0"
+																		suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Delete}"
+																		Command="{Binding #BatchesList.DataContext.RemoveBatchCommand}"
+																		CommandParameter="{Binding}"/>
+															</Grid>
+														</suki:GlassCard>
+													</DataTemplate>
+												</ItemsControl.ItemTemplate>
+											</ItemsControl>
+										</ScrollViewer>
+									</StackPanel>
+								</Grid>
+							</Expander>
+						</StackPanel>
+					</suki:GlassCard>
+				</ScrollViewer>
+			</DockPanel>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

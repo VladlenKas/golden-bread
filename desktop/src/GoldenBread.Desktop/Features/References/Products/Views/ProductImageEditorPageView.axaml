@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+			 xmlns:models="using:GoldenBread.Desktop.Features.References.Products.Models"
+			 x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductImageEditorPageView"
+			 x:DataType="vm:ProductImageEditorPageViewModel"
+			 x:CompileBindings="False">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="Сохранить" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<DockPanel HorizontalSpacing="8" HorizontalAlignment="Left">
+				<ScrollViewer>
+					<suki:GlassCard Width="520">
+						<StackPanel Spacing="12">
+							<Expander Header="Добавить изображения" IsExpanded="False">
+								<DockPanel HorizontalSpacing="8">
+									<Button DockPanel.Dock="Right"
+											Classes="Small"
+											suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
+											Command="{Binding AddImageCommand}"/>
+									<TextBlock Text="Нажмите + для добавления (макс. 5)"
+											   VerticalAlignment="Center" Opacity="0.6"/>
+								</DockPanel>
+							</Expander>
+
+							<Expander Header="Изображения продукции" IsExpanded="True" ExpandDirection="Down">
+								<Grid>
+									<suki:InfoBar VerticalContentAlignment="Center"
+												  Title="Добавьте изображение (необязательно)"
+												  Severity="Information"
+												  IsClosable="False"
+												  IsOpen="True"
+												  IsVisible="{Binding IsEmpty}"/>
+
+									<StackPanel Spacing="8">
+										<ItemsControl x:Name="ImagesList" ItemsSource="{Binding ImagePaths}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate DataType="models:ProductImageItem">
+													<suki:GlassCard Margin="0 4" Padding="16">
+														<DockPanel HorizontalSpacing="12">
+															<Image Source="{Binding Bitmap}"
+																   Width="80"
+																   Height="80"
+																   Stretch="UniformToFill"
+																   DockPanel.Dock="Left"/>
+
+															<Button Classes="Small"
+																	DockPanel.Dock="Right"
+																	VerticalAlignment="Center"
+																	suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Delete}"
+																	Command="{Binding #ImagesList.DataContext.RemoveImageCommand}"
+																	CommandParameter="{Binding}"/>
+
+															<StackPanel VerticalAlignment="Center" Spacing="4">
+																<TextBlock Text="Изображение"
+																		   FontWeight="Bold"
+																		   FontSize="14"/>
+																<TextBlock Text="{Binding FileName}"
+																		   TextWrapping="Wrap"
+																		   Opacity="0.6"
+																		   FontSize="12"/>
+															</StackPanel>
+														</DockPanel>
+													</suki:GlassCard>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+									</StackPanel>
+								</Grid>
+							</Expander>
+						</StackPanel>
+					</suki:GlassCard>
+				</ScrollViewer>
+			</DockPanel>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

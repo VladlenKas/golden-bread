@@ -72,7 +72,7 @@ public partial class PurchasePositionEditorPageViewModel : PageViewModel, ISukiS
             });
 
         this.WhenAnyValue(x => x.SelectedIngredientItem)
-            .Subscribe(item =>
+            .Subscribe(item =>  
             {
                 if (item != null)
                 {
@@ -105,7 +105,7 @@ public partial class PurchasePositionEditorPageViewModel : PageViewModel, ISukiS
             .Subscribe(item =>
             {
                 if (ItemEditable.Unit != item!.Value)
-                    ItemEditable.Unit = item.Value.Value;
+                    ItemEditable.Unit = item.Value!.Value;
             });
 
         // Синхронизируем ComboBox, НЕ трогая FilteredUnits

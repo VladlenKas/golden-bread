@@ -4,6 +4,7 @@ using GoldenBread.Application.Common.Constants;
 using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Application.Features.Catalog.Dtos;
 using GoldenBread.Application.Features.Catalog.Mapping;
+using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Application.Features.Catalog.Queires.GetProductDetail;
 
@@ -16,7 +17,11 @@ public sealed class GetProductDetailQueryHandler(
         GetProductDetailQuery query,
         CancellationToken ct)
     {
-        int? companyId = await accountContext.GetCompanyIdAsync(ct);
+        var account = await accountContext.GetAccountAsync(ct);
+        int? companyId = null;
+
+        if (account != null && account.AccountType == AccountType.Company)
+            companyId = await accountContext.GetCompanyIdAsync(ct);
 
         var product = await catalogQueryService
             .GetProductDetailAsync(query.ProductId, ct) ??

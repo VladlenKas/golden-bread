@@ -1,0 +1,253 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+			 x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductsListPageView"
+			 x:DataType="vm:ProductsListPageViewModel"
+			 x:CompileBindings="False">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel VerticalSpacing="16">
+
+			<!-- Toolbar -->
+			<DockPanel DockPanel.Dock="Top"
+					   HorizontalSpacing="8"
+					   LastChildFill="False"
+					   Margin="4 0">
+				<TextBox DockPanel.Dock="Left"
+						 Width="320"
+						 Text="{Binding SearchText}"
+						 Watermark="{Binding FilteredItems.Count, StringFormat='Искать среди {0} записей...'}"
+						 suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}" />
+
+				<SplitButton DockPanel.Dock="Right"
+							 Classes="Flat"
+							 Command="{Binding AddCommand}"
+							 IsVisible="{Binding Permissions.Create}">
+					<SplitButton.Content>
+						<StackPanel Orientation="Horizontal" Spacing="8">
+							<icon:MaterialIcon Kind="Plus" Width="16" Height="16"/>
+							<TextBlock Text="Добавить"/>
+						</StackPanel>
+					</SplitButton.Content>
+					<SplitButton.Flyout>
+						<MenuFlyout>
+							<MenuItem Header="Новая категория"
+									  Icon="{icon:MaterialIconExt Kind=PlusCircle}"
+									  Command="{Binding ShowCreateCategoryDialogCommand}"/>
+							<MenuItem Header="Изменить категорию"
+									  Icon="{icon:MaterialIconExt Kind=Pencil}"
+									  Command="{Binding ShowEditCategoryDialogCommand}"/>
+							<MenuItem Header="Удалить категорию"
+									  Icon="{icon:MaterialIconExt Kind=Delete}"
+									  Command="{Binding ShowDeleteCategoryDialogCommand}"/>
+						</MenuFlyout>
+					</SplitButton.Flyout>
+				</SplitButton>
+			</DockPanel>
+
+			<!-- Cards Grid -->
+			<ScrollViewer>
+				<ItemsControl x:Name="ItemsList"
+							  ItemsSource="{Binding FilteredItems}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel HorizontalAlignment="Center" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<suki:GlassCard Width="300"
+											Margin="14"
+											Padding="0"
+											CornerRadius="16"
+											DoubleTapped="DataGrid_DoubleTapped"
+											IsInteractive="True"
+											Tag="{Binding}">
+								<Grid>
+									<Grid RowDefinitions="Auto,*">
+										<!-- Image Area -->
+										<Grid Height="260">
+											<Border ClipToBounds="True">
+												<Panel>
+													<!-- Fallback -->
+													<Grid Background="#1AFFFFFF"
+														  IsVisible="{Binding !ProductImage}">
+														<StackPanel Spacing="12"
+																	HorizontalAlignment="Center"
+																	VerticalAlignment="Center">
+															<icon:MaterialIcon Kind="ImageOff"
+																			   Width="48"
+																			   Height="48"/>
+															<TextBlock Text="Нет изображения"
+																	   FontSize="12"/>
+														</StackPanel>
+													</Grid>
+
+													<!-- Image -->
+													<Image Source="{Binding ProductImage}"
+														   Stretch="UniformToFill"
+														   IsVisible="{Binding !!ProductImage}"/>
+												</Panel>
+											</Border>
+
+											<!-- Shading -->
+											<Border VerticalAlignment="Bottom"
+													Height="100">
+												<Border.Background>
+													<LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
+														<GradientStop Color="#CC000000" Offset="0"/>
+														<GradientStop Color="#00000000" Offset="1"/>
+													</LinearGradientBrush>
+												</Border.Background>
+											</Border>
+
+
+											<!-- Price -->
+											<Grid Margin="10"
+												  VerticalAlignment="Bottom"
+												  HorizontalAlignment="Right">
+												<suki:GlassCard Padding="9 5" CornerRadius="12">
+													<StackPanel Orientation="Horizontal">
+														<icon:MaterialIcon Kind="CurrencyRub"
+																		   Width="18"
+																		   Opacity="0.9"/>
+														<TextBlock Text="{Binding AmountPrice, StringFormat='{}{0:N2}'}"
+																   FontSize="16"
+																   FontWeight="Bold"
+																   VerticalAlignment="Center"/>
+														<TextBlock Text="{Binding SalePrice, StringFormat='{}({0:N2} за шт.)'}"
+																   FontSize="12"
+																   FontWeight="Bold"
+																   Margin="4 0 0 0"
+																   VerticalAlignment="Bottom"/>
+													</StackPanel>
+												</suki:GlassCard>
+											</Grid>
+										</Grid>
+
+										<!-- Info Area -->
+										<StackPanel Grid.Row="1"
+													Spacing="8"
+													Margin="18 14 18 16">
+											<TextBlock Text="{Binding Name}"
+													   FontSize="19"
+													   FontWeight="Bold"
+													   TextTrimming="CharacterEllipsis"/>
+
+											<TextBlock Text="{Binding Description}"
+													   FontSize="12"
+													   Opacity="0.6"
+													   TextTrimming="WordEllipsis"
+													   TextWrapping="Wrap"
+													   MaxLines="2"
+													   LineHeight="17"/>
+
+											<Separator/>
+
+											<!-- Stats Chips -->
+											<StackPanel Orientation="Horizontal"
+														Spacing="10"
+														Margin="0 4 0 0">
+												<suki:GlassCard Padding="9 5" CornerRadius="12">
+													<StackPanel Orientation="Horizontal" Spacing="5">
+														<Ellipse Width="8"
+																 Height="8"
+																 Fill="{Binding CategoryColor, Converter={StaticResource HexColorConverter}}"
+																 VerticalAlignment="Center"/>
+														<TextBlock Text="{Binding CategoryName}"
+																   FontSize="12"
+																   Opacity="0.75"
+																   VerticalAlignment="Center"/>
+													</StackPanel>
+												</suki:GlassCard>
+
+												<suki:GlassCard Padding="9 5" CornerRadius="12">
+													<StackPanel Orientation="Horizontal" Spacing="5">
+														<icon:MaterialIcon Kind="Clock"
+																		   Width="13"
+																		   Opacity="0.6"
+																		   VerticalAlignment="Center"/>
+														<TextBlock Text="{Binding ProductionTimeMinutes, StringFormat='{}{0} мин'}"
+																   FontSize="11"
+																   Opacity="0.75"
+																   VerticalAlignment="Center"/>
+													</StackPanel>
+												</suki:GlassCard>
+
+												<suki:GlassCard Padding="9 5" CornerRadius="12">
+													<StackPanel Orientation="Horizontal" Spacing="5">
+														<icon:MaterialIcon Kind="Package"
+																		   Width="13"
+																		   Opacity="0.6"
+																		   VerticalAlignment="Center"/>
+														<TextBlock Text="{Binding QuantityPerBatch, StringFormat='{}{0} шт'}"
+																   FontSize="11"
+																   Opacity="0.75"
+																   VerticalAlignment="Center"/>
+													</StackPanel>
+												</suki:GlassCard>
+											</StackPanel>
+										</StackPanel>
+									</Grid>
+								</Grid>
+
+								<!-- Context Menu -->
+								<suki:GlassCard.ContextMenu>
+									<ContextMenu>
+										<MenuItem Header="Изменить"
+												  Icon="{icon:MaterialIconExt Kind=Pencil}">
+											<MenuItem Header="Данные продукции"
+													  Icon="{icon:MaterialIconExt Kind=PackageVariant}"
+													  Command="{Binding #ItemsList.DataContext.EditCommand}"
+													  CommandParameter="{Binding}"/>
+											<MenuItem Header="Рецепт"
+													  Icon="{icon:MaterialIconExt Kind=BookOpenVariant}"
+													  Command="{Binding #ItemsList.DataContext.EditRecipeCommand}"
+													  CommandParameter="{Binding}"/>
+											<MenuItem Header="Партии"
+													  Icon="{icon:MaterialIconExt Kind=Archive}"
+													  Command="{Binding #ItemsList.DataContext.EditBatchesCommand}"
+													  CommandParameter="{Binding}"/>
+											<MenuItem Header="Фото"
+													  Icon="{icon:MaterialIconExt Kind=Camera}"
+													  Command="{Binding #ItemsList.DataContext.EditImagesCommand}"
+													  CommandParameter="{Binding}"/>
+										</MenuItem>
+
+										<MenuItem Header="Удалить"
+												  Icon="{icon:MaterialIconExt Kind=Delete}"
+												  Command="{Binding #ItemsList.DataContext.DeleteCommand}"
+												  CommandParameter="{Binding}"/>
+									</ContextMenu>
+								</suki:GlassCard.ContextMenu>
+							</suki:GlassCard>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+			<!-- Empty State -->
+			<StackPanel IsVisible="{Binding IsEmpty}"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Spacing="16">
+				<icon:MaterialIcon Kind="PackageVariant"
+								   Width="72"
+								   Height="72"
+								   Opacity="0.25"/>
+				<TextBlock Text="Нет продукции для отображения"
+						   Classes="h4"
+						   Opacity="0.5"
+						   TextAlignment="Center"/>
+				<TextBlock Text="Добавьте первый товар или измените фильтр"
+						   Opacity="0.35"
+						   FontSize="13"
+						   TextAlignment="Center"/>
+			</StackPanel>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

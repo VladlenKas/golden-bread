@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+             x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductCategoryDeleteDialogView"
+             x:DataType="vm:ProductCategoryDeleteDialogViewModel">
+
+    <StackPanel Spacing="24">
+        <suki:GlassCard>
+            <StackPanel Spacing="12">
+                <DockPanel HorizontalSpacing="8">
+                    <TextBlock Text="Категория:" VerticalAlignment="Center"/>
+                    <AutoCompleteBox ItemsSource="{Binding Categories}"
+                                     SelectedItem="{Binding SelectedCategory}"
+                                     FilterMode="Contains"
+                                     MinimumPrefixLength="0"
+                                     Watermark="Выберите категорию"/>
+                </DockPanel>
+            </StackPanel>
+        </suki:GlassCard>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="Отмена" Command="{Binding CancelCommand}"/>
+            <Button Content="Удалить" Command="{Binding DeleteCommand}" Classes="Danger"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

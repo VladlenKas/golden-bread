@@ -31,4 +31,10 @@ public class ProductBatch
             MarkupPercent = markupPercent
         };
     }
+
+    public void Update(int markupPercent, int quantityUnits)
+    {
+        MarkupPercent = markupPercent;
+        QuantityUnits = quantityUnits;
+    }
 }

@@ -3,6 +3,7 @@ using GoldenBread.Desktop.Features.Administration.Users.Models;
 using GoldenBread.Desktop.Features.Common.DetailData;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions.Models;
 using GoldenBread.Desktop.Features.References.Employees.Models;
+using GoldenBread.Desktop.Features.References.Products.Models;
 using GoldenBread.Desktop.Features.References.Suppliers.Models;
 
 
@@ -124,6 +125,44 @@ public static class DetailDialogFactory
                         new("Количество партий", item.QuantityBatchesFormatted),
                         new("Остаток на складе", item.QuantityUnitInBatchesFormatted)
                     ])
+            ]);
+    }
+
+    public static DetailDialogData FromProduct(ProductDetailResponse item)
+    {
+        return new DetailDialogData(
+            Sections:
+            [
+                new DetailSectionData(
+                Header: "Основная информация",
+                Fields:
+                [
+                    new("Название", item.Name),
+                    new("Описание", item.Description),
+                    new("Вес", $"{item.Weight} г"),
+                    new("Время приготовления", $"{item.ProductionTimeMinutes} мин"),
+                    new("Срок хранения", $"{item.ShelfLifeDays} дней"),
+                    new("Температура хранения", $"от {item.StorageTempMin}°C до {item.StorageTempMax}°C"),
+                    new("Категория", item.CategoryName)
+                ]),
+
+            new DetailSectionData(
+                Header: "Рецепт",
+                Fields:
+                [
+                    ..item.Ingredients.Select(i =>
+                        new DetailFieldData(i.Name, $"{i.Quantity} {i.UnitLocalized}"))
+                ]),
+
+            new DetailSectionData(
+                Header: "Партии продажи",
+                Fields:
+                [
+                    ..item.AvailableBatches.Select(b =>
+                        new DetailFieldData(
+                            $"{b.QuantityPerBatch} шт",
+                            $"{b.UnitPrice:N2} ₽ / шт (всего {b.TotalPrice:N2} ₽)"))
+                ])
             ]);
     }
 }

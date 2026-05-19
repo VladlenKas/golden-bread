@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+			 x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductRecipeEditorPageView"
+			 x:DataType="vm:ProductRecipeEditorPageViewModel"
+			 x:CompileBindings="False">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="{Binding SaveButtonContent}" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<DockPanel HorizontalSpacing="8" HorizontalAlignment="Left">
+				<ScrollViewer>
+
+					<suki:GlassCard Width="500">
+						<StackPanel Spacing="12">
+							<Expander Header="Добавить ингредиент" IsExpanded="False">
+								<DockPanel HorizontalSpacing="8">
+									<Button DockPanel.Dock="Right"
+											Classes="Small"
+											suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
+											Command="{Binding AddRecipeItemCommand}"/>
+									<AutoCompleteBox ItemsSource="{Binding IngredientsAutocompleteItems}"
+													 SelectedItem="{Binding SelectedIngredientItem}"
+													 FilterMode="Contains"
+													 MinimumPrefixLength="0"
+													 Watermark="Выберите ингредиент"/>
+								</DockPanel>
+							</Expander>
+
+							<Expander Header="Рецепт" IsExpanded="True" ExpandDirection="Down">
+								<Grid>
+									<suki:InfoBar VerticalContentAlignment="Center"
+												  Title="Выберите ингредиент"
+												  Severity="Error"
+												  IsClosable="False"
+												  IsOpen="True"
+												  IsVisible="{Binding IsEmpty}"/>
+
+									<StackPanel Spacing="8">
+										<!-- Recipe Items -->
+										<ItemsControl x:Name="RecipesList" ItemsSource="{Binding Recipes}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate>
+													<DockPanel HorizontalSpacing="8" Margin="0 4">
+
+														<StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+															<TextBlock Text="{Binding IngredientName}"/>
+															<TextBlock Text="{Binding UnitLocalized, StringFormat='{} ({0})'}"/>
+														</StackPanel>
+
+														<Button Classes="Small"
+																DockPanel.Dock="Right"
+																suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Delete}"
+																Command="{Binding #RecipesList.DataContext.RemoveRecipeItemCommand}"
+																CommandParameter="{Binding}">
+														</Button>
+
+
+														<NumericUpDown Value="{Binding Quantity}"
+																	   Increment="0.1"
+																	   Watermark="Количество"
+																	   DockPanel.Dock="Left"
+																	   />
+													</DockPanel>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+									</StackPanel>
+								</Grid>
+							</Expander>
+						</StackPanel>
+					</suki:GlassCard>
+				</ScrollViewer>
+			</DockPanel>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

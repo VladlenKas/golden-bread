@@ -4,5 +4,7 @@ namespace GoldenBread.Application.Abstractions.Data.Repositories;
 
 public interface ICategoryRepository
 {
-    Task<List<ProductCategory>> GetAll(CancellationToken ct);
+    Task<List<ProductCategory>> GetAllAsync(CancellationToken ct);
+    Task<ProductCategory?> GetByIdAsync(int id, CancellationToken ct = default);
+    Task AddAsync(ProductCategory category, CancellationToken ct = default);
 }

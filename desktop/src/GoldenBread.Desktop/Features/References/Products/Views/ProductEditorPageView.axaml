@@ -1,0 +1,74 @@
+	<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+			 x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductEditorPageView"
+			 x:DataType="vm:ProductEditorPageViewModel">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel LastChildFill="False">
+			<!-- Кнопки -->
+			<StackPanel DockPanel.Dock="Right">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+					<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+					<Button Classes="Flat" Content="{Binding SaveButtonContent}" Command="{Binding SaveCommand}"/>
+				</StackPanel>
+			</StackPanel>
+
+			<DockPanel HorizontalSpacing="8" HorizontalAlignment="Left">
+				<suki:GlassCard Width="400">
+					<StackPanel Spacing="12">
+						<Expander Header="Данные продукции" IsExpanded="True" ExpandDirection="Down">
+							<StackPanel Spacing="8">
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Название:" VerticalAlignment="Center"/>
+									<TextBox Text="{Binding ItemEditable.Name}" MaxLength="100"/>
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Описание:" VerticalAlignment="Top" Margin="0 8 0 0"/>
+									<TextBox Text="{Binding ItemEditable.Description}"
+											 MaxLength="500"
+											 AcceptsReturn="True"
+											 TextWrapping="Wrap"
+											 />
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Категория:" VerticalAlignment="Center"/>
+									<AutoCompleteBox ItemsSource="{Binding CategoryAutocompleteItems}"
+													 SelectedItem="{Binding SelectedCategoryItem}"
+													 FilterMode="Contains"
+													 MinimumPrefixLength="0"
+													 Watermark="Выберите категорию"/>
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Себестоимость (₽):" VerticalAlignment="Center"/>
+									<NumericUpDown Value="{Binding ItemEditable.CostPrice}" Increment="10" Watermark="0,00"/>
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Вес (г):" VerticalAlignment="Center"/>
+									<NumericUpDown Value="{Binding ItemEditable.Weight}" Increment="10" Watermark="0,00"/>
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Время приготовления (мин):" VerticalAlignment="Center"/>
+									<NumericUpDown Value="{Binding ItemEditable.ProductionTimeMinutes}" Increment="5" Watermark="0"/>
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Срок хранения (дней):" VerticalAlignment="Center"/>
+									<NumericUpDown Value="{Binding ItemEditable.ShelfLifeDays}" Increment="1" Watermark="0"/>
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Темп. хранения от:" VerticalAlignment="Center"/>
+									<NumericUpDown Value="{Binding ItemEditable.StorageTempMin}" Increment="1" Watermark="0"/>
+								</DockPanel>
+								<DockPanel HorizontalSpacing="8">
+									<TextBlock Text="Темп. хранения до:" VerticalAlignment="Center"/>
+									<NumericUpDown Value="{Binding ItemEditable.StorageTempMax}" Increment="1" Watermark="0"/>
+								</DockPanel>
+							</StackPanel>
+						</Expander>
+					</StackPanel>
+				</suki:GlassCard>
+			</DockPanel>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

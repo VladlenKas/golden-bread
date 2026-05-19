@@ -15,6 +15,7 @@ public class CatalogMapper
             Name: p.Name,
             Description: p.Description,
             ProductionTimeMinutes: p.ProductionTimeMinutes,
+            CostPrice: p.CostPrice,
 
             CategoryId: p.CategoryId,
             CategoryName: p.Category.Name,

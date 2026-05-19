@@ -13,7 +13,7 @@ using GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
 using GoldenBread.Desktop.Features.Production.OrdersList;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
-using GoldenBread.Desktop.Features.References.Products;
+using GoldenBread.Desktop.Features.References.Products.ViewModels;
 using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
@@ -78,7 +78,13 @@ public partial class App : Application, IDisposable
         services.AddSingleton<MenuConfigService>();
         services.AddSingleton<SessionStorage>();
 
-        // Refit 
+        // Refit + Api
+        services.AddHttpClient<GoldenBreadApiClient>(client =>
+        {
+            client.BaseAddress = new Uri(AppSettings.ApiUrl);
+            client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+        }).AddHttpMessageHandler<SessionHeaderHandler>();
         services.AddApiClient<IAuthApi>();
         services.AddApiClient<IAccountApi>();
         services.AddApiClient<IUsersApi>();
@@ -87,6 +93,10 @@ public partial class App : Application, IDisposable
         services.AddApiClient<ICompaniesApi>();
         services.AddApiClient<IIngredientsApi>();
         services.AddApiClient<ISupplierIngredientsApi>();
+        services.AddApiClient<ISupplierIngredientsApi>();
+        services.AddApiClient<IProductsApi>();
+        services.AddApiClient<IProductCategoriesApi>();
+        services.AddApiClient<IImagesApi>();
 
         return services.BuildServiceProvider();
     }
@@ -126,7 +136,12 @@ public partial class App : Application, IDisposable
         services.AddTransient<CompanyEditorPageViewModel>();
 
         // Product Pages
-        services.AddTransient<ProductsHostPageViewModel>();
+        services.AddSingleton<ProductsHostPageViewModel>();
+        services.AddSingleton<ProductsListPageViewModel>();
+        services.AddTransient<ProductEditorPageViewModel>();
+        services.AddTransient<ProductImageEditorPageViewModel>();
+        services.AddTransient<ProductRecipeEditorPageViewModel>();
+        services.AddTransient<ProductBatchEditorPageViewModel>();
 
         // Warehouse Pages
         services.AddTransient<WarehouseHostPageViewModel>();

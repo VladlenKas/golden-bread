@@ -4,7 +4,7 @@ public class Product
 {
     public int ProductId { get; private set; }
 
-    public int CategoryId { get; private set; }
+    public int CategoryId { get; set; }
 
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
@@ -42,5 +42,32 @@ public class Product
             StorageTempMin = 0,
             StorageTempMax = 0
         };
+    }
+
+    public void Update(
+        string name,
+        string description,
+        decimal costPrice,
+        decimal weight,
+        int productionTimeMinutes,
+        int shelfLifeDays,
+        decimal storageTempMin,
+        decimal storageTempMax,
+        int categoryId)
+    {
+        Name = name;
+        Description = description;
+        CostPrice = costPrice;
+        Weight = weight;
+        ProductionTimeMinutes = productionTimeMinutes;
+        ShelfLifeDays = shelfLifeDays;
+        StorageTempMin = storageTempMin;
+        StorageTempMax = storageTempMax;
+        CategoryId = categoryId;
+    }
+
+    public void SoftDelete()
+    {
+        DeletedAt = DateTime.UtcNow;
     }
 }

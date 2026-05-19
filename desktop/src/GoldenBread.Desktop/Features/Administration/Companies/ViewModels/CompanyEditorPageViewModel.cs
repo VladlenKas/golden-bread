@@ -39,8 +39,7 @@ public partial class CompanyEditorPageViewModel : PageViewModel, ISukiStackPageT
                   ? ConstantMessages.CreateTitlePage
                   : ConstantMessages.EditorTitlePage;
 
-                if (item != null)
-                    await LoadCompanyAsync(item.CompanyId);
+                if (item != null) await LoadCompanyAsync(item.CompanyId);
             });
     }
 

@@ -1,0 +1,29 @@
+<!-- Create -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+             xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+             x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductCategoryCreateDialogView"
+             x:DataType="vm:ProductCategoryCreateDialogViewModel">
+
+    <StackPanel Spacing="24">
+        <suki:GlassCard>
+            <Expander Header="Данные категории" IsExpanded="True">
+                <StackPanel Spacing="12">
+                    <DockPanel HorizontalSpacing="8">
+                        <TextBlock Text="Название:" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding Name}" MaxLength="50"/>
+                    </DockPanel>
+                    <DockPanel HorizontalSpacing="8">
+                        <TextBlock Text="Цвет:" VerticalAlignment="Center"/>
+                        <ColorPicker Color="{Binding Color}"/>
+                    </DockPanel>
+                </StackPanel>
+            </Expander>
+        </suki:GlassCard>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+            <Button Content="Отмена" Command="{Binding CancelCommand}"/>
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" Classes="Flat"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

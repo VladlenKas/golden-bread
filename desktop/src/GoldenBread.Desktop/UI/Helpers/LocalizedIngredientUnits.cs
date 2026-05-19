@@ -43,4 +43,17 @@ public static class LocalizedIngredientUnits
         IngredientUnit.Pcs => "шт.",
         _ => "-"
     };
+
+    /// <summary>
+    /// Для детального просмотра
+    /// </summary>
+    public static string UnitsDetail(string unit) => unit switch
+    {
+        "G" => "г.",
+        "Kg" => "кг.",
+        "Ml" => "мл.",
+        "L" => "л.",
+        "Pcs" => "шт.",
+        _ => "-"
+    };
 }

@@ -5,7 +5,7 @@ using GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
 using GoldenBread.Desktop.Features.Production.OrdersList;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
-using GoldenBread.Desktop.Features.References.Products;
+using GoldenBread.Desktop.Features.References.Products.ViewModels;
 using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.UI.Common;
 using Microsoft.Extensions.DependencyInjection;

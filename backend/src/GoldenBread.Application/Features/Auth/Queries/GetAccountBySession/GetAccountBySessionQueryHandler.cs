@@ -7,6 +7,7 @@ namespace GoldenBread.Application.Features.Auth.Queries.GetAccountBySession;
 
 public sealed class GetAccountBySessionQueryHandler(
     IUnitOfWork unitOfWork,
+    ICookieService cookieService,
     ICurrentAccountContext accountContext) : 
     IRequestHandler<GetAccountBySessionQuery, AuthResponse?>
 {
@@ -24,6 +25,9 @@ public sealed class GetAccountBySessionQueryHandler(
         // Обновляем сессию
         account.SetSession();
         await unitOfWork.SaveChangesAsync(ct);
+
+        if (account.AccountType == AccountType.Company)
+            await cookieService.SignInWebAsync(account.Session!);
 
         // Всё ок? Возвращем код 200
         return AuthResponse.Response(account);

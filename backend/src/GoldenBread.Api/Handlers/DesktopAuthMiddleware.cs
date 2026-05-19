@@ -15,7 +15,7 @@ public class DesktopAuthMiddleware(RequestDelegate next)
             {
                 context.User = new ClaimsPrincipal(
                     new ClaimsIdentity(
-                        [new Claim("dstp.session", session)],
+                        [new Claim("desktop.session", session)],
                         "DesktopScheme"));
             }
         }

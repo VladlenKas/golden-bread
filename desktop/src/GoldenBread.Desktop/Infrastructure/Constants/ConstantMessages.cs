@@ -28,6 +28,7 @@ public static class ConstantMessages
     public const string UpdateAccountStatusConfirmDialog = "Сменить статус пользователя?";
     public const string SupplierIngredientDeleteConfirmDialog = "Вы уверены, что хотите удалить эту закупочную позицию? " +
         "Будут архивированы остатки на складе в размере {0} и затронет {1} партий";
+    public const string ProductDeleteConfirmDialog = "Вы уверены, что хотите удалить эту продукцию? Текущие и прошлые заказы не затронуты.";
 
     #endregion
 
@@ -58,6 +59,7 @@ public static class ConstantMessages
     public const string CompanyCannotBeDeleted = "Выбранная компания не может бытть удалена, так как имеет активные или необработанные заказы";
     public const string EmployeeCannotBeDeleted = "Выбранный сотрудник не может быть уволен, так как имеет активные или необработанные задачи";
     public const string IngredientCannotBeDeleted = "Выбранный ингредиент не может быть удален, так как имеет {0} связных рецептов и {1} закупочных позиций";
+    public const string CategoryCannotBeDeleted = "Категория не может быть удалена, так как содержит {0} продукций";
 
     #endregion
 
@@ -75,6 +77,7 @@ public static class ConstantMessages
     public const string RequiredValidation = "Обязательное поле не может быть пустым";
     public const string SupplierRequiredValidation = "Необходимо выбрать поставщика";
     public const string IngredientRequiredValidation = "Необходимо выбрать ингредиент";
+    public const string CategoryRequiredValidation = "Необходимо выбрать категорию товара";
     public const string RequiredRoleValidation = "У пользователя должна быть выбрана должность";
     public const string RequiredUnitValidation = "Для ингредиента должна быть выбрана единица измерения";
 
@@ -99,7 +102,10 @@ public static class ConstantMessages
     public const string PriceRangeValidation = "Цена должна быть от 0.01 до 999999.99";
     public const string WeightRangeValidation = "Вес/объем должен быть от 0.01 до 999999.99";
     public const string ShelfLifeRangeValidation = "Срок хранения должен быть от 1 до 1200 дней";
-
+    public const string TemperatureRangeValidation = "Минимальная температура должна быть меньше максимальной";
+    public const string IngredientExsist = "Этот ингредиент уже добавлен";
+    public const string IngredientsNull = "Добавьте хотя бы один ингредиент";
+    
     #endregion
 
     #region Helper Methods
