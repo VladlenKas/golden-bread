@@ -16,6 +16,7 @@ public class IngredientBatch
     public IngredientBatchStatus Status { get; set; }
 
     public SupplierIngredient SupplierIngredient { get; set; } = null!;
+    public ICollection<OrderItemIngredientReservation> OrderItemReservations { get; set; } = new List<OrderItemIngredientReservation>();
 
     public IngredientBatch() { }
 
@@ -52,5 +53,12 @@ public class IngredientBatch
             Status = IngredientBatchStatus.OutOfStock;
 
         return toWriteOff; // Возвращаем сколько реально списали
+    }
+
+    public void Return(decimal amount)
+    {
+        RemainingQuantity += amount;
+        if (Status == IngredientBatchStatus.OutOfStock && RemainingQuantity > 0)
+            Status = IngredientBatchStatus.Available;
     }
 }

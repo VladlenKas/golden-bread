@@ -22,6 +22,7 @@ public class OrderItem
     public OrderStatus Status { get; set; }
 
     public ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
+    public ICollection<OrderItemIngredientReservation> IngredientReservations { get; set; } = new List<OrderItemIngredientReservation>();
 
     public OrderItem() { }
 

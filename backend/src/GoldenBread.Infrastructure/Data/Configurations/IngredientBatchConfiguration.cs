@@ -18,5 +18,10 @@ public class IngredientBatchConfiguration : IEntityTypeConfiguration<IngredientB
             .HasForeignKey(d => d.SupplierIngredientId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("fk_ingredient_batches_supplier_ingredient");
+
+        builder.HasMany(d => d.OrderItemReservations)
+            .WithOne(p => p.IngredientBatch)
+            .HasForeignKey(p => p.IngredientBatchId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

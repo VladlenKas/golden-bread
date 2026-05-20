@@ -2,8 +2,8 @@
 
 public enum OrderStatus
 {
+    Created,
     Awaiting,
-    AwaitingIngredients,
     InProgress,
     Completed,
     Canceled,
