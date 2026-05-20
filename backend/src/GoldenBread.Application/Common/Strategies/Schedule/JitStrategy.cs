@@ -93,6 +93,6 @@ public class JitStrategy : ISchedulingStrategy
         if (!current.IsFeasible) return false;
 
         // JIT лучше, когда план заканчивается позже (максимально близко к дедлайну)
-        return current.PlanEnd > best.PlanEnd;
+        return current.PlanStart > best.PlanStart;
     }
 }
