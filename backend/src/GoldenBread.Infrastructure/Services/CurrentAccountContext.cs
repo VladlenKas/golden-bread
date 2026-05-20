@@ -36,7 +36,7 @@ internal class CurrentAccountContext(
     public async Task<int> GetRequiredCompanyIdAsync(CancellationToken ct)
     {
         var account = await GetAccountAsync(ct);
-        return account.GetCompany().CompanyId;
+        return account.GetCompany()!.CompanyId;
     }
 
     /// <summary>
@@ -48,6 +48,6 @@ internal class CurrentAccountContext(
             return null;
 
         var account = await GetAccountAsync(ct);
-        return account.GetCompany().CompanyId;
+        return account.GetCompany()?.CompanyId;
     }
 }

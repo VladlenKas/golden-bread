@@ -15,11 +15,7 @@ public sealed class GetCatalogQueryHandler(
         GetCatalogQuery query,
         CancellationToken ct)
     {
-        var account = await accountContext.GetAccountAsync(ct);
-        int? companyId = null;
-
-        if (account != null && account.AccountType == AccountType.Company)
-            companyId = await accountContext.GetCompanyIdAsync(ct);
+        int? companyId = await accountContext.GetCompanyIdAsync(ct);
 
         var data = await catalogQuery.GetCatalogAsync(companyId, ct);
 

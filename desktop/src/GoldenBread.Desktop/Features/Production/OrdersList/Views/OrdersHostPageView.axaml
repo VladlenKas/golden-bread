@@ -1,0 +1,175 @@
+<UserControl 
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:suki="https://github.com/kikipoulet/SukiUI"
+    xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:vm="using:GoldenBread.Desktop.Features.Production.OrdersList.ViewModels"
+    x:Class="GoldenBread.Desktop.Features.Production.OrdersList.Views.OrdersHostPageView"
+    x:DataType="vm:OrdersHostPageViewModel">
+
+    <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+        <Grid>
+            <!-- Kanban -->
+            <Grid ColumnDefinitions="*,*,*,*" Margin="12">
+                
+                <!-- === Новые === -->
+                <Border Grid.Column="0" 
+                        x:Name="ColNew"
+                        Tag="New" 
+                        Background="#15FFFFFF" 
+                        CornerRadius="16" 
+                        Margin="8">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+                            <icon:MaterialIcon Kind="Inbox" Width="20" Height="20" Foreground="{DynamicResource SukiPrimaryColor}"/>
+                            <TextBlock Text="Новые" Classes="h5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding NewItems.Count, StringFormat='({0})'}" 
+                                       VerticalAlignment="Center" Opacity="0.6" Margin="4,0,0,0"/>
+                        </StackPanel>
+
+                        <ScrollViewer Margin="8">
+                            <ItemsControl ItemsSource="{Binding NewItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="vm:KanbanItem">
+                                        <suki:GlassCard Margin="0,0,0,8" 
+                                                      PointerPressed="OnCardPointerPressed"
+                                                      Cursor="Hand">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14"/>
+                                                <TextBlock Text="{Binding Description}" Opacity="0.7" FontSize="12" TextWrapping="Wrap"/>
+                                                <Border Background="{DynamicResource SukiPrimaryColor}" 
+                                                        Height="3" CornerRadius="2" Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </suki:GlassCard>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+                <!-- === В работе === -->
+                <Border Grid.Column="1" 
+                        x:Name="ColInProgress"
+                        Tag="InProgress" 
+                        Background="#15FFFFFF" 
+                        CornerRadius="16" 
+                        Margin="8">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+                            <icon:MaterialIcon Kind="ProgressClock" Width="20" Height="20" Foreground="{DynamicResource SukiAccentColor}"/>
+                            <TextBlock Text="В работе" Classes="h5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding InProgressItems.Count, StringFormat='({0})'}" 
+                                       VerticalAlignment="Center" Opacity="0.6" Margin="4,0,0,0"/>
+                        </StackPanel>
+
+                        <ScrollViewer Margin="8">
+                            <ItemsControl ItemsSource="{Binding InProgressItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="vm:KanbanItem">
+                                        <suki:GlassCard Margin="0,0,0,8" 
+                                                      PointerPressed="OnCardPointerPressed"
+                                                      Cursor="Hand">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14"/>
+                                                <TextBlock Text="{Binding Description}" Opacity="0.7" FontSize="12" TextWrapping="Wrap"/>
+                                                <Border Background="{DynamicResource SukiAccentColor}" 
+                                                        Height="3" CornerRadius="2" Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </suki:GlassCard>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+                <!-- === На проверке === -->
+                <Border Grid.Column="2" 
+                        x:Name="ColReview"
+                        Tag="Review" 
+                        Background="#15FFFFFF" 
+                        CornerRadius="16" 
+                        Margin="8">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+                            <icon:MaterialIcon Kind="EyeCheck" Width="20" Height="20" Foreground="#FF9800"/>
+                            <TextBlock Text="На проверке" Classes="h5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ReviewItems.Count, StringFormat='({0})'}" 
+                                       VerticalAlignment="Center" Opacity="0.6" Margin="4,0,0,0"/>
+                        </StackPanel>
+
+                        <ScrollViewer Margin="8">
+                            <ItemsControl ItemsSource="{Binding ReviewItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="vm:KanbanItem">
+                                        <suki:GlassCard Margin="0,0,0,8" 
+                                                      PointerPressed="OnCardPointerPressed"
+                                                      Cursor="Hand">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" FontSize="14"/>
+                                                <TextBlock Text="{Binding Description}" Opacity="0.7" FontSize="12" TextWrapping="Wrap"/>
+                                                <Border Background="#FF9800" 
+                                                        Height="3" CornerRadius="2" Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </suki:GlassCard>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+                <!-- === Архив (read-only) === -->
+                <Border Grid.Column="3" 
+                        x:Name="ColArchive"
+                        Tag="Archive" 
+                        Background="#15FFFFFF" 
+                        CornerRadius="16" 
+                        Margin="8">
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="8" Margin="16,12,16,0">
+                            <icon:MaterialIcon Kind="Archive" Width="20" Height="20" Foreground="#9E9E9E"/>
+                            <TextBlock Text="Архив" Classes="h5" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ArchiveItems.Count, StringFormat='({0})'}" 
+                                       VerticalAlignment="Center" Opacity="0.6" Margin="4,0,0,0"/>
+                        </StackPanel>
+
+                        <ScrollViewer Margin="8">
+                            <ItemsControl ItemsSource="{Binding ArchiveItems}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="vm:KanbanItem">
+                                        <suki:GlassCard Margin="0,0,0,8" 
+                                                      Opacity="0.6"
+                                                      Cursor="No">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock Text="{Binding Title}" 
+                                                           FontWeight="SemiBold" 
+                                                           FontSize="14"
+                                                           TextDecorations="Strikethrough"/>
+                                                <TextBlock Text="{Binding Description}" 
+                                                           Opacity="0.5" 
+                                                           FontSize="12" 
+                                                           TextWrapping="Wrap"/>
+                                                <Border Background="#9E9E9E" 
+                                                        Height="3" CornerRadius="2" Margin="0,4,0,0"/>
+                                            </StackPanel>
+                                        </suki:GlassCard>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+            </Grid>
+
+            <!-- Overlay для «призрака» перетаскиваемой карточки -->
+            <Canvas x:Name="DragLayer" 
+                    IsHitTestVisible="False" 
+                    Background="Transparent"/>
+        </Grid>
+    </suki:BusyArea>
+</UserControl>

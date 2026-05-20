@@ -1,6 +1,4 @@
-﻿using GoldenBread.Application.Common.Strategies.Employee;
-using GoldenBread.Application.Common.Strategies.Product;
-using GoldenBread.Domain.Entities;
+﻿using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Interfaces.Services;
 using GoldenBread.Domain.Interfaces.Strategies;
 using GoldenBread.Domain.ValueObjects;
@@ -22,9 +20,28 @@ public class ScheduleTaskDistributor(
         foreach (var orderItemOrderingStrategy in orderingStrategies)
             foreach (var employeeTaskAssignmentStrategy in selectionStrategies)
             {
+                // ⬇️ Клонируем сотрудников с задачами из БД, чтобы прогоны не мусорили друг друга
+                var employeesSnapshot = employees.Select(e => Employee.Create(
+                    e.EmployeeId,
+                    e.Firstname,
+                    e.Lastname,
+                    e.Patronymic,
+                    e.Birthday,
+                    e.EmployeeTasks
+                        .Where(t => t.StartTime.HasValue && t.EndTime.HasValue)
+                        .Select(t => EmployeeTask.Create(
+                            t.EmployeeId,
+                            t.OrderItemId,
+                            t.StartTime,
+                            t.EndTime,
+                            t.AssignedQuantity,
+                            t.CompletedQuantity))
+                        .ToList()
+                )).ToList();
+
                 var result = BuildSchedule(
                     orderItems,
-                    employees,
+                    employeesSnapshot,
                     employeeTaskAssignmentStrategy,
                     orderItemOrderingStrategy,
                     schedulingStrategy,
@@ -33,6 +50,7 @@ public class ScheduleTaskDistributor(
                 if (bestResult == null || schedulingStrategy.IsBetter(result, bestResult))
                     bestResult = result;
             }
+
         return bestResult!;
     }
 
@@ -44,14 +62,11 @@ public class ScheduleTaskDistributor(
         ISchedulingStrategy schedulingStrategy,
         IWorkCalendar calendar)
     {
-        // Инициализируем контекст
         var context = new SchedulingContext
         {
             Calendar = calendar,
             Deadline = DateTimeOffset.UtcNow.AddDays(calendar.MaxPlanningDays),
-            CurrentLoadMinutes = employees.ToDictionary(
-                e => e,
-                e => 0.0) // Начальная загрузка - 0
+            CurrentLoadMinutes = employees.ToDictionary(e => e, e => 0.0)
         };
 
         var sortedItems = orderingStrategy.Sort(orderItems);
@@ -59,33 +74,37 @@ public class ScheduleTaskDistributor(
 
         foreach (var item in sortedItems)
         {
-            // 1. Выбираем сотрудника (с учётом текущей загрузки в контексте!)
             var assignments = selectionStrategy.Select(item, employees, context);
 
             if (assignments.Count == 0)
                 return ScheduleResult.Failed($"Не удалось назначить позицию {item.OrderItemId}");
 
-            // 2. Планируем время
             foreach (var assignment in assignments)
             {
-                var task = schedulingStrategy.TrySchedule(
+                var scheduledTasks = schedulingStrategy.TrySchedule(
                     assignment.Employee,
                     item,
                     assignment.AssignedQuantityUnits,
                     context.Deadline,
                     calendar);
 
-                if (task == null)
+                if (scheduledTasks.Count == 0)
                     return ScheduleResult.Failed("Не удалось разместить в календаре");
 
-                tasks.Add(task);
-                context.AssignedTasks.Add(task); // Обновляем контекст задачами тоже
+                foreach (var task in scheduledTasks)
+                {
+                    tasks.Add(task);
+                    context.AssignedTasks.Add(task);
+                    assignment.Employee.EmployeeTasks.Add(task);
+                }
             }
         }
 
-        // Считаем общие метрики плана
-        var planStart = tasks.Min(t => t.StartTime)?.DateTime ?? DateTime.MinValue;
-        var planEnd = tasks.Max(t => t.EndTime)?.DateTime ?? DateTime.MaxValue;
+        if (tasks.Count == 0)
+            return ScheduleResult.Failed("Нет назначенных задач");
+
+        var planStart = tasks.Min(t => t.StartTime)!.Value.DateTime;
+        var planEnd = tasks.Max(t => t.EndTime)!.Value.DateTime;
 
         return new ScheduleResult(
             Tasks: tasks,

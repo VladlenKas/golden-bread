@@ -11,7 +11,7 @@ using GoldenBread.Desktop.Features.Main;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
 using GoldenBread.Desktop.Features.Procurement.Warehouse;
-using GoldenBread.Desktop.Features.Production.OrdersList;
+using GoldenBread.Desktop.Features.Production.OrdersList.ViewModels;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
 using GoldenBread.Desktop.Features.References.Products.ViewModels;
 using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
@@ -152,7 +152,7 @@ public partial class App : Application, IDisposable
         services.AddTransient<PurchasePositionEditorPageViewModel>();
 
         // Orders Pages
-        services.AddTransient<OrdersHostPageViewModel>();
+        services.AddSingleton<OrdersHostPageViewModel>();
 
         // Common Pages
         services.AddTransient<ChangePasswordPageViewModel>();

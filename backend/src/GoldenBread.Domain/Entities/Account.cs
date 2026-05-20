@@ -45,10 +45,9 @@ public sealed class Account
         };
     }
 
-    public Company GetCompany()
+    public Company? GetCompany()
     {
-        return Company ?? 
-            throw new DomainExceptions(nameof(Company), ValidationErrorConstants.AccountHasNoCompany);
+        return Company ?? null;
     }
 
     public void UpdateEmail(string email)

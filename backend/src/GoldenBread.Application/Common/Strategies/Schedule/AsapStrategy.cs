@@ -8,63 +8,75 @@ namespace GoldenBread.Application.Common.Strategies.Schedule;
 
 public class AsapStrategy : ISchedulingStrategy
 {
-    public EmployeeTask? TrySchedule(
-        DbEntities.Employee employee, 
-        OrderItem orderItem, 
+    public List<EmployeeTask> TrySchedule(
+        DbEntities.Employee employee,
+        OrderItem orderItem,
         int units,
-        DateTimeOffset deadline, 
+        DateTimeOffset deadline,
         IWorkCalendar calendar)
     {
-        // Считаем сколько минут нужно
-        var minutesNeeded = units * orderItem.Batch.Product.ProductionTimeMinutes;
-        var duration = TimeSpan.FromMinutes(minutesNeeded);
+        var result = new List<EmployeeTask>();
+        var unitTimeMinutes = orderItem.Batch.Product.ProductionTimeMinutes;
 
-        // Указываем точку старта (начинаем со следующего дня)
-        var startSearch = DateTimeOffset.UtcNow.AddDays(1); 
+        if (unitTimeMinutes <= 0)
+            throw new InvalidOperationException("ProductionTimeMinutes must be > 0");
 
-        // Перебираем дни от сегодня до дедлайна
+        var remainingUnits = units;
+        var startSearch = DateTimeOffset.UtcNow.AddDays(1);
         var currentDate = startSearch.Date;
         var endDate = deadline.Date;
 
-        while (currentDate <= endDate)
+        while (currentDate <= endDate && remainingUnits > 0)
         {
-            // Получаем слоты для конкретного дня (рабочее время минус занятые задачи)
             var dayOffset = new DateTimeOffset(currentDate, calendar.TimeZone.BaseUtcOffset);
             var slots = employee.GetTimeSlots(dayOffset, calendar);
 
-            // Ищем первый свободный слот достаточной длительности
-            var freeSlot = slots
-                .Where(s => s.Type == SlotType.Free)
-                .FirstOrDefault(s => s.Duration >= duration);
-
-            if (freeSlot != null)
+            foreach (var freeSlot in slots.Where(s => s.Type == SlotType.Free))
             {
+                if (remainingUnits <= 0)
+                    break;
+
+                var slotMinutes = freeSlot.Duration.TotalMinutes;
+                var maxUnitsInSlot = (int)(slotMinutes / unitTimeMinutes);
+
+                // В этот остаток слота даже 1 единица не влезает — пропускаем
+                if (maxUnitsInSlot <= 0)
+                    continue;
+
+                var takeUnits = Math.Min(remainingUnits, maxUnitsInSlot);
+                var takeMinutes = takeUnits * unitTimeMinutes;
+                var duration = TimeSpan.FromMinutes(takeMinutes);
+
                 var startTime = freeSlot.Start;
                 var endTime = startTime.Add(duration);
 
-                // Проверяем, что укладываемся в дедлайн
-                if (endTime <= deadline)
-                {
-                    // Создаем задачу сразу, без промежуточного TaskAssignment
-                    return EmployeeTask.Create(
-                        employeeId: employee.EmployeeId,
-                        orderItemId: orderItem.OrderItemId,
-                        startTime: startTime,
-                        endTime: endTime,
-                        assignedQuantity: units,
-                        completedQuantity: 0);
-                }
+                // Если выходим за дедлайн — откатываем всё назначение
+                if (endTime > deadline)
+                    return new List<EmployeeTask>();
+
+                var task = EmployeeTask.Create(
+                    employeeId: employee.EmployeeId,
+                    orderItemId: orderItem.OrderItemId,
+                    startTime: startTime,
+                    endTime: endTime,
+                    assignedQuantity: takeUnits,
+                    completedQuantity: 0);
+
+                result.Add(task);
+                remainingUnits -= takeUnits;
             }
 
             currentDate = currentDate.AddDays(1);
         }
 
-        return null;
+        // Если остались нераспределённые единицы — значит места не хватило
+        return remainingUnits == 0 ? result : new List<EmployeeTask>();
     }
 
     public bool IsBetter(ScheduleResult current, ScheduleResult best)
     {
-        // ASAP лучше, когда заканчиваем раньше
+        if (!best.IsFeasible) return current.IsFeasible;
+        if (!current.IsFeasible) return false;
         return current.PlanEnd < best.PlanEnd;
     }
 }

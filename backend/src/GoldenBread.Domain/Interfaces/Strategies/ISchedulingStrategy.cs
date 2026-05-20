@@ -6,8 +6,11 @@ namespace GoldenBread.Domain.Interfaces.Strategies;
 
 public interface ISchedulingStrategy
 {
-    // Возвращаем готовое назначение или null, если не получилось
-    EmployeeTask? TrySchedule(
+    /// <summary>
+    /// Пытается разместить указанное количество единиц продукции в графике сотрудника.
+    /// Возвращает список созданных задач. Если пустой — разместить не удалось.
+    /// </summary>
+    List<EmployeeTask> TrySchedule(
         Employee employee,
         OrderItem orderItem,
         int units,
