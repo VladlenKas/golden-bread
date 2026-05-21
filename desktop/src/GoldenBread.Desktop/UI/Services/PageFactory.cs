@@ -9,6 +9,7 @@ using GoldenBread.Desktop.Features.References.Products.ViewModels;
 using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.UI.Common;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace GoldenBread.Desktop.UI.Services;
 
 public sealed class PageFactory(IServiceProvider provider) 
@@ -21,7 +22,7 @@ public sealed class PageFactory(IServiceProvider provider)
         ["suppliers"] = typeof(SuppliersHostPageViewModel),
         ["employees"] = typeof(EmployeesHostPageViewModel),
         ["purchase_positions"] = typeof(PurchasePositionsHostPageViewModel),
-        ["warehouse"] = typeof(WarehouseHostPageViewModel),
+        //["warehouse"] = typeof(WarehouseHostPageViewModel),
         ["orders"] = typeof(OrdersHostPageViewModel),
         //["analytics"] = typeof(AnalyticsHostPageViewModel),
     };
