@@ -28,6 +28,7 @@ public partial class SupplierForm : ViewModelBase
 
     [Reactive]
     [StringLength(200, ErrorMessage = ConstantMessages.AddressLengthValidation)]
+    [RegularExpression(ConstantRegularExpressions.Details, ErrorMessage = ConstantMessages.DetailsValidation)]
     string? _address;
 
     public static SupplierForm FromDto(SupplierDto dto)

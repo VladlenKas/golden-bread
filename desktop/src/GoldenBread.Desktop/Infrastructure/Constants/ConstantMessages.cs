@@ -94,8 +94,15 @@ public static class ConstantMessages
     public const string SupplierNameFormatValidation = "Название может содержать только буквы, пробелы, дефисы и ковычки";
     public const string EmailFormatValidation = "Некорректный формат электронной почты";
     public const string PhoneFormatValidation = "Телефон может содержать только цифры";
+    public const string DetailsValidation = "Поле должно содержать только кириллицу и разделительные знаки";
     public const string InnFormatValidation = "ИНН должен содержать 10 цифр и не может состоять только из нулей";
     public const string OgrnFormatValidation = "ОГРН должен содержать 13 цифр, начинаться с 1 или 5, содержать год регистрации не ранее 2002 и корректный код субъекта РФ";
+    public const string ProductNameLengthValidation = "Название должно содержать от 2 до 100 символов";
+    public const string DescriptionLengthValidation = "Описание не должно превышать 500 символов";
+    public const string CostPriceRangeValidation = "Себестоимость должна быть от 0.01 до 999999.99";
+    public const string ProductionTimeRangeValidation = "Время производства должно быть от 1 до 1440 минут";
+    public const string ProductShelfLifeRangeValidation = "Срок хранения должен быть от 1 до 60 дней";
+    public const string StorageTempRangeValidation = "Температура хранения должна быть от -50 до 100 °C";
 
     // Other
     public const string PasswordsMismatchValidation = "Пароли не совпадают";
@@ -105,6 +112,7 @@ public static class ConstantMessages
     public const string TemperatureRangeValidation = "Минимальная температура должна быть меньше максимальной";
     public const string IngredientExsist = "Этот ингредиент уже добавлен";
     public const string IngredientsNull = "Добавьте хотя бы один ингредиент";
+
     
     #endregion
 

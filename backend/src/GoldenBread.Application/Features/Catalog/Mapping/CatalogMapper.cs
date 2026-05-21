@@ -39,6 +39,7 @@ public class CatalogMapper
             Name: p.Name,
             Description: p.Description,
             Weight: p.Weight,
+            CostPrice: p.CostPrice,
             ProductionTimeMinutes: p.ProductionTimeMinutes,
             ShelfLifeDays: p.ShelfLifeDays,
             StorageTempMin: p.StorageTempMin,
@@ -52,6 +53,7 @@ public class CatalogMapper
             AvailableBatches: p.ProductBatches.Select(pb => new ProductBatchResponse(
                 ProductBatchId: pb.ProductBatchId,
                 QuantityPerBatch: pb.QuantityUnits,
+                MarkupPercent: pb.MarkupPercent,
                 UnitPrice: pb.UnitPrice,
                 TotalPrice: pb.TotalPrice)).ToList(),
 

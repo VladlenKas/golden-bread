@@ -210,8 +210,11 @@ public partial class PurchasePositionEditorPageViewModel : PageViewModel, ISukiS
                 }
                 else
                 {
-                    Debug.WriteLine(response.Error);
-                    _toastService.ShowError();
+                    var msg = response.Error != null
+                        ? GoldenBreadApiClient.GetErrorMessage(response.Error)
+                        : null;
+
+                    _toastService.ShowError(msg);
                     return false;
                 }
             }

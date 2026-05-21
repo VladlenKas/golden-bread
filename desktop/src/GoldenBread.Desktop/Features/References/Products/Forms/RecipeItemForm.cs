@@ -1,11 +1,8 @@
-﻿using GoldenBread.Desktop.Features.Common;
-using GoldenBread.Desktop.Features.References.Products.Models;
-using GoldenBread.Desktop.Infrastructure.Constants;
+﻿using GoldenBread.Desktop.Features.References.Products.Models;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Helpers;
 using ReactiveUI.SourceGenerators;
 using System.ComponentModel.DataAnnotations;
-using System.Reactive;
 
 namespace GoldenBread.Desktop.Features.References.Products.Forms;
 
@@ -41,7 +38,8 @@ public partial class RecipeItemForm : ViewModelBase
         RecipeId = RecipeId,
         IngredientId = IngredientId,
         IngredientName = IngredientName,
-        Quantity = Quantity
+        Quantity = Quantity,
+        Unit = Unit
     };
 
     public bool EqualsValues(RecipeItemForm? other)

@@ -318,15 +318,15 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
             }
 
             var msg = response.Error != null
-                ? ApiExtensions.GetErrorMessage(response.Error)
-                : "Не удалось создать заказ";
+                ? GoldenBreadApiClient.GetErrorMessage(response.Error)
+                : null;
 
             _toastService.ShowError(msg);
             return false;
         }
         catch (ApiException ex)
         {
-            _toastService.ShowError(ApiExtensions.GetErrorMessage(ex));
+            _toastService.ShowError(GoldenBreadApiClient.GetErrorMessage(ex));
             return false;
         }
         catch

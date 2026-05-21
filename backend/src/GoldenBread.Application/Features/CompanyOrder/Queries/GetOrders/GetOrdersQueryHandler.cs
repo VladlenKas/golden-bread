@@ -14,7 +14,7 @@ public sealed class GetOrdersQueryHandler(
         CancellationToken ct)
     {
         var companyId = await accountContext.GetCompanyIdAsync(ct);
-        var orders = await orderRepository.GetAllByCompanyIdAsync(companyId.Value, ct);
+        var orders = await orderRepository.GetAllByCompanyIdAsync(companyId!.Value, ct);
 
         var orderItems = orders.Select(order => new OrderListItemResponse(
             order.OrderId,

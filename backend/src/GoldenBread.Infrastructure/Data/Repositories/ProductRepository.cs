@@ -44,6 +44,24 @@ public sealed class ProductRepository(IGoldenBreadContext context) : IProductRep
             .FirstOrDefaultAsync(p => p.ProductId == id, ct);
     }
 
+    public async Task<bool> ExistsByNameAsync(
+        string name,
+        int? excludeId = null,
+        CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+
+        name = name.Trim().ToLower();
+
+        return await context.Products
+            .Where(p => p.DeletedAt == null)
+            .AnyAsync(c =>
+            c.Name != null &&
+            c.Name.Trim().ToLower() == name &&
+            (!excludeId.HasValue || c.ProductId != excludeId.Value), ct);
+    }
+
     public async Task AddAsync(Product product, CancellationToken ct = default)
     {
         await context.Products.AddAsync(product, ct);

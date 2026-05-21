@@ -1,6 +1,4 @@
-﻿using GoldenBread.Desktop.Features.Common;
-using GoldenBread.Desktop.Features.Procurement.PurchasePositions.Models; // ← ItemsAutoCompleteBox
-using GoldenBread.Desktop.Features.References.Products.Forms;
+﻿using GoldenBread.Desktop.Features.References.Products.Forms;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
@@ -9,7 +7,6 @@ using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using SukiUI.Controls;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace GoldenBread.Desktop.Features.References.Products.ViewModels;
@@ -69,6 +66,12 @@ public partial class ProductEditorPageViewModel : PageViewModel, ISukiStackPageT
                 if (item != null)
                     ItemEditable.CategoryId = item.Id;
             });
+    }
+
+    public void InitializeDraft(ProductForm form)
+    {
+        ItemEditable = form.Clone();          // или new ProductForm { ... } если нет Clone
+        ItemEditableCache = ItemEditable.Clone(); // чтобы сравнение "нет изменений" работало
     }
 
     [ReactiveCommand]
@@ -151,7 +154,11 @@ public partial class ProductEditorPageViewModel : PageViewModel, ISukiStackPageT
                 return true;
             }
 
-            _toastService.ShowError();
+            var msg = response.Error != null
+                ? GoldenBreadApiClient.GetErrorMessage(response.Error)
+                : null;
+
+            _toastService.ShowError(msg);
             return false;
         }
         catch

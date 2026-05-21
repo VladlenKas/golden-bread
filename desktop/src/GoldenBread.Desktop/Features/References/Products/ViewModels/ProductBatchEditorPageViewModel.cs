@@ -83,7 +83,7 @@ public partial class ProductBatchEditorPageViewModel : PageViewModel, ISukiStack
                 response.Content.AvailableBatches.Select(b => new ProductBatchForm
                 {
                     ProductBatchId = b.ProductBatchId,
-                    MarkupPercent = 0,
+                    MarkupPercent = b.MarkupPercent,
                     QuantityUnits = b.QuantityPerBatch,
                     BaseUnitPrice = basePrice 
                 }));
@@ -92,6 +92,14 @@ public partial class ProductBatchEditorPageViewModel : PageViewModel, ISukiStack
             BatchesCache = Batches.Select(b => b.Clone()).ToList();
         }
         finally { IsBusy = false; }
+    }
+
+    public void InitializeDraft(List<ProductBatchForm> batches, decimal costPrice)
+    {
+        Batches = new ObservableCollection<ProductBatchForm>(
+            batches.Select(b => b.Clone()));
+
+        CostPrice = costPrice;
     }
 
     [ReactiveCommand]

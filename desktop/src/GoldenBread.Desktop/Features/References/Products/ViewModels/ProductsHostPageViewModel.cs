@@ -6,6 +6,7 @@ using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Services;
 using ReactiveUI;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 
 namespace GoldenBread.Desktop.Features.References.Products.ViewModels;
@@ -19,18 +20,12 @@ public partial class ProductsHostPageViewModel : HostPageViewModel
 
     private readonly ProductsListPageViewModel _listPage;
 
-    // VM для создания — создаём один раз и переиспользуем
-    private ProductEditorPageViewModel? _productEditor;
-    private ProductRecipeEditorPageViewModel? _recipeEditor;
-    private ProductBatchEditorPageViewModel? _batchEditor;
-    private ProductImageEditorPageViewModel? _imageEditor;
-
-    // Черновик создания продукта
-    private ProductCreationDraft? _draft;
-
-    // Текущие подписки на команды шага (отменяем при переходе на другой шаг)
-    private readonly SerialDisposable _saveSubscription = new();
-    private readonly SerialDisposable _backSubscription = new();
+    // === СТЕК СОЗДАНИЯ ===
+    // Храним только пройденные VM. Текущая — последняя в списке.
+    // При "Далее" от конкретной VM обрезаем всё, что было после неё, и пушим новую.
+    // При "Назад" от конкретной VM удаляем её и всё после, показываем предыдущую.
+    private readonly List<PageViewModel> _creationStack = new ();
+    private readonly Dictionary<PageViewModel, CompositeDisposable> _stepDisposables = new ();
 
     public ProductsHostPageViewModel(
         PageFactory factory,
@@ -64,138 +59,216 @@ public partial class ProductsHostPageViewModel : HostPageViewModel
 
     private void StartCreation()
     {
-        _draft = new ProductCreationDraft();
+        ClearCreationStack();
 
-        _productEditor ??= _factory.GetPage<ProductEditorPageViewModel>();
-        _recipeEditor ??= _factory.GetPage<ProductRecipeEditorPageViewModel>();
-        _batchEditor ??= _factory.GetPage<ProductBatchEditorPageViewModel>();
-        _imageEditor ??= _factory.GetPage<ProductImageEditorPageViewModel>();
+        var editor = _factory.GetPage<ProductEditorPageViewModel>();
+        editor.ProductId = 0;
 
-        // Сброс в режим создания
-        _productEditor.ProductId = 0;
-        _recipeEditor.ProductId = 0;
-        _batchEditor.ProductId = 0;
-        _imageEditor.ProductId = 0;
-
-        // Очистка коллекций от прошлого создания
-        _recipeEditor.Recipes.Clear();
-        _batchEditor.Batches.Clear();
-        _batchEditor.CostPrice = 0;
-        _imageEditor.ImagePaths.Clear();
-
-        ShowProductStep();
+        PushStep(editor);
     }
 
-    private void ShowProductStep()
-    {
-        ClearStepSubscriptions();
+    // --- Переходы вперёд ---
 
-        _saveSubscription.Disposable = _productEditor!.SaveCommand
-            .Where(ok => ok)
-            .Take(1)
-            .Subscribe(_ =>
+    private void ShowRecipeStep(ProductEditorPageViewModel from)
+    {
+        var editor = _factory.GetPage<ProductRecipeEditorPageViewModel>();
+        editor.ProductId = 0;
+        PushAfter(from, editor);
+    }
+
+    private void ShowBatchStep(ProductRecipeEditorPageViewModel from)
+    {
+        var editor = _factory.GetPage<ProductBatchEditorPageViewModel>();
+        editor.ProductId = 0;
+
+        // CostPrice берём из данных продукта, который уже в стеке
+        var productEditor = _creationStack.OfType<ProductEditorPageViewModel>().FirstOrDefault();
+        if (productEditor?.ItemEditable != null)
+            editor.CostPrice = productEditor.ItemEditable.CostPrice;
+
+        PushAfter(from, editor);
+    }
+
+    private void ShowImageStep(ProductBatchEditorPageViewModel from)
+    {
+        var editor = _factory.GetPage<ProductImageEditorPageViewModel>();
+        editor.ProductId = 0;
+        PushAfter(from, editor);
+    }
+
+    // --- Управление стеком ---
+
+    /// <summary>
+    /// Добавляет первую страницу в чистый стек.
+    /// </summary>
+    private void PushStep(PageViewModel page)
+    {
+        _creationStack.Add(page);
+        SubscribeToStep(page);
+        NavigateTo(page);
+    }
+
+    /// <summary>
+    /// Вызывается при нажатии "Далее" на странице <paramref name="from"/>.
+    /// Обрезает всё, что лежало впереди (пользователь мог перескочить назад),
+    /// и создаёт новую страницу после <paramref name="from"/>.
+    /// </summary>
+    private void PushAfter(PageViewModel from, PageViewModel newPage)
+    {
+        var index = _creationStack.IndexOf(from);
+        if (index >= 0 && index < _creationStack.Count - 1)
+        {
+            // Удаляем "мёртвые" страницы, которые SukiUI уже выкинул,
+            // но мы всё ещё держим в памяти
+            for (int i = _creationStack.Count - 1; i > index; i--)
             {
-                _draft!.Product = _productEditor.ItemEditable;
-                ShowRecipeStep();
-            });
+                RemoveStepAt(i);
+            }
+        }
 
-        _backSubscription.Disposable = _productEditor.GoBackCommand
-            .Take(1)
-            .Subscribe(_ => CancelCreation());
-
-        NavigateTo(_productEditor);
+        _creationStack.Add(newPage);
+        SubscribeToStep(newPage);
+        NavigateTo(newPage);
     }
 
-    private void ShowRecipeStep()
+    /// <summary>
+    /// Вызывается при нажатии "Назад" на странице <paramref name="from"/>.
+    /// Удаляет её и всё после (хотя после обычно ничего нет),
+    /// показывает предыдущую страницу из стека.
+    /// </summary>
+    private void GoBackFrom(PageViewModel from)
     {
-        ClearStepSubscriptions();
+        var index = _creationStack.IndexOf(from);
+        if (index < 0) return; // не нашли — игнорируем
 
-        _saveSubscription.Disposable = _recipeEditor!.SaveCommand
-            .Where(ok => ok)
-            .Take(1)
-            .Subscribe(_ =>
-            {
-                _draft!.Recipes = _recipeEditor.Recipes.ToList();
-                ShowBatchStep();
-            });
+        if (index == 0)
+        {
+            // На первом шаге — отмена всего создания
+            ClearCreationStack();
+            ShowList();
+            return;
+        }
 
-        _backSubscription.Disposable = _recipeEditor.GoBackCommand
-            .Take(1)
-            .Subscribe(_ => ShowProductStep());
+        // Удаляем текущую и всё, что теоретически могло быть после
+        for (int i = _creationStack.Count - 1; i >= index; i--)
+        {
+            RemoveStepAt(i);
+        }
 
-        NavigateTo(_recipeEditor);
+        // Показываем предыдущую, которая теперь последняя
+        var prev = _creationStack.LastOrDefault();
+        if (prev != null)
+            NavigateTo(prev);
+        else
+            ShowList();
     }
 
-    private void ShowBatchStep()
+    private void RemoveStepAt(int index)
     {
-        ClearStepSubscriptions();
+        var page = _creationStack[index];
+        if (_stepDisposables.Remove(page, out var d))
+            d.Dispose();
 
-        if (_draft?.Product != null)
-            _batchEditor!.CostPrice = _draft.Product.CostPrice;
-
-        _saveSubscription.Disposable = _batchEditor!.SaveCommand
-            .Where(ok => ok)
-            .Take(1)
-            .Subscribe(_ =>
-            {
-                _draft!.Batches = _batchEditor.Batches.ToList();
-                ShowImageStep();
-            });
-
-        _backSubscription.Disposable = _batchEditor.GoBackCommand
-            .Take(1)
-            .Subscribe(_ => ShowRecipeStep());
-
-        NavigateTo(_batchEditor);
+        _creationStack.RemoveAt(index);
     }
 
-    private void ShowImageStep()
+    private void ClearCreationStack()
     {
-        ClearStepSubscriptions();
+        foreach (var d in _stepDisposables.Values)
+            d.Dispose();
 
-        _saveSubscription.Disposable = _imageEditor!.SaveCommand
-            .Where(ok => ok)
-            .Take(1)
-            .Subscribe(async _ =>
-            {
-                _draft!.ImagePaths = _imageEditor.ImagePaths.Select(i => i.FileName).ToList();
-                await FinishCreationAsync();
-            });
-
-        _backSubscription.Disposable = _imageEditor.GoBackCommand
-            .Take(1)
-            .Subscribe(_ => ShowBatchStep());
-
-        NavigateTo(_imageEditor);
+        _stepDisposables.Clear();
+        _creationStack.Clear();
     }
 
-    private void ClearStepSubscriptions()
+    // --- Подписки на команды шагов (один раз на жизнь VM) ---
+
+    private void SubscribeToStep(PageViewModel page)
     {
-        _saveSubscription.Disposable = null;
-        _backSubscription.Disposable = null;
+        // Если уже подписаны — не дублируем
+        if (_stepDisposables.ContainsKey(page)) return;
+
+        var d = new CompositeDisposable();
+
+        switch (page)
+        {
+            case ProductEditorPageViewModel editor:
+                editor.SaveCommand
+                    .Where(ok => ok)
+                    .Subscribe(_ => ShowRecipeStep(editor))
+                    .DisposeWith(d);
+
+                editor.GoBackCommand
+                    .Subscribe(_ => GoBackFrom(editor))
+                    .DisposeWith(d);
+                break;
+
+            case ProductRecipeEditorPageViewModel editor:
+                editor.SaveCommand
+                    .Where(ok => ok)
+                    .Subscribe(_ => ShowBatchStep(editor))
+                    .DisposeWith(d);
+
+                editor.GoBackCommand
+                    .Subscribe(_ => GoBackFrom(editor))
+                    .DisposeWith(d);
+                break;
+
+            case ProductBatchEditorPageViewModel editor:
+                editor.SaveCommand
+                    .Where(ok => ok)
+                    .Subscribe(_ => ShowImageStep(editor))
+                    .DisposeWith(d);
+
+                editor.GoBackCommand
+                    .Subscribe(_ => GoBackFrom(editor))
+                    .DisposeWith(d);
+                break;
+
+            case ProductImageEditorPageViewModel editor:
+                editor.SaveCommand
+                    .Where(ok => ok)
+                    .Subscribe(async _ => await FinishCreationAsync())
+                    .DisposeWith(d);
+
+                editor.GoBackCommand
+                    .Subscribe(_ => GoBackFrom(editor))
+                    .DisposeWith(d);
+                break;
+        }
+
+        _stepDisposables[page] = d;
     }
+
+    // --- Финализация ---
 
     private async Task FinishCreationAsync()
     {
-        if (_draft == null) return;
+        var productEditor = _creationStack.OfType<ProductEditorPageViewModel>().FirstOrDefault();
+        var recipeEditor = _creationStack.OfType<ProductRecipeEditorPageViewModel>().FirstOrDefault();
+        var batchEditor = _creationStack.OfType<ProductBatchEditorPageViewModel>().FirstOrDefault();
+        var imageEditor = _creationStack.OfType<ProductImageEditorPageViewModel>().FirstOrDefault();
+
+        if (productEditor?.ItemEditable == null)
+        {
+            _toastService.ShowError("Не заполнены основные данные продукта");
+            return;
+        }
 
         try
         {
-            // Убеждаемся, что изображения загружены на сервер (SaveAsync в imageEditor это делает)
-            var imagePaths = _imageEditor!.ImagePaths.Select(i => i.FileName).ToList();
-
             var command = new CreateProductWithDetailsCommand(
-                _draft.Product.ToDto(),
-                _draft.Recipes.Select(r => r.ToDto()).ToList(),
-                _draft.Batches.Select(b => b.ToDto(0)).ToList(),
-                imagePaths);
+                productEditor.ItemEditable.ToDto(),
+                recipeEditor?.Recipes.Select(r => r.ToDto()).ToList() ?? new(),
+                batchEditor?.Batches.Select(b => b.ToDto(0)).ToList() ?? new(),
+                imageEditor?.ImagePaths.Select(i => i.FileName).ToList() ?? new());
 
             var response = await _api.Create(command);
 
             if (response.IsSuccessStatusCode)
             {
                 _toastService.ShowSuccess(ConstantMessages.CreatedToast);
-                _draft = null;
+                ClearCreationStack();
                 ShowList();
             }
             else
@@ -209,14 +282,7 @@ public partial class ProductsHostPageViewModel : HostPageViewModel
         }
     }
 
-    private void CancelCreation()
-    {
-        ClearStepSubscriptions();
-        _draft = null;
-        ShowList();
-    }
-
-    // === РЕДАКТИРОВАНИЕ СУЩЕСТВУЮЩИХ ===
+    // === РЕДАКТИРОВАНИЕ СУЩЕСТВУЮЩИХ (одноразовые страницы, вне стека создания) ===
 
     private void ShowEditor(ProductListItem? item)
     {
@@ -270,8 +336,7 @@ public partial class ProductsHostPageViewModel : HostPageViewModel
 
     private void ShowList()
     {
-        ClearStepSubscriptions();
-        _draft = null;
+        ClearCreationStack();
         _listPage.RefreshCommand.Execute();
         NavigateTo(_listPage);
     }
@@ -283,12 +348,4 @@ public partial class ProductsHostPageViewModel : HostPageViewModel
     }
 
     protected override void OnDeactivated() => ShowList();
-}
-
-public class ProductCreationDraft
-{
-    public ProductForm Product { get; set; } = new();
-    public List<RecipeItemForm> Recipes { get; set; } = new();
-    public List<ProductBatchForm> Batches { get; set; } = new();
-    public List<string> ImagePaths { get; set; } = new();
 }

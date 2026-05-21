@@ -58,7 +58,11 @@ public partial class ChangeEmailPageViewModel(
                 return true;
             }
 
-            toastService.ShowError();
+            var msg = response.Error != null
+                        ? GoldenBreadApiClient.GetErrorMessage(response.Error)
+                        : null;
+
+            toastService.ShowError(msg);
             return false;
         }
         catch

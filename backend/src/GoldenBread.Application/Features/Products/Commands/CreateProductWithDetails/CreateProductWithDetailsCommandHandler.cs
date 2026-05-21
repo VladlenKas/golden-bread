@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Domain.Entities;
 
 
@@ -29,6 +30,9 @@ public sealed class CreateProductWithDetailsCommandHandler(
                 StorageTempMax = p.StorageTempMax,
                 CategoryId = p.CategoryId
             };
+
+            if (await productRepository.ExistsByNameAsync(p.Name, null, ct))
+                throw new DuplicateEntityException(nameof(p.Name));
 
             await productRepository.AddAsync(product, ct);
             await unitOfWork.SaveChangesAsync(ct);

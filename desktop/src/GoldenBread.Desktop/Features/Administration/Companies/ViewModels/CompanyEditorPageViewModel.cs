@@ -78,7 +78,11 @@ public partial class CompanyEditorPageViewModel : PageViewModel, ISukiStackPageT
                 }
                 else
                 {
-                    _toastService.ShowError();
+                    var msg = response.Error != null
+                        ? GoldenBreadApiClient.GetErrorMessage(response.Error)
+                        : null;
+
+                    _toastService.ShowError(msg);
                     return false;
                 }
             }

@@ -146,7 +146,7 @@ public partial class ProductRecipeEditorPageViewModel : PageViewModel, ISukiStac
         {
             IngredientId = SelectedIngredientItem.Id,
             IngredientName = SelectedIngredientItem.Name,
-            Unit = LocalizedIngredientUnits.UnitsTable(SelectedIngredientItem.BaseUnit),
+            Unit = SelectedIngredientItem.BaseUnit.ToString(),
             Quantity = 0
         });
 

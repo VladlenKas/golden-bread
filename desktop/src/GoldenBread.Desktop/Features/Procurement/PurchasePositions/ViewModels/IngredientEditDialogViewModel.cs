@@ -8,7 +8,6 @@ using GoldenBread.Desktop.UI.Services;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using System.ComponentModel.DataAnnotations;
-using static GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels.PurchasePositionEditorPageViewModel;
 
 namespace GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
 
@@ -79,6 +78,14 @@ public partial class IngredientEditDialogViewModel : ViewModelBase, IDialogAware
         {
             _dismissDialog?.Invoke();
             _dialogTcs?.TrySetResult(true);
+        }
+        else
+        {
+            var msg = response.Error != null
+                        ? GoldenBreadApiClient.GetErrorMessage(response.Error)
+                        : null;
+
+            _toastService.ShowError(msg);
         }
     }
 

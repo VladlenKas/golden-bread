@@ -23,6 +23,7 @@ public record ProductDetailResponse(
 public record ProductBatchResponse(
     int ProductBatchId,
     int QuantityPerBatch,
+    int MarkupPercent,
     decimal UnitPrice,
     decimal TotalPrice);
 

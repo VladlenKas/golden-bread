@@ -44,6 +44,14 @@ public partial class IngredientCreateDialogViewModel(IIngredientsApi api, ToastS
             _dismissDialog?.Invoke();
             _dialogTcs?.TrySetResult(true);
         }
+        else
+        {
+            var msg = response.Error != null
+                        ? GoldenBreadApiClient.GetErrorMessage(response.Error)
+                        : null;
+
+            toastService.ShowError(msg);
+        }
     }
 
     [ReactiveCommand]

@@ -7,7 +7,7 @@ namespace GoldenBread.Desktop.UI.Services;
 
 public class ToastService(ISukiToastManager manager)
 {
-    public void ShowError(string message = ConstantMessages.ExceptionToast)
+    public void ShowError(string? message = ConstantMessages.ExceptionToast)
     {
         manager.CreateToast()
             .WithTitle("Ошибка")

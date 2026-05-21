@@ -7,6 +7,7 @@ public sealed record ProductDetailResponse(
     string Name,
     string Description,
     decimal Weight,
+    decimal CostPrice,
     int ProductionTimeMinutes,
     int ShelfLifeDays,
     decimal StorageTempMin,
@@ -32,6 +33,7 @@ public sealed record ProductDetailResponse(
 public sealed record ProductBatchResponse(
     int ProductBatchId,
     int QuantityPerBatch,
+    int MarkupPercent,
     decimal UnitPrice,
     decimal TotalPrice);
 

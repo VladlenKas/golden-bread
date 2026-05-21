@@ -287,7 +287,7 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
             {
                 var msg = response.Error != null
                     ? GoldenBreadApiClient.GetErrorMessage(response.Error)
-                    : "Не удалось обновить статус заказа";
+                    : null;
 
                 _toastService.ShowErrorImportant(msg);
                 return false;

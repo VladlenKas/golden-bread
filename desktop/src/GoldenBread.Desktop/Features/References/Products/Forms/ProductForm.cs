@@ -1,22 +1,66 @@
 ﻿using GoldenBread.Desktop.Features.References.Products.Models;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
-using System.ComponentModel.DataAnnotations;
 using ReactiveUI.SourceGenerators;
+using System.ComponentModel.DataAnnotations;
+using static GoldenBread.Desktop.UI.Common.PageViewModel;
 
 namespace GoldenBread.Desktop.Features.References.Products.Forms;
 
 public partial class ProductForm : ViewModelBase
 {
-    [Reactive] int _productId;
-    [Reactive][Required][StringLength(100, MinimumLength = 2)] string _name = null!;
-    [Reactive][Required][StringLength(500)] string _description = null!;
-    [Reactive][Required][Range(0.01, 999999.99)] decimal _costPrice;
-    [Reactive][Required][Range(0.01, 999999.99)] decimal _weight;
-    [Reactive][Required][Range(1, 1440)] int _productionTimeMinutes;
-    [Reactive][Required][Range(0, 3650)] int _shelfLifeDays;
-    [Reactive][Required][Range(-50, 100)] decimal _storageTempMin;
-    [Reactive][Required][Range(-50, 100)] decimal _storageTempMax;
-    [Reactive][Required][Range(1, int.MaxValue)] int _categoryId;
+    [Reactive]
+    int _productId;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [StringLength(100, MinimumLength = 2, ErrorMessage = ConstantMessages.ProductNameLengthValidation)]
+    [RegularExpression(ConstantRegularExpressions.Name, ErrorMessage = ConstantMessages.NameFormatValidation)]
+    string _name = null!;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [StringLength(100, ErrorMessage = ConstantMessages.DescriptionLengthValidation)]
+    [RegularExpression(ConstantRegularExpressions.Details, ErrorMessage = ConstantMessages.DetailsValidation)]
+    string _description = null!;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(0.01, 999999.99, ErrorMessage = ConstantMessages.CostPriceRangeValidation)]
+    decimal _costPrice;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(0.01, 999999.99, ErrorMessage = ConstantMessages.WeightRangeValidation)]
+    decimal _weight;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(1, 1440, ErrorMessage = ConstantMessages.ProductionTimeRangeValidation)]
+    int _productionTimeMinutes;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(1, 60, ErrorMessage = ConstantMessages.ProductShelfLifeRangeValidation)]
+    int _shelfLifeDays;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(-50, 100, ErrorMessage = ConstantMessages.StorageTempRangeValidation)]
+    decimal _storageTempMin;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(-50, 100, ErrorMessage = ConstantMessages.StorageTempRangeValidation)]
+    decimal _storageTempMax;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.CategoryRequiredValidation)]
+    [Range(1, int.MaxValue, ErrorMessage = ConstantMessages.CategoryRequiredValidation)]
+    int _categoryId;
+
+    [Reactive]
+    ItemsAutoCompleteBox? _selectedCategoryItem;
 
     public static ProductForm FromDto(ProductDto dto) => new()
     {
@@ -48,7 +92,8 @@ public partial class ProductForm : ViewModelBase
         ShelfLifeDays = ShelfLifeDays,
         StorageTempMin = StorageTempMin,
         StorageTempMax = StorageTempMax,
-        CategoryId = CategoryId
+        CategoryId = CategoryId,
+        SelectedCategoryItem = SelectedCategoryItem
     };
 
     public bool EqualsValues(ProductForm? other)

@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Exceptions;
 
 namespace GoldenBread.Application.Features.Products.Commands.UpdateProduct;
 
@@ -12,7 +13,11 @@ public sealed class UpdateProductCommandHandler(
     {
         var dto = request.Dto;
         var product = await repository.GetByIdAsync(dto.ProductId, ct);
+
         if (product is null) return false;
+
+        if (await repository.ExistsByNameAsync(dto.Name, dto.ProductId, ct))
+            throw new DuplicateEntityException(nameof(dto.Name));
 
         product.Update(
             dto.Name, dto.Description, dto.CostPrice, dto.Weight,

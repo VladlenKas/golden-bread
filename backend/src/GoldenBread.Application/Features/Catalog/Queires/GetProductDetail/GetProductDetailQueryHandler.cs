@@ -17,7 +17,12 @@ public sealed class GetProductDetailQueryHandler(
         GetProductDetailQuery query,
         CancellationToken ct)
     {
-        int? companyId = await accountContext.GetCompanyIdAsync(ct);
+        int? companyId = null;
+        try
+        {
+            companyId = await accountContext.GetCompanyIdAsync(ct);
+        }
+        catch { }
 
         var product = await catalogQueryService
             .GetProductDetailAsync(query.ProductId, ct) ??

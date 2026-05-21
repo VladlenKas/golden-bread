@@ -15,7 +15,12 @@ public sealed class GetCatalogQueryHandler(
         GetCatalogQuery query,
         CancellationToken ct)
     {
-        int? companyId = await accountContext.GetCompanyIdAsync(ct);
+        int? companyId = null;
+        try
+        {
+            companyId = await accountContext.GetCompanyIdAsync(ct);
+        }
+        catch { }
 
         var data = await catalogQuery.GetCatalogAsync(companyId, ct);
 

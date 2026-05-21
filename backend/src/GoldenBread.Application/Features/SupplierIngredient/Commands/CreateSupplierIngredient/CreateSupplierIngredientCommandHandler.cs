@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Exceptions;
 
 namespace GoldenBread.Application.Features.SupplierIngredient.Commands.CreateSupplierIngredient;
 
@@ -20,6 +21,9 @@ public sealed class CreateSupplierIngredientCommandHandler(
             dto.Unit,
             dto.Weight,
             dto.ShelfLifeDays);
+
+        if (await repository.ExistsByNameAsync(dto.SupplierId, dto.Name, null, ct))
+            throw new DuplicateEntityException(nameof(dto.Name));
 
         await repository.AddAsync(entity, ct);
         await unitOfWork.SaveChangesAsync(ct);

@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Desktop.UI.Helpers;
 using Refit;
+using System.Net;
 using System.Text.Json;
 
 namespace GoldenBread.Desktop.Infrastructure.Api;
@@ -18,40 +19,59 @@ public class GoldenBreadApiClient(HttpClient httpClient)
             using var doc = JsonDocument.Parse(apiEx.Content);
             var root = doc.RootElement;
 
-            // 1. Ищем наши кастомные поля (приоритет: message > error > detail)
-            var customText = GetString(root, "message")
-                ?? GetString(root, "error")
-                ?? GetString(root, "detail");
-
-            // 2. Берем title/type, но отсекаем generic ASP.NET
-            var title = GetString(root, "title");
             var type = GetString(root, "type");
+            var title = GetString(root, "title");
 
-            var isGenericTitle = title is not null && (
-                title.Equals("Conflict", StringComparison.OrdinalIgnoreCase) ||
-                title.Equals("Bad Request", StringComparison.OrdinalIgnoreCase) ||
-                title.Equals("Not Found", StringComparison.OrdinalIgnoreCase) ||
-                title.Equals("Unauthorized", StringComparison.OrdinalIgnoreCase) ||
-                title.Contains("validation", StringComparison.OrdinalIgnoreCase) ||
-                title.Contains("unexpected", StringComparison.OrdinalIgnoreCase));
-
-            // 3. Формируем базовый текст
-            var mainText = customText;
-            if (string.IsNullOrWhiteSpace(mainText) && !isGenericTitle)
-                mainText = title;
-            if (string.IsNullOrWhiteSpace(mainText) && type is not null)
-                mainText = GetMessageByExceptionType(type);
-
-            // 4. Если есть shortages — значит это 409, добавляем список ингредиентов
-            if (root.TryGetProperty("shortages", out var shortages) && shortages.ValueKind == JsonValueKind.Array)
+            // --- 1. ОШИБКИ ВАЛИДАЦИИ / ДУБЛИКАТЫ (массив errors) ---
+            if (root.TryGetProperty("errors", out var errors) && errors.ValueKind == JsonValueKind.Array)
             {
                 var lines = new List<string>();
 
-                // Если API не прислал message/error — берем дефолт по типу
-                if (string.IsNullOrWhiteSpace(mainText))
-                    mainText = "Недостаточно ингредиентов для запуска заказа в производство\n";
+                foreach (var item in errors.EnumerateArray())
+                {
+                    var prop = item.TryGetProperty("propertyName", out var p) ? p.GetString() : null;
+                    var msg = item.TryGetProperty("errorMessage", out var m) ? m.GetString() : null;
 
-                lines.Add(mainText);
+                    if (!string.IsNullOrWhiteSpace(prop))
+                    {
+                        var ruProp = PropertyNamesRu.GetValueOrDefault(prop, prop);
+                        lines.Add($"• {ruProp}: {msg ?? "уже используется"}");
+                    }
+                    else if (!string.IsNullOrWhiteSpace(msg))
+                    {
+                        lines.Add($"• {msg}");
+                    }
+                }
+
+                if (lines.Count > 0)
+                {
+                    bool isDuplicate =
+                        type?.Contains("Duplicate", StringComparison.OrdinalIgnoreCase) == true ||
+                        title?.Contains("duplicating", StringComparison.OrdinalIgnoreCase) == true ||
+                        apiEx.StatusCode == HttpStatusCode.Conflict;
+
+                    if (isDuplicate)
+                    {
+                        return lines.Count == 1
+                            ? "Дублирование: " + lines[0].TrimStart('•', ' ')
+                            : "Обнаружено дублирование:\n" + string.Join("\n", lines);
+                    }
+
+                    // Обычная валидация (не дубликат)
+                    var header = GetString(root, "message") ?? "Ошибки валидации:";
+                    return header + "\n" + string.Join("\n", lines);
+                }
+            }
+
+            // --- 2. SHORTAGES (как было раньше) ---
+            if (root.TryGetProperty("shortages", out var shortages) && shortages.ValueKind == JsonValueKind.Array)
+            {
+                var lines = new List<string>();
+                var header = GetString(root, "message")
+                    ?? GetMessageByExceptionType(type)
+                    ?? "Недостаточно ингредиентов";
+
+                lines.Add(header);
 
                 foreach (var item in shortages.EnumerateArray())
                 {
@@ -66,18 +86,32 @@ public class GoldenBreadApiClient(HttpClient httpClient)
                 return string.Join("\n", lines);
             }
 
+            // --- 3. БАЗОВЫЙ ТЕКСТ (message / error / detail / title / type) ---
+            var mainText = GetString(root, "message")
+                ?? GetString(root, "error")
+                ?? GetString(root, "detail");
+
+            if (string.IsNullOrWhiteSpace(mainText) && title is not null && !IsGenericTitle(title))
+                mainText = title;
+
+            if (string.IsNullOrWhiteSpace(mainText) && type is not null)
+                mainText = GetMessageByExceptionType(type);
+
             return mainText ?? apiEx.Message;
         }
         catch
         {
             return apiEx.Message;
         }
-
-        static string? GetString(JsonElement el, string prop) =>
-            el.TryGetProperty(prop, out var p) && p.ValueKind == JsonValueKind.String
-                ? p.GetString()
-                : null;
     }
+
+    private static bool IsGenericTitle(string title) =>
+        title.Equals("Conflict", StringComparison.OrdinalIgnoreCase) ||
+        title.Equals("Bad Request", StringComparison.OrdinalIgnoreCase) ||
+        title.Equals("Not Found", StringComparison.OrdinalIgnoreCase) ||
+        title.Equals("Unauthorized", StringComparison.OrdinalIgnoreCase) ||
+        title.Contains("validation", StringComparison.OrdinalIgnoreCase) ||
+        title.Contains("unexpected", StringComparison.OrdinalIgnoreCase);
 
     private static string? GetMessageByExceptionType(string type) => type switch
     {
@@ -89,4 +123,31 @@ public class GoldenBreadApiClient(HttpClient httpClient)
         "BusinessValidationException" => "Бизнес-ошибка",
         _ => null
     };
+
+
+    /// <summary>
+    /// Перевод имён свойств на русский для тостов
+    /// Ключи должны совпадать с тем, что присылает API в propertyName
+    /// </summary>
+    private static readonly Dictionary<string, string> PropertyNamesRu = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Name"] = "Название",
+        ["NewEmail"] = "Электронная почта",
+        ["Role"] = "Роль",
+        ["Phone"] = "Телефон",
+        ["Address"] = "Адрес",
+        ["UserName"] = "Логин",
+        ["Password"] = "Пароль",
+        ["SupplierId"] = "Поставщик",
+        ["IngredientId"] = "Ингредиент",
+        ["ProductId"] = "Продукт",
+        ["OrderId"] = "Заказ",
+        ["AccountId"] = "Аккаунт",
+        ["Role"] = "Роль",
+    };
+
+    private static string? GetString(JsonElement el, string prop) =>
+        el.TryGetProperty(prop, out var p) && p.ValueKind == JsonValueKind.String
+            ? p.GetString()
+            : null;
 }
