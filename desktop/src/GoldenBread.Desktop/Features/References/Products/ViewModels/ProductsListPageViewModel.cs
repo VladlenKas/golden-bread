@@ -164,6 +164,7 @@ public partial class ProductsListPageViewModel : PageViewModel, ISukiStackPageTi
         return await tcs.Task;
     }
 
+
     [ReactiveCommand]
     private async Task<ProductListItem?> EditRecipeAsync(ProductListItem? item) => item;
 

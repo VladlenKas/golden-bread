@@ -24,11 +24,6 @@
           "update": true,
           "delete": true
         },
-        "warehouse": {
-          "create": true,
-          "update": true,
-          "delete": true
-        },
         "orders": {
           "create": true,
           "update": true,
@@ -61,11 +56,6 @@
           "delete": false
         },
         "purchase_positions": {
-          "create": true,
-          "update": true,
-          "delete": false
-        },
-        "warehouse": {
           "create": true,
           "update": true,
           "delete": false

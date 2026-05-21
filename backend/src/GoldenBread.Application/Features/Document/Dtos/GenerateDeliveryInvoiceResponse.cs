@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GoldenBread.Application.Features.Document.Dtos;
+﻿namespace GoldenBread.Application.Features.Document.Dtos;
 
 public class GenerateDeliveryInvoiceResponse
 {

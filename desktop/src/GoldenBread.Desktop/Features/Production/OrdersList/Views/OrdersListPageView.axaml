@@ -82,7 +82,7 @@
 								</StackPanel>
 							</Expander.Header>
 							<ScrollViewer>
-								<ItemsControl ItemsSource="{Binding CreatedItems}" HorizontalAlignment="Stretch">
+								<ItemsControl x:Name="ItemsList1" ItemsSource="{Binding CreatedItems}" HorizontalAlignment="Stretch">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<suki:GlassCard CornerRadius="12"
@@ -142,6 +142,14 @@
 																   FontSize="13" FontWeight="SemiBold"/>
 													</StackPanel>
 												</StackPanel>
+												<suki:GlassCard.ContextMenu>
+									<ContextMenu>
+										<MenuItem Header="Скачать накладную"
+												  Icon="{icon:MaterialIconExt Kind=FileDownload}"
+												  Command="{Binding #ItemsList1.DataContext.DownloadDocumentCommand}"
+												  CommandParameter="{Binding}"/>
+									</ContextMenu>
+								</suki:GlassCard.ContextMenu>
 											</suki:GlassCard>
 										</DataTemplate>
 									</ItemsControl.ItemTemplate>
@@ -168,7 +176,7 @@
 								</StackPanel>
 							</Expander.Header>
 							<ScrollViewer>
-								<ItemsControl ItemsSource="{Binding InProgressItems}" HorizontalAlignment="Stretch">
+								<ItemsControl x:Name="ItemsList2" ItemsSource="{Binding InProgressItems}" HorizontalAlignment="Stretch">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<suki:GlassCard CornerRadius="12"
@@ -228,6 +236,15 @@
 																   FontSize="13" FontWeight="SemiBold"/>
 													</StackPanel>
 												</StackPanel>
+
+												<suki:GlassCard.ContextMenu>
+									<ContextMenu>
+										<MenuItem Header="Скачать накладную"
+												  Icon="{icon:MaterialIconExt Kind=FileDownload}"
+												  Command="{Binding #ItemsList2.DataContext.DownloadDocumentCommand}"
+												  CommandParameter="{Binding}"/>
+									</ContextMenu>
+								</suki:GlassCard.ContextMenu>
 											</suki:GlassCard>
 										</DataTemplate>
 									</ItemsControl.ItemTemplate>
@@ -254,7 +271,7 @@
 								</StackPanel>
 							</Expander.Header>
 							<ScrollViewer>
-								<ItemsControl ItemsSource="{Binding CompletedItems}" HorizontalAlignment="Stretch">
+								<ItemsControl x:Name="ItemsList3" ItemsSource="{Binding CompletedItems}" HorizontalAlignment="Stretch">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<suki:GlassCard CornerRadius="12"
@@ -313,6 +330,14 @@
 																   FontSize="13" FontWeight="SemiBold"/>
 													</StackPanel>
 												</StackPanel>
+												<suki:GlassCard.ContextMenu>
+									<ContextMenu>
+										<MenuItem Header="Скачать накладную"
+												  Icon="{icon:MaterialIconExt Kind=FileDownload}"
+												  Command="{Binding #ItemsList3.DataContext.DownloadDocumentCommand}"
+												  CommandParameter="{Binding}"/>
+									</ContextMenu>
+								</suki:GlassCard.ContextMenu>
 											</suki:GlassCard>
 										</DataTemplate>
 									</ItemsControl.ItemTemplate>
@@ -339,7 +364,7 @@
 								</StackPanel>
 							</Expander.Header>
 							<ScrollViewer>
-								<ItemsControl ItemsSource="{Binding CanceledItems}" HorizontalAlignment="Stretch">
+								<ItemsControl x:Name="ItemsList4"  ItemsSource="{Binding CanceledItems}" HorizontalAlignment="Stretch">
 									<ItemsControl.ItemTemplate>
 										<DataTemplate>
 											<suki:GlassCard CornerRadius="12"
@@ -381,6 +406,14 @@
 																   TextDecorations="Strikethrough"/>
 													</StackPanel>
 												</StackPanel>
+												<suki:GlassCard.ContextMenu>
+									<ContextMenu>
+										<MenuItem Header="Скачать накладную"
+												  Icon="{icon:MaterialIconExt Kind=FileDownload}"
+												  Command="{Binding #ItemsList4.DataContext.DownloadDocumentCommand}"
+												  CommandParameter="{Binding}"/>
+									</ContextMenu>
+								</suki:GlassCard.ContextMenu>
 											</suki:GlassCard>
 										</DataTemplate>
 									</ItemsControl.ItemTemplate>

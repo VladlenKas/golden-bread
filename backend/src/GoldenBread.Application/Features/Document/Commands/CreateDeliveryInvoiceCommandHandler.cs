@@ -22,7 +22,7 @@ public class GenerateDeliveryInvoiceCommandHandler(
         var company = Company.Create(
             0,
             0,
-            "GoldenBred",
+            "GoldenBread",
             "529402859238",
             "1857203028347",
             "89377888090",

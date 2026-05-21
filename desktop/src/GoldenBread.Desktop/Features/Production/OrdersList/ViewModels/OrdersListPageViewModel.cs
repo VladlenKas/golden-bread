@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using Avalonia.Platform.Storage;
+using DynamicData;
 using GoldenBread.Desktop.Features.Common;
 using GoldenBread.Desktop.Features.Production.OrdersList.Dtos;
 using GoldenBread.Desktop.Features.Production.OrdersList.Models;
@@ -21,6 +22,8 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
     private readonly IOrdersApi _api;
     private readonly DialogService _dialogService;
     private readonly ToastService _toastService;
+    private readonly IDocumentsApi _documentsApi;
+    private readonly WindowService _windowService;
 
     [Reactive] private bool _isBusy;
     [Reactive] private string _searchText = "";
@@ -53,10 +56,14 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
 
     public OrdersListPageViewModel(
         IOrdersApi api,
+        IDocumentsApi documentsApi,
+        WindowService windowService,
         DialogService dialogService,
         ToastService toastService)
     {
         _api = api;
+        _documentsApi = documentsApi;
+        _windowService = windowService;
         _dialogService = dialogService;
         _toastService = toastService;
 
@@ -326,6 +333,69 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
 
         var vm = DetailDialogFactory.FromOrder(detail.Content);
         _dialogService.ShowDetailViewModel(vm);
+    }
+
+    [ReactiveCommand]
+    private async Task DownloadDocumentAsync(KanbanItem? item)
+    {
+        if (item is null) return;
+
+        try
+        {
+            IsBusy = true;
+
+            // 1. Скачиваем с сервера
+            var response = await _documentsApi.DownloadDeliveryInvoiceAsync(item.Id);
+
+            if (!response.IsSuccessStatusCode || response.Content is null)
+            {
+                _toastService.ShowError("Не удалось скачать документ");
+                return;
+            }
+
+            // 2. Диалог сохранения
+            var window = _windowService.GetMenuWindow();
+            if (window is null)
+            {
+                _toastService.ShowError("Окно не найдено");
+                return;
+            }
+
+            var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+            {
+                Title = "Сохранить накладную",
+                SuggestedFileName = $"Накладная_№{item.Id}.xlsx",
+                DefaultExtension = "xlsx",
+                FileTypeChoices = new[]
+                {
+                new FilePickerFileType("Excel (*.xlsx)") { Patterns = new[] { "*.xlsx" } }
+            }
+            });
+
+            if (file is null)
+                return; // пользователь отменил
+
+            // 3. Записываем на диск
+            await using (var stream = response.Content)
+            await using (var fileStream = await file.OpenWriteAsync())
+            {
+                await stream.CopyToAsync(fileStream);
+            }
+
+            _toastService.ShowSuccess("Документ сохранён");
+        }
+        catch (ApiException ex)
+        {
+            _toastService.ShowError(GoldenBreadApiClient.GetErrorMessage(ex));
+        }
+        catch (Exception ex)
+        {
+            _toastService.ShowError($"Ошибка сохранения: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     private SourceList<KanbanItem>? GetList(string key) => key switch

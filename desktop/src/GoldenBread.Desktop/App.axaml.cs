@@ -99,6 +99,7 @@ public partial class App : Application, IDisposable
         services.AddApiClient<IProductCategoriesApi>();
         services.AddApiClient<IImagesApi>();
         services.AddApiClient<IOrdersApi>();
+        services.AddApiClient<IDocumentsApi>();
 
         return services.BuildServiceProvider();
     }
