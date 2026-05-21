@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Exceptions;
 
 
 namespace GoldenBread.Application.Features.Ingredient.Commands.CreateIngredient;
@@ -12,6 +13,10 @@ public sealed class CreateIngredientCommandHandler(
     public async Task<int> Handle(CreateIngredientCommand request, CancellationToken ct)
     {
         var dto = request.IngredientDto;
+
+        if (await repository.ExistsByNameAsync(dto.Name, null, ct))
+            throw new DuplicateEntityException(nameof(dto.Name));
+
         var entity = new DbEntities.Ingredient
         {
             Name = dto.Name,

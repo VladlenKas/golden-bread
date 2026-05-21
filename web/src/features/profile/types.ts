@@ -32,7 +32,7 @@ export interface ProfileResponse {
 }
 
 // Данные по заказу
-export type OrderStatus = 'Awaiting' | 'AwaitingIngredients' | 'InProgress' | 'Completed' | 'Canceled';
+export type OrderStatus = 'Created' | 'InProgress' | 'Completed' | 'Canceled';
 
 export interface OrderListItemResponse {
   orderId: number;

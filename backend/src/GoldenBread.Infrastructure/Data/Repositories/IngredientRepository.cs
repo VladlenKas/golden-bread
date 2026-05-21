@@ -21,12 +21,20 @@ public class IngredientRepository(IGoldenBreadContext context) : IIngredientRepo
             .FirstOrDefaultAsync(i => i.IngredientId == id, ct);
     }
 
-    public async Task<Ingredient?> GetByIdWithRelationsAsync(int id, CancellationToken ct = default)
+    public async Task<bool> ExistsByNameAsync(
+        string name,
+        int? excludeId = null,
+        CancellationToken ct = default)
     {
-        return await context.Ingredients
-            .Include(i => i.Recipes)
-            .Include(i => i.SupplierIngredients)
-            .FirstOrDefaultAsync(i => i.IngredientId == id, ct);
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+
+        name = name.Trim().ToLower();
+
+        return await context.Ingredients.AnyAsync(c =>
+            c.Name != null &&
+            c.Name.Trim().ToLower() == name &&
+            (!excludeId.HasValue || c.IngredientId != excludeId.Value), ct);
     }
 
     public async Task AddAsync(Ingredient ingredient, CancellationToken ct = default)

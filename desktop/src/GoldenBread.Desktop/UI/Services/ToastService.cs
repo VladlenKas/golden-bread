@@ -51,6 +51,16 @@ public class ToastService(ISukiToastManager manager)
             .Queue();
     }
 
+    public void ShowErrorImportant(string message)
+    {
+        manager.CreateToast()
+            .WithTitle("Ошибка")
+            .WithContent(message)
+            .OfType(NotificationType.Error)
+            .Dismiss().ByClicking()
+            .Queue();
+    }
+
     public TaskCompletionSource<bool> ShowWarningQuestion(string message)
     {
         var tcs = new TaskCompletionSource<bool>();

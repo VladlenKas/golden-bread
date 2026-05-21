@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Application.Common.Exceptions;
+using GoldenBread.Application.Features.Orders.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace GoldenBread.Api.Handlers;
@@ -38,6 +39,8 @@ public sealed class GlobalExceptionHandler(
         DuplicateEntityException ex => (StatusCodes.Status409Conflict, $"Error duplicating the value for the \"{ex.PropertyName}\" parameter"),
         BusinessValidationException => (StatusCodes.Status422UnprocessableEntity, "One validation error has occurred"),
         NotFoundException => (StatusCodes.Status404NotFound, "Not found resourse"),
+        InsufficientIngredientsException ex => (StatusCodes.Status409Conflict, ex.Message),
+        InvalidOperationException => (StatusCodes.Status400BadRequest, "Bad Request"),
         _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
     };
 
@@ -46,6 +49,7 @@ public sealed class GlobalExceptionHandler(
         ValidationException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Errors },
         DuplicateEntityException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
         BusinessValidationException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["errors"] = ex.Error },
+        InsufficientIngredientsException ex => new Dictionary<string, object?> { ["message"] = exception.Message, ["shortages"] = ex.Shortages },
         _ => new Dictionary<string, object?> { ["message"] = exception.Message }
     };
 }

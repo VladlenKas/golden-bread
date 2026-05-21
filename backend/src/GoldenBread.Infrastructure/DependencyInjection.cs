@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentAccountContext, CurrentAccountContext>();
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<IDeliveryInvoiceGenerator, DeliveryInvoiceGenerator>();
+        services.AddScoped<IUnitConversionService, UnitConversionService>();
 
         // Repositories
         services.AddScoped<IAccountRepository, AccountRepository>();

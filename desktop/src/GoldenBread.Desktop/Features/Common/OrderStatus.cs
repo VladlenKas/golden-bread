@@ -1,4 +1,4 @@
-﻿namespace GoldenBread.Domain.Enums;
+﻿namespace GoldenBread.Desktop.Features.Common;
 
 public enum OrderStatus
 {

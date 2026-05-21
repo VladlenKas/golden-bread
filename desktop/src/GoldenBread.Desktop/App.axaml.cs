@@ -85,6 +85,7 @@ public partial class App : Application, IDisposable
             client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/json"));
         }).AddHttpMessageHandler<SessionHeaderHandler>();
+
         services.AddApiClient<IAuthApi>();
         services.AddApiClient<IAccountApi>();
         services.AddApiClient<IUsersApi>();
@@ -97,6 +98,7 @@ public partial class App : Application, IDisposable
         services.AddApiClient<IProductsApi>();
         services.AddApiClient<IProductCategoriesApi>();
         services.AddApiClient<IImagesApi>();
+        services.AddApiClient<IOrdersApi>();
 
         return services.BuildServiceProvider();
     }
@@ -153,6 +155,8 @@ public partial class App : Application, IDisposable
 
         // Orders Pages
         services.AddSingleton<OrdersHostPageViewModel>();
+        services.AddSingleton<OrdersListPageViewModel>();
+        services.AddTransient<OrderEditorPageViewModel>();
 
         // Common Pages
         services.AddTransient<ChangePasswordPageViewModel>();

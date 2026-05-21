@@ -1,10 +1,6 @@
 ﻿using ClosedXML.Excel;
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace GoldenBread.Infrastructure.Services;
 

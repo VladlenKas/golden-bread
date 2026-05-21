@@ -99,7 +99,7 @@ public class GetCartQueryHandler(
         if (scheduleResult.IsFeasible)
         {
             minimalDate = DateOnly.FromDateTime(scheduleResult.PlanEnd);
-            maximalDate = minimalDate.Value.AddDays(30);
+            maximalDate = DateOnly.FromDateTime(DateTime.Now).AddDays(30);
         }
 
         return new CartDto

@@ -11,7 +11,7 @@ public partial class ProductsListPageView : UserControl
         InitializeComponent();
     }
 
-    private void DataGrid_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
+    private void ItemCard_DoubleTapped(object? sender, Avalonia.Input.TappedEventArgs e)
     {
         if (sender is Control { DataContext: ProductListItem item } &&
             DataContext is ProductsListPageViewModel vm)

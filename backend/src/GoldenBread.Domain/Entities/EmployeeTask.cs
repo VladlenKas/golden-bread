@@ -40,4 +40,9 @@ public class EmployeeTask
             CompletedQuantity = completedQuantity,
         };
     }
+
+    public void UpdateStatus(OrderStatus status)
+    {
+        Status = status;
+    }
 }

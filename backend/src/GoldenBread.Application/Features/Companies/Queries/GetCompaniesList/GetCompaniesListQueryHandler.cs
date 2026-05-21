@@ -36,7 +36,7 @@ public sealed class GetCompaniesListQueryHandler(ICompanyRepository companyRepos
     {
         return !company.Orders.Any(o =>
                 o.Status == Domain.Enums.OrderStatus.InProgress ||
-                o.Status == Domain.Enums.OrderStatus.Awaiting) ||
+                o.Status == Domain.Enums.OrderStatus.Created) ||
                 company.Orders.Count == 0;
     }
 }

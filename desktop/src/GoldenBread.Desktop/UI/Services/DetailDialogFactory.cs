@@ -1,10 +1,13 @@
 ﻿using GoldenBread.Desktop.Features.Administration.Companies.Models;
 using GoldenBread.Desktop.Features.Administration.Users.Models;
+using GoldenBread.Desktop.Features.Common;
 using GoldenBread.Desktop.Features.Common.DetailData;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions.Models;
+using GoldenBread.Desktop.Features.Production.OrdersList.Dtos;
 using GoldenBread.Desktop.Features.References.Employees.Models;
 using GoldenBread.Desktop.Features.References.Products.Models;
 using GoldenBread.Desktop.Features.References.Suppliers.Models;
+using GoldenBread.Desktop.UI.Helpers;
 
 
 namespace GoldenBread.Desktop.UI.Services;
@@ -165,4 +168,67 @@ public static class DetailDialogFactory
                 ])
             ]);
     }
+
+    public static DetailDialogData FromOrder(OrderDetailResponse item)
+    {
+        return new DetailDialogData(
+            Sections:
+            [
+                new DetailSectionData(
+                Header: "Основная информация",
+                Fields:
+                [
+                    new("Номер заказа", $"Заказ №{item.OrderId}"),
+                    new("Компания", item.CompanyName),
+                    new("Статус", GetStatusName(item.Status)),
+                    new("Дата создания", item.CreatedAt.ToString("dd.MM.yyyy HH:mm")),
+                    new("Дата начала", item.StartDate?.ToString("dd.MM.yyyy") ?? "Не назначена"),
+                    new("Дата завершения", item.EndDate.ToString("dd.MM.yyyy")),
+                    new("Общая сумма", $"{item.TotalAmount:N2} ₽")
+                ]),
+
+            new DetailSectionData(
+                Header: $"Позиции заказа ({item.Items.Count})",
+                Fields:
+                [
+                    ..item.Items.Select(i =>
+                        new DetailFieldData(
+                            $"Позиция",
+                            $"Название: {i.ProductName} \nСумма: {i.TotalCost:N2} ₽ \nКол-во партий: {i.Quantity} \nКол-во ед. в партии: {i.BatchInfo} \nСтатус: ({GetStatusName(i.Status)})"))
+                ]),
+
+            new DetailSectionData(
+                Header: $"Списанные ингредиенты ({item.Reservations.Count})",
+                Fields: item.Reservations.Count != 0
+                    ?
+                    [
+                        ..item.Reservations.Select(r =>
+                            new DetailFieldData(
+                                r.IngredientName,
+                                $"{r.ReservedQuantity:N2} {LocalizedIngredientUnits.UnitsTable(r.Unit)} (партия от {r.DeliveryDate:dd.MM.yyyy}, годен до {r.ExpiryDate:dd.MM.yyyy})"))
+                    ]
+                    : [new DetailFieldData("Нет списанных ингредиентов", "")]),
+
+            new DetailSectionData(
+                Header: $"Задачи сотрудников ({item.Tasks.Count})",
+                Fields: item.Tasks.Count != 0
+                    ?
+                    [
+                        ..item.Tasks.Select(t =>
+                            new DetailFieldData(
+                                $"Задача №{t.EmployeeTaskId}",
+                                $"Сотрудник: {t.EmployeeName} \nСлот: {t.StartTime:HH:mm}-{t.EndTime:HH:mm} \nСтатус: {GetStatusName(t.Status)}"))
+                    ]
+                    : [new DetailFieldData("Нет назначенных задач", "")])
+            ]);
+    }
+
+    private static string GetStatusName(OrderStatus status) => status switch
+    {
+        OrderStatus.Created => "Создан",
+        OrderStatus.InProgress => "В процессе",
+        OrderStatus.Completed => "Готов",
+        OrderStatus.Canceled => "Отменён",
+        _ => status.ToString()
+    };
 }

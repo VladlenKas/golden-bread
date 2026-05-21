@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Exceptions;
 
 
 namespace GoldenBread.Application.Features.Ingredient.Commands.UpdateIngredient;
@@ -16,6 +17,9 @@ public sealed class UpdateIngredientCommandHandler(
 
         if (entity is null)
             return false;
+
+        if (await repository.ExistsByNameAsync(dto.Name, entity.IngredientId, ct))
+            throw new DuplicateEntityException(nameof(dto.Name));
 
         entity.Name = dto.Name;
         entity.BaseUnit = dto.BaseUnit;

@@ -66,8 +66,7 @@ export function useOrders() {
   // Маппинг статусов (проверь какие статусы реально приходят с бэкенда!)
   const getStatusLabel = (status: OrderStatus): string => {
     const map: Record<OrderStatus, string> = {
-      Awaiting: 'Ожидает подтверждения',
-      AwaitingIngredients: 'Ожидает ингредиентов',
+      Created: 'Необработан',
       InProgress: 'В процессе',
       Completed: 'Завершен',
       Canceled: 'Отменен'
@@ -77,8 +76,7 @@ export function useOrders() {
 
   const getStatusClasses = (status: OrderStatus): string => {
     const map: Record<OrderStatus, string> = {
-      Awaiting: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500',
-      AwaitingIngredients: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500',
+      Created: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500',
       InProgress: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500',
       Completed: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500',
       Canceled: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
@@ -89,8 +87,7 @@ export function useOrders() {
   // Опции для фильтра статусов
   const statusOptions: { value: OrderStatus | 'all'; label: string }[] = [
     { value: 'all', label: 'Все статусы' },
-    { value: 'Awaiting', label: 'Ожидает подтверждения' },
-    { value: 'AwaitingIngredients', label: 'Ожидает ингредиентов' },
+    { value: 'Created', label: 'Необработан' },
     { value: 'InProgress', label: 'В процессе' },
     { value: 'Completed', label: 'Завершен' },
     { value: 'Canceled', label: 'Отменен' }

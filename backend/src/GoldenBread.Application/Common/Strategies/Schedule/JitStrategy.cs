@@ -67,8 +67,8 @@ public class JitStrategy : ISchedulingStrategy
                 var task = EmployeeTask.Create(
                     employeeId: employee.EmployeeId,
                     orderItemId: orderItem.OrderItemId,
-                    startTime: startTime,
-                    endTime: endTime,
+                    startTime: startTime.UtcDateTime,
+                    endTime: endTime.UtcDateTime,
                     assignedQuantity: takeUnits,
                     completedQuantity: 0);
 

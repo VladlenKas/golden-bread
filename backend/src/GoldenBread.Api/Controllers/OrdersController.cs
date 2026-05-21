@@ -1,6 +1,12 @@
 ﻿using GoldenBread.Application.Features.CompanyOrder.Commands.CreateOrder;
 using GoldenBread.Application.Features.CompanyOrder.Queries.GetOrders;
+using GoldenBread.Application.Features.Orders.Commands;
+using GoldenBread.Application.Features.Orders.Dtos;
+using GoldenBread.Application.Features.Orders.Exceptions;
+using GoldenBread.Application.Features.Orders.Queries;
 using Microsoft.AspNetCore.Authorization;
+using CreateOrderCommandUser = GoldenBread.Application.Features.Orders.Commands.CreateOrderCommand;
+using CreateOrderCommandCompany = GoldenBread.Application.Features.CompanyOrder.Commands.CreateOrder.CreateOrderCommand;
 
 namespace GoldenBread.Api.Controllers;
 
@@ -18,28 +24,77 @@ public class OrdersController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand request)
+    public async Task<IActionResult> CreateOrderCompany([FromBody] CreateOrderCommandCompany request)
     {
-        var command = new CreateOrderCommand(
+        var command = new CreateOrderCommandCompany(
             request.DesiredDeliveryDate);
 
         var result = await mediator.Send(command);
-
-        // Сейчас эта функция не работает.
-        // Ответ всегда положительный, если не критическая ошибка
-        //if (result.InsufficientIngredients)
-        //{
-        //    return Ok(new
-        //    {
-        //        success = false,
-        //        insufficientIngredients = true,
-        //    });
-        //}
 
         return Ok(new
         {
             success = true,
             orderId = result.OrderId
         });
+    }
+
+    [HttpGet("kanban")]
+    [Authorize]
+    public async Task<ActionResult<List<OrderKanbanItem>>> GetKanban()
+    {
+        var result = await mediator.Send(new GetOrdersKanbanQuery());
+        return Ok(result);
+    }
+
+    [HttpPut("status")]
+    [Authorize]
+    public async Task<ActionResult> UpdateStatus([FromBody] UpdateOrderStatusRequest request)
+    {
+        try
+        {
+            await mediator.Send(new UpdateOrderStatusCommand(request));
+            return NoContent();
+        }
+        catch (InsufficientIngredientsException ex)
+        {
+            return Conflict(new InsufficientIngredientsResponse(ex.Shortages));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpGet("editor-data")]
+    [Authorize]
+    public async Task<ActionResult<OrderEditorDataResponse>> GetEditorData()
+    {
+        var result = await mediator.Send(new GetOrderEditorDataQuery());
+        return Ok(result);
+    }
+
+    [HttpPost("calculate-delivery")]
+    [Authorize]
+    public async Task<ActionResult<CalculateDeliveryResponse>> CalculateDelivery(
+        [FromBody] CalculateDeliveryRequest request)
+    {
+        var result = await mediator.Send(new CalculateDeliveryDateQuery(request));
+        return Ok(result);
+    }
+
+    [HttpPost("create-from-user")]
+    [Authorize]
+    public async Task<ActionResult<int>> CreateOrderUser([FromBody] CreateOrderRequest request)
+    {
+        var id = await mediator.Send(new CreateOrderCommandUser(request));
+        return CreatedAtAction(nameof(GetById), new { id }, id);
+    }
+
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<OrderDetailResponse>> GetById(int id)
+    {
+        var result = await mediator.Send(new GetOrderByIdQuery(id));
+        return result is null ? NotFound() : Ok(result);
     }
 }

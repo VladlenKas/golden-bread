@@ -26,7 +26,8 @@
 
 											<TextBox Text="{Binding Value}"
 													 Classes="NoShadow"
-													 TextWrapping="Wrap"
+													 VerticalContentAlignment="Top"
+													 TextWrapping="WrapWithOverflow"
 													 suki:TextBoxExtensions.Prefix="{Binding Label, StringFormat='{}{0}:'}" />
 
 										</DataTemplate>

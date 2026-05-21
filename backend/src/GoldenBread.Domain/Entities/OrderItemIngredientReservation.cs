@@ -1,6 +1,4 @@
-﻿using GoldenBread.Domain.Enums;
-
-namespace GoldenBread.Domain.Entities;
+﻿namespace GoldenBread.Domain.Entities;
 
 public class OrderItemIngredientReservation
 {
@@ -8,7 +6,6 @@ public class OrderItemIngredientReservation
     public int OrderItemId { get; set; }
     public int IngredientBatchId { get; set; }
     public decimal ReservedQuantity { get; set; }   // В единице поставщика
-    public IngredientUnit ReservedUnit { get; set; } // Единица поставщика
 
     public OrderItem OrderItem { get; set; } = null!;
     public IngredientBatch IngredientBatch { get; set; } = null!;

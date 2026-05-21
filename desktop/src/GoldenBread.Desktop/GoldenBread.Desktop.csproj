@@ -48,8 +48,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Production\OrdersList\Models\" />
-  </ItemGroup>
-
 </Project>

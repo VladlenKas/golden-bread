@@ -19,6 +19,7 @@ public class GoldenBreadContext : DbContext, IGoldenBreadContext
     public DbSet<Favorite> Favorites { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
     public DbSet<SupplierIngredient> SupplierIngredients { get; set; }
+    public DbSet<OrderItemIngredientReservation> OrderItemIngredientReservations { get; set; }
     public DbSet<IngredientBatch> IngredientBatches { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }

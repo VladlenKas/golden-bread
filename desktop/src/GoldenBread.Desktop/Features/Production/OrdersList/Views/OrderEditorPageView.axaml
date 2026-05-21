@@ -1,0 +1,249 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.Production.OrdersList.ViewModels"
+			 xmlns:forms="using:GoldenBread.Desktop.Features.Production.OrdersList.Forms"
+			 xmlns:dtos="using:GoldenBread.Desktop.Features.Production.OrdersList.Dtos"
+			 x:Class="GoldenBread.Desktop.Features.Production.OrdersList.Views.OrderEditorPageView"
+			 x:DataType="vm:OrderEditorPageViewModel"
+			 x:CompileBindings="False">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel HorizontalSpacing="12" VerticalSpacing="16" LastChildFill="True">
+
+			<!-- Кнопки -->
+			<StackPanel DockPanel.Dock="Top"
+						Orientation="Horizontal"
+						HorizontalAlignment="Right"
+						Spacing="8">
+				<Button Classes="Basic" Content="Назад" Command="{Binding GoBackCommand}"/>
+				<Button Classes="Flat"
+						Content="Создать заказ"
+						Command="{Binding SaveCommand}"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12">
+				<!-- Левая карточка: 3 expander -->
+				<ScrollViewer>
+					<suki:GlassCard Width="500">
+						<StackPanel Spacing="12">
+
+							<!-- Компания -->
+							<Expander Header="Выбор компании" IsExpanded="True" ExpandDirection="Down">
+								<StackPanel Spacing="8">
+									<AutoCompleteBox ItemsSource="{Binding Companies}"
+													 SelectedItem="{Binding SelectedCompany}"
+													 FilterMode="Contains"
+													 MinimumPrefixLength="0"
+													 Watermark="Начните вводить название компании..."
+													 ValueMemberBinding="{Binding Name}">
+										<AutoCompleteBox.ItemTemplate>
+											<DataTemplate DataType="dtos:CompanyLookup">
+												<TextBlock Text="{Binding Name}"/>
+											</DataTemplate>
+										</AutoCompleteBox.ItemTemplate>
+									</AutoCompleteBox>
+								</StackPanel>
+							</Expander>
+
+							<!-- Продукция -->
+							<Expander Header="Выбор продукции" IsExpanded="True" ExpandDirection="Down">
+								<StackPanel Spacing="8">
+									<AutoCompleteBox ItemsSource="{Binding ProductAutocompleteItems}"
+													 SelectedItem="{Binding SelectedProductAutoCompleteItem}"
+													 FilterMode="Contains"
+													 MinimumPrefixLength="0"
+													 Watermark="Выберите продукт для добавления"/>
+								</StackPanel>
+							</Expander>
+
+							<!-- Корзина -->
+							<Expander Header="Выбранные позиции" IsExpanded="True" ExpandDirection="Down">
+								<Grid>
+									<suki:InfoBar Title="Добавьте продукцию"
+												  Severity="Information"
+												  IsClosable="False"
+												  IsOpen="True"
+												  IsVisible="{Binding IsCartEmpty}"/>
+
+									<StackPanel Spacing="8" IsVisible="{Binding HasCartItems}">
+										<ItemsControl x:Name="CartItemsList" ItemsSource="{Binding Form.CartItems}">
+											<ItemsControl.ItemTemplate>
+												<DataTemplate DataType="forms:OrderCartItem">
+													<suki:GlassCard Margin="0 8" Padding="20 16">
+														<StackPanel Spacing="6">
+
+															<!-- Заголовок: название + удаление -->
+															<DockPanel>
+																<Button DockPanel.Dock="Right"
+																		Classes="Basic Accent"
+																		suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Delete}"
+																		Command="{Binding #CartItemsList.DataContext.RemoveProductCommand}"
+																		CommandParameter="{Binding}"/>
+																<TextBlock Text="{Binding ProductName}"
+																		   FontWeight="Bold"
+																		   Classes="h5"
+																		   VerticalAlignment="Center"/>
+															</DockPanel>
+
+															<!-- Партия и базовые цены -->
+															<DockPanel VerticalSpacing="12" LastChildFill="False">
+																<TextBlock DockPanel.Dock="Left" Text="Партия:" VerticalAlignment="Center"/>
+																<ComboBox DockPanel.Dock="Left"
+																		  ItemsSource="{Binding AvailableBatches}"
+																		  SelectedItem="{Binding SelectedBatch}">
+																	<ComboBox.ItemTemplate>
+																		<DataTemplate>
+																			<TextBlock Text="{Binding DisplayText}"/>
+																		</DataTemplate>
+																	</ComboBox.ItemTemplate>
+																</ComboBox>
+
+																<DockPanel DockPanel.Dock="Right">
+																	<Button Classes="Basic"
+																			suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Minus}"
+																			Command="{Binding #CartItemsList.DataContext.DecreaseQuantityCommand}"
+																			CommandParameter="{Binding}"/>
+																	<TextBlock Text="{Binding Quantity}"
+																			   Width="24"
+																			   TextAlignment="Center"
+																			   VerticalAlignment="Center"/>
+																	<Button Classes="Basic"
+																			suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Plus}"
+																			Command="{Binding #CartItemsList.DataContext.IncreaseQuantityCommand}"
+																			CommandParameter="{Binding}"/>
+																</DockPanel>
+															</DockPanel>
+
+															<!-- Количество партий и итоги -->
+															<DockPanel HorizontalSpacing="12" HorizontalAlignment="Right" LastChildFill="False">
+																<StackPanel Orientation="Horizontal" Spacing="4">
+																	<TextBlock Text="Всего шт:" Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
+																	<TextBlock Text="{Binding TotalUnits}" FontWeight="Bold" VerticalAlignment="Center"/>
+																</StackPanel>
+																<StackPanel Orientation="Horizontal" Spacing="4">
+																	<TextBlock Text="Сумма:" Opacity="0.6" FontSize="12" VerticalAlignment="Center"/>
+																	<TextBlock Text="{Binding TotalCost, StringFormat='{}{0:N2} ₽'}"
+																			   FontWeight="Bold"
+																			   FontSize="16"
+																			   VerticalAlignment="Center"
+																			   Foreground="{DynamicResource SukiPrimaryColor}"/>
+																</StackPanel>
+															</DockPanel>
+
+														</StackPanel>
+													</suki:GlassCard>
+												</DataTemplate>
+											</ItemsControl.ItemTemplate>
+										</ItemsControl>
+									</StackPanel>
+								</Grid>
+							</Expander>
+						</StackPanel>
+					</suki:GlassCard>
+				</ScrollViewer>
+
+				<!-- Правая карточка: дата и итог -->
+				<ScrollViewer>
+					<suki:GlassCard Width="500">
+						<StackPanel>
+							<Expander Header="Выбор даты доставки">
+								<StackPanel Spacing="16">
+									<suki:InfoBar Title="Выберите компанию и добавьте продукцию"
+												  Severity="Information"
+												  IsClosable="False"
+												  IsOpen="True"
+												  IsVisible="{Binding !CanSelectDate}"/>
+
+									<StackPanel Spacing="8" IsEnabled="{Binding CanSelectDate}">
+										<suki:GlassCard>
+											<Calendar SelectedDate="{Binding SelectedCalendarDate, Mode=TwoWay}"
+													  DisplayDateStart="{Binding MinDeliveryDateOffset}"/>
+										</suki:GlassCard>
+
+										<suki:InfoBar IsVisible="{Binding IsOrderTooLarge}"
+													  Title="Заказ слишком большой"
+													  Message="Невозможно рассчитать дату доставки. Уменьшите количество или измените состав заказа."
+													  Severity="Warning"
+													  IsClosable="False"/>
+
+										<StackPanel IsVisible="{Binding !IsOrderTooLarge}" Spacing="4">
+											<TextBlock IsVisible="{Binding !!Form.MinDeliveryDate}"
+													   Foreground="{DynamicResource SukiAccentColor}">
+												<TextBlock.Text>
+													<MultiBinding StringFormat="Минимальная дата доставки: {0:d}">
+														<Binding Path="Form.MinDeliveryDate"/>
+													</MultiBinding>
+												</TextBlock.Text>
+											</TextBlock>
+											<TextBlock IsVisible="{Binding !!Form.MaxDeliveryDate}"
+													   Foreground="{DynamicResource SukiAccentColor}">
+												<TextBlock.Text>
+													<MultiBinding StringFormat="Максимальная дата доставки: {0:d}">
+														<Binding Path="Form.MaxDeliveryDate"/>
+													</MultiBinding>
+												</TextBlock.Text>
+											</TextBlock>
+										</StackPanel>
+									</StackPanel>
+								</StackPanel>
+
+							</Expander>
+							<Expander IsExpanded="True">
+								<Expander.Header>
+									<TextBlock Text="Итого по заказу"
+											   FontSize="16"
+											   FontWeight="SemiBold"/>
+								</Expander.Header>
+
+								<Border Margin="0,12,0,0"
+										Padding="16"
+										CornerRadius="12"
+										Background="{DynamicResource SukiCardBackgroundBrush}">
+									<StackPanel Spacing="14">
+
+										<TextBlock Text="Сводка заказа"
+												   FontSize="15"
+												   FontWeight="Bold"
+												   Opacity="0.9"/>
+
+										<Grid ColumnDefinitions="*,Auto"
+											  RowDefinitions="Auto,Auto,Auto"
+											  RowSpacing="10">
+
+											<TextBlock Grid.Row="0" Grid.Column="0"
+													   Text="Позиций:"
+													   Opacity="0.65"/>
+											<TextBlock Grid.Row="0" Grid.Column="1"
+													   Text="{Binding Form.CartItems.Count}"
+													   FontWeight="SemiBold"/>
+
+											<TextBlock Grid.Row="1" Grid.Column="0"
+													   Text="Всего единиц:"
+													   Opacity="0.65"/>
+											<TextBlock Grid.Row="1" Grid.Column="1"
+													   Text="{Binding TotalUnits}"
+													   FontWeight="SemiBold"/>
+
+											<TextBlock Grid.Row="2" Grid.Column="0"
+													   Text="Общая сумма:"
+													   Opacity="0.65"
+													   VerticalAlignment="Center"/>
+											<TextBlock Grid.Row="2" Grid.Column="1"
+													   Text="{Binding TotalPrice, StringFormat='{}{0:N2} ₽'}"
+													   FontSize="22"
+													   FontWeight="Bold"
+													   Foreground="{DynamicResource SukiPrimaryColor}"/>
+										</Grid>
+
+									</StackPanel>
+								</Border>
+							</Expander>
+						</StackPanel>
+					</suki:GlassCard>
+				</ScrollViewer>
+			</StackPanel>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

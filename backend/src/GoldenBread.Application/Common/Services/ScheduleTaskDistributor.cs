@@ -13,7 +13,8 @@ public class ScheduleTaskDistributor(
     public ScheduleResult Distribute(
         List<OrderItem> orderItems,
         List<Employee> employees,
-        ISchedulingStrategy schedulingStrategy)
+        ISchedulingStrategy schedulingStrategy,
+        DateTimeOffset? deadline = null)
     {
         ScheduleResult? bestResult = null;
 
@@ -45,7 +46,8 @@ public class ScheduleTaskDistributor(
                     employeeTaskAssignmentStrategy,
                     orderItemOrderingStrategy,
                     schedulingStrategy,
-                    calendar);
+                    calendar,
+                    deadline ?? DateTimeOffset.UtcNow.AddDays(calendar.MaxPlanningDays));
 
                 if (bestResult == null || schedulingStrategy.IsBetter(result, bestResult))
                     bestResult = result;
@@ -60,12 +62,13 @@ public class ScheduleTaskDistributor(
         IEmployeeSelectionStrategy selectionStrategy,
         IOrderItemOrderingStrategy orderingStrategy,
         ISchedulingStrategy schedulingStrategy,
-        IWorkCalendar calendar)
+        IWorkCalendar calendar,
+        DateTimeOffset deadline)
     {
         var context = new SchedulingContext
         {
             Calendar = calendar,
-            Deadline = DateTimeOffset.UtcNow.AddDays(calendar.MaxPlanningDays),
+            Deadline = deadline,
             CurrentLoadMinutes = employees.ToDictionary(e => e, e => 0.0)
         };
 

@@ -30,7 +30,7 @@ public class CreateOrderCommandHandler(
             // 2. Создать заказ
             var order = Order.Create(
                 companyId,
-                OrderStatus.Awaiting,
+                OrderStatus.Created,
                 command.DesiredDeliveryDate);
 
             await orderRepository.CreateAsync(order, ct);
