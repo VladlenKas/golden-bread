@@ -211,24 +211,29 @@
 											<MenuItem Header="Данные продукции"
 													  Icon="{icon:MaterialIconExt Kind=PackageVariant}"
 													  Command="{Binding #ItemsList.DataContext.EditCommand}"
+													  IsVisible="{Binding #ItemsList.DataContext.Permissions.Update}"
 													  CommandParameter="{Binding}"/>
 											<MenuItem Header="Рецепт"
 													  Icon="{icon:MaterialIconExt Kind=BookOpenVariant}"
 													  Command="{Binding #ItemsList.DataContext.EditRecipeCommand}"
+													  IsVisible="{Binding #ItemsList.DataContext.Permissions.Update}"
 													  CommandParameter="{Binding}"/>
 											<MenuItem Header="Партии"
 													  Icon="{icon:MaterialIconExt Kind=Archive}"
 													  Command="{Binding #ItemsList.DataContext.EditBatchesCommand}"
+													  IsVisible="{Binding #ItemsList.DataContext.Permissions.Update}"
 													  CommandParameter="{Binding}"/>
 											<MenuItem Header="Фото"
 													  Icon="{icon:MaterialIconExt Kind=Camera}"
 													  Command="{Binding #ItemsList.DataContext.EditImagesCommand}"
+													  IsVisible="{Binding #ItemsList.DataContext.Permissions.Update}"
 													  CommandParameter="{Binding}"/>
 										</MenuItem>
 
 										<MenuItem Header="Удалить"
 												  Icon="{icon:MaterialIconExt Kind=Delete}"
 												  Command="{Binding #ItemsList.DataContext.DeleteCommand}"
+												  IsVisible="{Binding #ItemsList.DataContext.Permissions.Delete}"
 												  CommandParameter="{Binding}"/>
 									</ContextMenu>
 								</suki:GlassCard.ContextMenu>

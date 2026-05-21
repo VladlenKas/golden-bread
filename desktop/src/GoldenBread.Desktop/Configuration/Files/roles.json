@@ -15,9 +15,9 @@
           "delete": true
         },
         "employees": {
-          "create": true,
+          "create": false,
           "update": true,
-          "delete": true
+          "delete": false
         },
         "purchase_positions": {
           "create": true,
@@ -38,16 +38,6 @@
           "create": true,
           "update": true,
           "delete": true
-        },
-        "system_users": {
-          "create": true,
-          "update": true,
-          "delete": true
-        },
-        "companies": {
-          "create": true,
-          "update": true,
-          "delete": true
         }
       }
     },
@@ -59,6 +49,11 @@
           "create": false,
           "update": true,
           "delete": false
+        },
+        "suppliers": {
+          "create": true,
+          "update": true,
+          "delete": true
         },
         "purchase_positions": {
           "create": true,
@@ -72,8 +67,18 @@
         },
         "orders": {
           "create": true,
-          "update": true,
+          "update": false,
           "delete": false
+        },
+        "system_users": {
+          "create": true,
+          "update": true,
+          "delete": true
+        },
+        "companies": {
+          "create": true,
+          "update": true,
+          "delete": true
         },
         "analytics": {
           "create": false,

@@ -54,6 +54,7 @@
 
 				<Button DockPanel.Dock="Right"
 						Classes="Flat"
+						IsVisible="{Binding Permissions.Create}"
 						Command="{Binding AddCommand}">
 					<StackPanel Orientation="Horizontal" Spacing="8">
 						<icon:MaterialIcon Kind="Plus" Width="16" Height="16"/>

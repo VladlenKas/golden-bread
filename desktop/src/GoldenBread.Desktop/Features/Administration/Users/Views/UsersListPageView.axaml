@@ -81,15 +81,18 @@ x:CompileBindings="False">
 								<MenuItem Header="Изменить"
 										  Icon="{icon:MaterialIconExt Kind=Edit}"
 										  Command="{Binding EditCommand}"
+										  IsVisible="{Binding Permissions.Update}"
 										  CommandParameter="{Binding SelectedItem}">
 								</MenuItem>
 								<MenuItem Header="Уволить"
 										  Icon="{icon:MaterialIconExt Kind=Delete}"
 										  Command="{Binding DeleteCommand}"
+										  IsVisible="{Binding Permissions.Delete}"
 										  CommandParameter="{Binding SelectedItem}">
 								</MenuItem>
 								<MenuItem Header="Сменить статус"
-										  Icon="{icon:MaterialIconExt Kind=ToggleSwitch}">
+										  Icon="{icon:MaterialIconExt Kind=ToggleSwitch}"
+										  IsVisible="{Binding Permissions.Update}">
 
 									<MenuItem Header="На рассмотрении"
 											  Command="{Binding SetStatusPendingCommand}"
@@ -108,7 +111,8 @@ x:CompileBindings="False">
 											  CommandParameter="{Binding SelectedItem}"/>
 								</MenuItem>
 								<MenuItem Header="Учётные данные"
-										  Icon="{icon:MaterialIconExt Kind=ShieldAccount}">
+										  Icon="{icon:MaterialIconExt Kind=ShieldAccount}"
+										  IsVisible="{Binding Permissions.Update}">
 
 									<MenuItem Header="Сменить пароль"
 											  Icon="{icon:MaterialIconExt Kind=Key}"

@@ -233,6 +233,9 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
 
     public async Task<bool> ConfirmMoveAsync(string fromColumn, string toColumn, KanbanItem item)
     {
+        if (!Permissions.Update)
+            return false;
+
         CanDragged = false;
 
         var message = $"Переместить «{item.Title}» из «{ColumnNames[fromColumn]}» в «{ColumnNames[toColumn]}»?";
