@@ -43,6 +43,10 @@ public partial class OrdersHostPageViewModel : HostPageViewModel
         NavigateTo(editPage);
     }
 
-    protected override void OnActivated() => ShowList();
+    protected override void OnActivated()
+    {
+        _listPage.Permissions = this.Permissions;
+        ShowList();
+    }
     protected override void OnDeactivated() => ShowList();
 }

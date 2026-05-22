@@ -9,15 +9,20 @@
           "update": true,
           "delete": true
         },
-        "suppliers": {
+        "product_categories": {
           "create": true,
           "update": true,
           "delete": true
         },
-        "employees": {
-          "create": false,
+        "ingredients": {
+          "create": true,
           "update": true,
-          "delete": false
+          "delete": true
+        },
+        "suppliers": {
+          "create": true,
+          "update": true,
+          "delete": true
         },
         "purchase_positions": {
           "create": true,
@@ -25,19 +30,34 @@
           "delete": true
         },
         "warehouse": {
-          "create": true,
-          "update": true,
-          "delete": true
+          "create": false,
+          "update": false,
+          "delete": false
         },
         "orders": {
-          "create": true,
-          "update": true,
-          "delete": true
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "employees": {
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "companies": {
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "system_users": {
+          "create": false,
+          "update": false,
+          "delete": false
         },
         "analytics": {
-          "create": true,
-          "update": true,
-          "delete": true
+          "create": false,
+          "update": false,
+          "delete": false
         }
       }
     },
@@ -45,40 +65,45 @@
       "key": "CommercialManager",
       "title": "Коммерческий менеджер",
       "pages": {
-        "products": {
-          "create": false,
-          "update": true,
-          "delete": false
-        },
-        "suppliers": {
+        "companies": {
           "create": true,
           "update": true,
           "delete": true
-        },
-        "purchase_positions": {
-          "create": true,
-          "update": true,
-          "delete": false
-        },
-        "warehouse": {
-          "create": true,
-          "update": true,
-          "delete": false
-        },
-        "orders": {
-          "create": true,
-          "update": false,
-          "delete": false
         },
         "system_users": {
           "create": true,
           "update": true,
           "delete": true
         },
-        "companies": {
+        "employees": {
           "create": true,
           "update": true,
           "delete": true
+        },
+        "orders": {
+          "create": true,
+          "update": true,
+          "delete": false
+        },
+        "products": {
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "suppliers": {
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "purchase_positions": {
+          "create": false,
+          "update": false,
+          "delete": false
+        },
+        "warehouse": {
+          "create": false,
+          "update": false,
+          "delete": false
         },
         "analytics": {
           "create": false,

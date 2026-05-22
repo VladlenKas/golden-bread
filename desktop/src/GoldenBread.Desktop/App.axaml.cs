@@ -107,40 +107,40 @@ public partial class App : Application, IDisposable
     private static ServiceProvider ConfigureViewModels(IServiceCollection services)
     {
         // Main Window (Loading)
-        services.AddSingleton<MainWindowView>();
+        services.AddTransient<MainWindowView>();
         services.AddTransient<MainWindowViewModel>();
 
         // Auth Window
-        services.AddSingleton<AuthWindowView>();
+        services.AddTransient<AuthWindowView>();
         services.AddTransient<AuthWindowViewModel>();
 
         // Menu Window
-        services.AddSingleton<MenuWindowView>();
+        services.AddTransient<MenuWindowView>();
         services.AddTransient<MenuWindowViewModel>();
 
         // Employee Pages
-        services.AddSingleton<EmployeesHostPageViewModel>();
-        services.AddSingleton<EmployeesListPageViewModel>();
+        services.AddTransient<EmployeesHostPageViewModel>();
+        services.AddTransient<EmployeesListPageViewModel>();
         services.AddTransient<EmployeeEditorPageViewModel>();
 
         // Supplier Pages
-        services.AddSingleton<SuppliersHostPageViewModel>();
-        services.AddSingleton<SuppliersListPageViewModel>();
+        services.AddTransient<SuppliersHostPageViewModel>();
+        services.AddTransient<SuppliersListPageViewModel>();
         services.AddTransient<SupplierEditorPageViewModel>();
 
         // Users Pages
-        services.AddSingleton<UsersHostPageViewModel>();
-        services.AddSingleton<UsersListPageViewModel>();
+        services.AddTransient<UsersHostPageViewModel>();
+        services.AddTransient<UsersListPageViewModel>();
         services.AddTransient<UserEditorPageViewModel>();
 
         // Companies Pages
-        services.AddSingleton<CompaniesHostPageViewModel>();
-        services.AddSingleton<CompaniesListPageViewModel>();
+        services.AddTransient<CompaniesHostPageViewModel>();
+        services.AddTransient<CompaniesListPageViewModel>();
         services.AddTransient<CompanyEditorPageViewModel>();
 
         // Product Pages
-        services.AddSingleton<ProductsHostPageViewModel>();
-        services.AddSingleton<ProductsListPageViewModel>();
+        services.AddTransient<ProductsHostPageViewModel>();
+        services.AddTransient<ProductsListPageViewModel>();
         services.AddTransient<ProductEditorPageViewModel>();
         services.AddTransient<ProductImageEditorPageViewModel>();
         services.AddTransient<ProductRecipeEditorPageViewModel>();
@@ -150,13 +150,13 @@ public partial class App : Application, IDisposable
         services.AddTransient<WarehouseHostPageViewModel>();
 
         // Purchase Positions Pages
-        services.AddSingleton<PurchasePositionsHostPageViewModel>();
-        services.AddSingleton<PurchasePositionsListPageViewModel>();
+        services.AddTransient<PurchasePositionsHostPageViewModel>();
+        services.AddTransient<PurchasePositionsListPageViewModel>();
         services.AddTransient<PurchasePositionEditorPageViewModel>();
 
         // Orders Pages
-        services.AddSingleton<OrdersHostPageViewModel>();
-        services.AddSingleton<OrdersListPageViewModel>();
+        services.AddTransient<OrdersHostPageViewModel>();
+        services.AddTransient<OrdersListPageViewModel>();
         services.AddTransient<OrderEditorPageViewModel>();
 
         // Common Pages
