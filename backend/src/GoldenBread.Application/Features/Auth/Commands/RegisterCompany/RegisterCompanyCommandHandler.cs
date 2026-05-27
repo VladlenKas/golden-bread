@@ -4,6 +4,8 @@ using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Domain.Entities;
 using GoldenBread.Domain.Enums;
+using GoldenBread.Domain.Interfaces.Services;
+using System.Globalization;
 
 namespace GoldenBread.Application.Features.Auth.Commands.RegisterCompany;
 

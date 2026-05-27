@@ -66,7 +66,9 @@ public partial class AuthWindowViewModel(
             authState.Authenticate(
                 data.Id, 
                 data.Role!.Value, 
-                data.VerificationStatus);
+                data.VerificationStatus,
+                data.UserInfo ?? null,
+                data.SessionInfo ?? null);
 
             windowService.ShowWindow<MenuWindowView, MenuWindowViewModel>();
             windowService.CloseWindow(this);

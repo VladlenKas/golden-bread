@@ -6,4 +6,6 @@ public sealed record AuthResponse(
     int Id,
     string? Session,
     UserRole? Role,
-    VerificationStatus VerificationStatus);
+    VerificationStatus VerificationStatus,
+    string? UserInfo = null,
+    string? SessionInfo = null);

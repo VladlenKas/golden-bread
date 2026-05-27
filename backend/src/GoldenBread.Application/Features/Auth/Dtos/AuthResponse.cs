@@ -1,5 +1,4 @@
-﻿using GoldenBread.Domain.Entities;
-using GoldenBread.Domain.Enums;
+﻿using GoldenBread.Domain.Enums;
 
 namespace GoldenBread.Application.Features.Auth.Dtos;
 
@@ -7,7 +6,9 @@ public sealed record AuthResponse(
     int Id,
     string? Session,
     UserRole? Role,
-    VerificationStatus VerificationStatus)
+    VerificationStatus VerificationStatus,
+    string? UserInfo = null,
+    string? SessionInfo = null)
 {
     public static AuthResponse Response(DbEntities.Account account)
     {
@@ -25,7 +26,16 @@ public sealed record AuthResponse(
                 account.AccountId,
                 account.Session,
                 account.User!.Role,
-                account.VerificationStatus);
+                account.VerificationStatus,
+                $" {RolesLocalized(account.User.Role)}: {account.User.Lastname} {account.User.Firstname}",
+                $"Сессия активна до: {account.SessionExpiresAt!.Value.LocalDateTime:dd.MM.yyyy HH:mm}");
         }
     }
+
+    private static string RolesLocalized(UserRole role) => role switch
+    {
+        UserRole.Technologist => "Технолог",
+        UserRole.CommercialManager => "Коммерческий менеджер",
+        _ => "-"
+    };
 }

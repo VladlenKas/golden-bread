@@ -6,6 +6,8 @@ using GoldenBread.Application.Common.Exceptions;
 using GoldenBread.Application.Contracts;
 using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Domain.Enums;
+using GoldenBread.Domain.Interfaces.Services;
+using System.Globalization;
 using System.Runtime.Intrinsics.X86;
 
 namespace GoldenBread.Application.Features.Auth.Commands.Login;

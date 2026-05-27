@@ -13,11 +13,11 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.HasIndex(e => e.CategoryId, "fk_products_category_id_idx");
 
-        builder.Property(e => e.CostPrice).HasPrecision(4, 2);
+        builder.Property(e => e.CostPrice).HasPrecision(10, 2);
         builder.Property(e => e.Name).HasMaxLength(100);
-        builder.Property(e => e.Weight).HasPrecision(5, 3);
-        builder.Property(e => e.StorageTempMin).HasPrecision(4, 1);
-        builder.Property(e => e.StorageTempMax).HasPrecision(4, 1);
+        builder.Property(e => e.Weight).HasPrecision(10, 2);
+        builder.Property(e => e.StorageTempMin).HasPrecision(10, 2);
+        builder.Property(e => e.StorageTempMax).HasPrecision(10, 2);
 
         builder.HasOne(d => d.Category)
             .WithMany(p => p.Products)

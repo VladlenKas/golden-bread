@@ -5,6 +5,7 @@ using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
+using GoldenBread.Desktop.UI.Helpers;
 using GoldenBread.Desktop.UI.Services;
 using ReactiveUI.SourceGenerators;
 using SukiUI.Dialogs;
@@ -13,6 +14,7 @@ using System.Diagnostics;
 namespace GoldenBread.Desktop.Features.Main;
 
 public partial class MainWindowViewModel(
+    IUsersApi usersApi,
     WindowService windowService,
     ISukiDialogManager sukiDialogManager,
     SessionStorage sessionStorage,
@@ -53,7 +55,12 @@ public partial class MainWindowViewModel(
                 }
 
                 sessionStorage.SaveSession(data.Session!);
-                userStore.Authenticate(data.Id, data.Role!.Value, data.VerificationStatus);
+                userStore.Authenticate(
+                    data.Id, 
+                    data.Role!.Value, 
+                    data.VerificationStatus, 
+                    data.UserInfo,
+                    data.SessionInfo);
 
                 StatusText = "Открытие главного меню...";
 

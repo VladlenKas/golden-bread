@@ -2,6 +2,7 @@
 using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.Auth.Dtos;
 using GoldenBread.Domain.Enums;
+using GoldenBread.Domain.Interfaces.Services;
 
 namespace GoldenBread.Application.Features.Auth.Queries.GetAccountBySession;
 

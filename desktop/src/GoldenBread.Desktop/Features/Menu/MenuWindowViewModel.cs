@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Styling;
+using DynamicData.Binding;
 using GoldenBread.Desktop.Configuration.Services;
 using GoldenBread.Desktop.Features.Auth;
 using GoldenBread.Desktop.Infrastructure.Api;
@@ -16,6 +17,7 @@ using SukiUI.Enums;
 using SukiUI.Models;
 using SukiUI.Toasts;
 using System.Collections.ObjectModel;
+using System.Reactive.Linq;
 
 namespace GoldenBread.Desktop.Features.Menu;
 
@@ -30,9 +32,12 @@ public partial class MenuWindowViewModel : ViewModelBase
     private readonly WindowService _windowService;
     private readonly DialogService _dialogService;
 
+    [Reactive] private string? _userData;
+    [Reactive] private string? _userSessionData;
     [Reactive] private SectionMenuItem? _selectedSection;
     [Reactive] private HostPageViewModel? _activePage;
     [Reactive] private bool _isLoading = false;
+    [Reactive] private string? _baseThemeHeader;
     [Reactive] public ThemeVariant _baseTheme = ThemeVariant.Dark;
     [Reactive] public SukiBackgroundStyle _backgroundStyle = SukiBackgroundStyle.GradientSoft;
 
@@ -69,8 +74,16 @@ public partial class MenuWindowViewModel : ViewModelBase
         SukiToastManager = sukiToastManager;
         _dialogService = dialogService;
 
+        UserData = userStore.Info;
+        UserSessionData = userStore.SessionInfo;
         BaseTheme = _theme.ActiveBaseTheme;
-        _theme.OnBaseThemeChanged += variant => BaseTheme = variant;
+        BaseThemeHeader = _theme.ActiveBaseTheme.Equals(ThemeVariant.Dark) ? "Темная" : "Светлая";
+
+        _theme.OnBaseThemeChanged += variant =>
+        {
+            BaseTheme = variant;
+            BaseThemeHeader = variant.Equals(ThemeVariant.Dark) ? "Темная" : "Светлая";
+        };
 
         // При смене выбранного раздела – загружаем его страницы и выбираем первую
         this.WhenAnyValue(x => x.SelectedSection)
@@ -81,13 +94,12 @@ public partial class MenuWindowViewModel : ViewModelBase
         var sections = _menuConfig.GetSidebarSectionsWithPages();
 
         SidebarSections.Clear();
+
         foreach (var item in sections)
             SidebarSections.Add(item);
 
         SelectedSection = SidebarSections.FirstOrDefault();
     }
-
-    public void ChangeTheme(SukiColorTheme theme) => _theme.ChangeColorTheme(theme);
 
     private void LoadSectionPages(SectionMenuItem section)
     {
@@ -105,6 +117,8 @@ public partial class MenuWindowViewModel : ViewModelBase
 
         ActivePage = SectionPages.FirstOrDefault();
     }
+
+    public void ChangeTheme(SukiColorTheme theme) => _theme.ChangeColorTheme(theme);
 
     [ReactiveCommand]
     private void ToggleBaseTheme() => _theme.SwitchBaseTheme();

@@ -1,24 +1,23 @@
-<sukiUI:SukiWindow
-	xmlns="https://github.com/avaloniaui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:suki="https://github.com/kikipoulet/SukiUI"
-	xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
-	xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-	xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
-	xmlns:vm="using:GoldenBread.Desktop.Features.Menu"
-	xmlns:local="clr-namespace:GoldenBread.Desktop.UI.Helpers"
-	x:Class="GoldenBread.Desktop.Features.Menu.MenuWindowView"
-	x:DataType="vm:MenuWindowViewModel"
-	Icon="/Assets/Icons/logo.ico"
-	Title="Golden Bread UI - Меню"
-	WindowStartupLocation="CenterScreen"
-	Width="1300" Height="850"
-	CanPin="True"
-	CanFullScreen="True"
-	IsMenuVisible="True"
-	BackgroundStyle="{Binding BackgroundStyle}">
+<sukiUI:SukiWindow xmlns="https://github.com/avaloniaui"
+				   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+				   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+				   xmlns:suki="https://github.com/kikipoulet/SukiUI"
+				   xmlns:sukiUI="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+				   xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+				   xmlns:theme="clr-namespace:SukiUI.Theme;assembly=SukiUI"
+				   xmlns:vm="using:GoldenBread.Desktop.Features.Menu"
+				   xmlns:local="clr-namespace:GoldenBread.Desktop.UI.Helpers"
+				   x:Class="GoldenBread.Desktop.Features.Menu.MenuWindowView"
+				   x:DataType="vm:MenuWindowViewModel"
+				   Icon="/Assets/Icons/logo.ico"
+				   Title="Golden Bread UI - Меню"
+				   WindowStartupLocation="CenterScreen"
+				   Width="1300" Height="850"
+				   CanPin="True"
+				   CanFullScreen="True"
+				   IsMenuVisible="True"
+				   BackgroundStyle="{Binding BackgroundStyle}">
 
 	<sukiUI:SukiWindow.Hosts>
 		<sukiUI:SukiDialogHost Manager="{Binding SukiDialogManager}"/>
@@ -31,66 +30,75 @@
 
 	<suki:SukiWindow.RightWindowTitleBarControls>
 
-		<!-- Переключение Light/Dark -->
-		<Button Classes="WindowControlsButton" Command="{Binding ToggleBaseThemeCommand}">
-			<icon:MaterialIcon 
-				Width="16" Height="16"
-				Foreground="{DynamicResource SukiText}"
-				Kind="{Binding BaseTheme, Converter={StaticResource ThemeToIconConverter}}"/>
+		<Button Classes="WindowControlsButton">
+			<icon:MaterialIcon Foreground="{DynamicResource SukiText}" Kind="SettingsOutline"/>
+			<Button.Flyout>
+				<MenuFlyout>
+
+					<!-- Выбор темная/светлой темы -->
+					<MenuItem Header="{Binding BaseThemeHeader}"
+							  Command="{Binding ToggleBaseThemeCommand}">
+						<MenuItem.Icon>
+							<icon:MaterialIcon Kind="{Binding BaseTheme, Converter={StaticResource ThemeToIconConverter}}"/>
+						</MenuItem.Icon>
+					</MenuItem>
+
+					<!-- Смена цвета темы -->
+					<MenuItem Header="Цвет темы"
+							  Click="ThemeMenuItem_OnClick"
+							  ItemsSource="{Binding LocalizedThemes}"
+							  Icon="{icon:MaterialIconExt Kind=FormatColorFill}">
+
+						<MenuItem.DataTemplates>
+							<DataTemplate DataType="{x:Type local:LocalizedTheme}">
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<Ellipse Width="12" Height="12" Fill="{Binding Theme.PrimaryBrush}"/>
+									<TextBlock Text="{Binding DisplayName}"/>
+								</StackPanel>
+							</DataTemplate>
+						</MenuItem.DataTemplates>
+					</MenuItem>
+
+					<!-- Смена фона темы -->
+					<MenuItem Header="Фон"
+							  Click="BackgroundMenuItem_OnClick"
+							  ItemsSource="{Binding LocalizedBackgrounds}"
+							  Icon="{icon:MaterialIconExt Kind=Image}">
+
+						<MenuItem.DataTemplates>
+							<DataTemplate DataType="{x:Type local:LocalizedBackground}">
+								<TextBlock Text="{Binding DisplayName}"/>
+							</DataTemplate>
+						</MenuItem.DataTemplates>
+					</MenuItem>
+
+				</MenuFlyout>
+			</Button.Flyout>
 		</Button>
 
 	</suki:SukiWindow.RightWindowTitleBarControls>
 
 	<suki:SukiWindow.MenuItems>
+		<!-- Данные о пользователе -->
+		<MenuItem Header="{Binding UserData}"/>
+		<MenuItem Header="{Binding UserSessionData}"/>
 
 		<!-- Цветовая тема -->
-		<MenuItem 
-			Click="ThemeMenuItem_OnClick"
-			Header="Цветовая тема"
-			ItemsSource="{Binding LocalizedThemes}">
-
-			<MenuItem.DataTemplates>
-				<DataTemplate DataType="{x:Type local:LocalizedTheme}">
-					<StackPanel Orientation="Horizontal" Spacing="8">
-						<Ellipse Width="12" Height="12" Fill="{Binding Theme.PrimaryBrush}"/>
-						<TextBlock Text="{Binding DisplayName}"/>
-					</StackPanel>
-				</DataTemplate>
-			</MenuItem.DataTemplates>
-
-		</MenuItem>
-
-		<!-- Фон -->
-		<MenuItem 
-			Header="Фон" 
-			Click="BackgroundMenuItem_OnClick" 
-			ItemsSource="{Binding LocalizedBackgrounds}">
-
-			<MenuItem.DataTemplates>
-				<DataTemplate DataType="{x:Type local:LocalizedBackground}">
-					<TextBlock Text="{Binding DisplayName}"/>
-				</DataTemplate>
-			</MenuItem.DataTemplates>
-
-		</MenuItem>
 
 	</suki:SukiWindow.MenuItems>
 
 	<Grid ColumnDefinitions="Auto *">
 
 		<!-- Боковая панель с разделами -->
-		<suki:SukiSideMenu
-			Grid.Column="0"
-			ItemsSource="{Binding SidebarSections}"
-			SelectedItem="{Binding SelectedSection}">
+		<suki:SukiSideMenu ItemsSource="{Binding SidebarSections}"
+						   SelectedItem="{Binding SelectedSection}">
 
-			<!-- Разделы --> 
+			<!-- Контент (разделы) -->
 			<suki:SukiSideMenu.ItemTemplate>
 				<DataTemplate>
-					<suki:SukiSideMenuItem
-						Classes="Compact"
-						FontWeight="Regular"
-						Header="{Binding Title}">
+					<suki:SukiSideMenuItem Classes="Compact"
+										   FontWeight="Regular"
+										   Header="{Binding Title}">
 
 						<suki:SukiSideMenuItem.Icon>
 							<icon:MaterialIcon Kind="{Binding Icon}" />
@@ -98,28 +106,30 @@
 
 					</suki:SukiSideMenuItem>
 				</DataTemplate>
+
 			</suki:SukiSideMenu.ItemTemplate>
 
-			<!-- Выход --> 
+			<!-- Футер -->
 			<suki:SukiSideMenu.FooterContent>
-				<Button
-					Margin="36 4"
-					Classes="Basic"
-					FontWeight="Regular"
-					Content="Выйти"
-					HorizontalContentAlignment="Left"
-					Command="{Binding LogoutCommand}"
-					theme:ButtonExtensions.ShowProgress="{Binding IsLoading}"
-					suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Logout}"/>
+				<suki:SukiSideMenuItem Classes="Compact Danger"
+									   Header="Выход"
+									   FontWeight="Medium"
+									   Tapped="LogoutMenuItem_Tapped"
+									   Opacity="0.9">
+
+					<suki:SukiSideMenuItem.Icon>
+						<icon:MaterialIcon Kind="Logout" />
+					</suki:SukiSideMenuItem.Icon>
+
+				</suki:SukiSideMenuItem>
 			</suki:SukiSideMenu.FooterContent>
 		</suki:SukiSideMenu>
 
 		<!-- Основной контент справа от меню -->
-		<TabControl
-			Grid.Column="1"
-			Margin="24"
-			ItemsSource="{Binding SectionPages}"
-			SelectedItem="{Binding ActivePage}">
+		<TabControl Grid.Column="1"
+					Margin="24"
+					ItemsSource="{Binding SectionPages}"
+					SelectedItem="{Binding ActivePage}">
 
 			<TabControl.ItemTemplate>
 				<DataTemplate>

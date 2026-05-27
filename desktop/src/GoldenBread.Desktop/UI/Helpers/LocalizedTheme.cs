@@ -13,6 +13,8 @@ public class LocalizedTheme(SukiColorTheme theme)
         "Orange" => "Оранжевая",
         "Purple" => "Фиолетовая",
         "Pink" => "Розовая",
+        "White" => "Белая",
+        "Black" => "Темная",
         _ => Theme.DisplayName
     };
-}
+}   

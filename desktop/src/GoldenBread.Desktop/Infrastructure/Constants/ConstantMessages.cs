@@ -112,6 +112,7 @@ public static class ConstantMessages
     public const string TemperatureRangeValidation = "Минимальная температура должна быть меньше максимальной";
     public const string IngredientExsist = "Этот ингредиент уже добавлен";
     public const string IngredientsNull = "Добавьте хотя бы один ингредиент";
+    public const string StorageTempValidation = "Минимальная температура хранения не может быть больше максимальной";
 
     
     #endregion

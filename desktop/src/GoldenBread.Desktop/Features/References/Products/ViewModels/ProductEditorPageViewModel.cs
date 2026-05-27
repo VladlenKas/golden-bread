@@ -134,6 +134,11 @@ public partial class ProductEditorPageViewModel : PageViewModel, ISukiStackPageT
             _toastService.ShowError(GetFirstError());
             return false;
         }
+        else if (ItemEditable.StorageTempMin > ItemEditable.StorageTempMax)
+        {
+            _toastService.ShowError(ConstantMessages.StorageTempValidation);
+            return false;
+        }
 
         if (ProductId == 0)
             return true;

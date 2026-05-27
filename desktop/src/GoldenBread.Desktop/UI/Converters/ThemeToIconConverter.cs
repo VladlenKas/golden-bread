@@ -8,8 +8,9 @@ public class ThemeToIconConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        return (ThemeVariant)value! == ThemeVariant.Light ? "WeatherNight" : "WeatherSunny";
+        return (ThemeVariant)value! == ThemeVariant.Light ? "WeatherSunny" : "WeatherNight";
     }
+
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         => throw new NotSupportedException();
 }
