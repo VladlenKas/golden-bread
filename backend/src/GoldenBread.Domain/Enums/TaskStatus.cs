@@ -2,8 +2,8 @@
 
 public enum TaskStatus
 {
-    Created,
     InProgress,
     Paused,
-    Completed
+    Completed,
+    Canceled,
 }

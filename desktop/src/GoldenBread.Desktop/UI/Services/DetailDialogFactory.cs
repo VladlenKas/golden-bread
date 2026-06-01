@@ -179,10 +179,10 @@ public static class DetailDialogFactory
         OrderStatus.InProgress => "В процессе",
         OrderStatus.Completed => "Готов",
         OrderStatus.Canceled => "Отменён",
-        Features.Common.TaskStatus.Created => "Назначена",
         Features.Common.TaskStatus.InProgress => "В работе",
         Features.Common.TaskStatus.Paused => "Приостановлена",
         Features.Common.TaskStatus.Completed => "Выполнена",
+        Features.Common.TaskStatus.Canceled => "Отменён",
         _ => status.ToString()
     };
 }

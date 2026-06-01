@@ -94,7 +94,7 @@ public sealed class UpdateOrderStatusCommandHandler(
             deadline);
 
         foreach (var task in scheduleResult.Tasks!)
-            task.UpdateStatus(Domain.Enums.TaskStatus.Created);
+            task.UpdateStatus(Domain.Enums.TaskStatus.InProgress);
 
         if (!scheduleResult.IsFeasible)
         {
@@ -152,6 +152,13 @@ public sealed class UpdateOrderStatusCommandHandler(
             .AsTracking()
             .Where(t => t.OrderItem.OrderId == order.OrderId)
             .ToListAsync(ct);
+
+        if (tasks.Any(t => 
+            t.Status == Domain.Enums.TaskStatus.Paused ||
+            t.Status == Domain.Enums.TaskStatus.InProgress))
+        {
+            throw new InvalidOperationException("Для подтверждения завершения заказа все связанные задачи должны быть выполнены");
+        }
 
         foreach (var task in tasks)
             task.UpdateStatus(Domain.Enums.TaskStatus.Completed);

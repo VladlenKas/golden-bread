@@ -27,7 +27,7 @@ public sealed class GetEmployeesListQueryHandler(IEmployeeRepository employeeRep
     private bool CanDelete(Employee employee)
     {
         return !employee.EmployeeTasks.Any(et =>
-            et.Status == Domain.Enums.TaskStatus.Created ||
+            et.Status == Domain.Enums.TaskStatus.Paused ||
             et.Status == Domain.Enums.TaskStatus.InProgress) ||
             employee.EmployeeTasks.Count == 0;
     }
