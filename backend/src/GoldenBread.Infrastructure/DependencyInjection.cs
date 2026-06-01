@@ -32,11 +32,11 @@ public static class DependencyInjection
                 npgsql => 
             {
                 npgsql.MapEnum<AccountType>("account_type");
-                npgsql.MapEnum<IngredientBatchStatus>("ingredient_batch_status");
                 npgsql.MapEnum<IngredientUnit>("ingredient_unit");
                 npgsql.MapEnum<OrderStatus>("order_status");
                 npgsql.MapEnum<UserRole>("user_role");
                 npgsql.MapEnum<VerificationStatus>("verification_status");
+                npgsql.MapEnum<Domain.Enums.TaskStatus>("task_status");
             }).UseSnakeCaseNamingConvention();
         });
 
@@ -65,8 +65,6 @@ public static class DependencyInjection
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IEmployeeTaskRepository, EmployeeTaskRepository>();
         services.AddScoped<IFavoriteRepository, FavoriteRepository>();
-        services.AddScoped<ISupplierRepository, SupplierRepository>();
-        services.AddScoped<ISupplierIngredientRepository, SupplierIngredientRepository>();
         services.AddScoped<IIngredientRepository, IngredientRepository>();
 
         // Data Services

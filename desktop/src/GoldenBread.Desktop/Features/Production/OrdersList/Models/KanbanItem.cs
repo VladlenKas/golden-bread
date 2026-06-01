@@ -1,9 +1,4 @@
-﻿using GoldenBread.Desktop.Features.Common;
-using System.ComponentModel.Design;
-using System.Xml.Linq;
-using Tmds.DBus.Protocol;
-
-namespace GoldenBread.Desktop.Features.Production.OrdersList.Models;
+﻿namespace GoldenBread.Desktop.Features.Production.OrdersList.Models;
 
 public class KanbanItem
 {
@@ -19,11 +14,15 @@ public class KanbanItem
     public DateTime? CreatedAt { get; set; }
     public decimal TotalAmount { get; set; }
     public int TotalOrderItems { get; set; }
-    public int CompletedOrderItems { get; set; }
-    public double Progress => TotalOrderItems == 0 ? 0 : (double)CompletedOrderItems / TotalOrderItems;
+    public int TotalTasks { get; set; }        
+    public int CompletedTasks { get; set; }
+
+    public double Progress => TotalTasks == 0 ? 0 : (double)CompletedTasks / TotalTasks;
     public bool IsDraggable => Status is not ("Completed" or "Canceled");
     public bool IsEnabled => Status != "Canceled";
 
-    public string SearchText => $"{OrderId}{CompanyName}{StartDate}{CreatedAt}{TotalAmount}{TotalOrderItems}{CompletedOrderItems}".ToLowerInvariant();
-
+    public string SearchText => $"{OrderId}{CompanyName}{StartDate}{CreatedAt}{TotalAmount}{TotalOrderItems}".ToLowerInvariant();
+    public string ProgressText => TotalTasks == 0
+        ? "Ожидает распределения"
+        : $"{CompletedTasks}/{TotalTasks} задач";
 }

@@ -24,7 +24,7 @@ public partial class EmployeesListPageViewModel : PageViewModel, ISukiStackPageT
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public EmployeeListItem? _selectedItem;
 
-    public string Title { get; set; } = ConstantMessages.HostTitlePage;
+    public string Title { get; set; } = "Список сотрудников";
     public ReadOnlyObservableCollection<EmployeeListItem> FilteredItems { get; }
 
     public EmployeesListPageViewModel(

@@ -10,34 +10,25 @@ namespace GoldenBread.Desktop.Configuration.Services;
 public sealed class MenuConfigService(CurrentUserStore userStore)
 {
     private readonly RolesConfig _roles = JsonHelper.Load<RolesConfig>(AppSettings.RolesJson);
-    private readonly SectionsConfig _sections = JsonHelper.Load<SectionsConfig>(AppSettings.SectionsJson);
+    private readonly PagesConfig _pages = JsonHelper.Load<PagesConfig>(AppSettings.PagesJson);  // ← новый файл
 
     /// <summary>
-    /// Все секции со страницами, доступные по правам роли пользователя
+    /// Все страницы, доступные по правам роли пользователя (плоский список)
     /// </summary>
-    public IReadOnlyList<SectionMenuItem> GetSidebarSectionsWithPages()
+    public IReadOnlyList<PageMenuItem> GetSidebarPages()
     {
         var rolePages = GetRolePageKeys();
 
-        return _sections.Sections
-            .Where(s => s.Pages.Any(p => rolePages.Contains(p.Key)))
-            .Select(s => new SectionMenuItem
+        return _pages.Pages
+            .Where(p => rolePages.Contains(p.Key))
+            .Select(p => new PageMenuItem
             {
-                Key = s.Key,
-                Title = s.Title,
-                Icon = ParseHelper.ParseIcon(s.Icon),
-                Order = s.Order,
-                Pages = s.Pages
-                    .Where(p => rolePages.Contains(p.Key))
-                    .Select(p => new PageMenuItem
-                    {
-                        Key = p.Key,
-                        Title = p.Title,
-                        Order = p.Order
-                    })
-                    .ToList()
+                Key = p.Key,
+                Title = p.Title,
+                Icon = ParseHelper.ParseIcon(p.Icon),
+                Order = p.Order
             })
-            .OrderBy(s => s.Order)
+            .OrderBy(p => p.Order)
             .ToList();
     }
 

@@ -14,7 +14,6 @@ using System.Diagnostics;
 namespace GoldenBread.Desktop.Features.Main;
 
 public partial class MainWindowViewModel(
-    IUsersApi usersApi,
     WindowService windowService,
     ISukiDialogManager sukiDialogManager,
     SessionStorage sessionStorage,

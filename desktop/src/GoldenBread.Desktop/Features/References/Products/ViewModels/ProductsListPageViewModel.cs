@@ -29,7 +29,7 @@ public partial class ProductsListPageViewModel : PageViewModel, ISukiStackPageTi
     [Reactive] private string _searchText = string.Empty;
     [Reactive] public ProductListItem? _selectedItem;
 
-    public string Title { get; set; } = ConstantMessages.HostTitlePage;
+    public string Title { get; set; } = "Список продукции";
     public ReadOnlyObservableCollection<ProductListItem> FilteredItems { get; }
 
     public ProductsListPageViewModel(

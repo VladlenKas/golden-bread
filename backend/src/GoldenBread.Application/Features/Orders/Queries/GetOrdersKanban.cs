@@ -18,19 +18,21 @@ public sealed class GetOrdersKanbanQueryHandler(
         var orders = await context.Orders
             .AsTracking()
             .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.EmployeeTasks)
             .Include(o => o.Company)
             .ToListAsync(ct);
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var updated = false;
 
         foreach (var order in orders)
         {
-            // InProgress → Completed если все позиции готовы
+            // InProgress → Completed если все задачи сотрудников выполнены
             if (order.Status == OrderStatus.InProgress
-                && order.OrderItems.All(oi => oi.Status == OrderStatus.Completed))
+                && order.OrderItems
+                    .SelectMany(oi => oi.EmployeeTasks)
+                    .All(t => t.Status == Domain.Enums.TaskStatus.Completed))
             {
-                order.Status = OrderStatus.Completed;
+                order.UpdateStatus(OrderStatus.Completed);
                 updated = true;
             }
         }
@@ -46,7 +48,8 @@ public sealed class GetOrdersKanbanQueryHandler(
             o.CreatedAt,
             o.OrderItems.Sum(i => i.TotalAmount),
             o.OrderItems.Count,
-            o.OrderItems.Count(i => i.Status == OrderStatus.Completed),
+            o.OrderItems.SelectMany(oi => oi.EmployeeTasks).Count(),
+            o.OrderItems.SelectMany(oi => oi.EmployeeTasks).Count(t => t.Status == Domain.Enums.TaskStatus.Completed),
             o.Status
         )).ToList();
     }

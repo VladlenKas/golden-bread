@@ -46,8 +46,8 @@ public partial class ProductEditorPageViewModel : PageViewModel, ISukiStackPageT
             .Subscribe(async id =>
             {
                 Title = id > 0
-                    ? ConstantMessages.EditorTitlePage
-                    : ConstantMessages.CreateTitlePage;
+                    ? "Редактирование основных данных"
+                    : "Основные данные";
 
                 SaveButtonContent = id > 0
                     ? "Сохранить"

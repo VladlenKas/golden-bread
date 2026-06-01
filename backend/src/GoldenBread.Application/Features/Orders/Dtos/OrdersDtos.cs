@@ -10,7 +10,8 @@ public record OrderKanbanItem(
     DateTime? CreatedAt,
     decimal TotalAmount,
     int TotalOrderItems,
-    int CompletedOrderItems,
+    int TotalTasks,
+    int CompletedTasks,
     OrderStatus Status);
 
 public record OrderEditorDataResponse(
@@ -48,9 +49,6 @@ public record UpdateOrderStatusRequest(
     OrderStatus NewStatus,
     string? CancelReason);
 
-public record InsufficientIngredientsResponse(
-    List<IngredientShortageItem> Shortages);
-
 public record IngredientShortageItem(
     string IngredientName,
     decimal RequiredQuantity,
@@ -66,26 +64,20 @@ public record OrderDetailResponse(
     decimal TotalAmount,
     DateTime CreatedAt,
     List<OrderItemDetail> Items,
-    List<EmployeeTaskDetail> Tasks,
-    List<IngredientReservationDetail> Reservations);
+    List<EmployeeTaskDetail> Tasks);
 
 public record OrderItemDetail(
+    int IdBatch,
     string ProductName,
     string BatchInfo,
     int Quantity,
     decimal TotalCost,
-    OrderStatus Status);
+    int TotalTasks,
+    int CompletedTasks);
 
 public record EmployeeTaskDetail(
     int EmployeeTaskId,
     string EmployeeName,
-    OrderStatus Status,
+    Domain.Enums.TaskStatus Status,
     DateTimeOffset? StartTime,
     DateTimeOffset? EndTime);
-
-public record IngredientReservationDetail(
-    string IngredientName,
-    decimal ReservedQuantity,
-    IngredientUnit Unit,
-    DateOnly DeliveryDate,
-    DateOnly ExpiryDate);

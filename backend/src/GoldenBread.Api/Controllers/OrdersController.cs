@@ -55,10 +55,6 @@ public class OrdersController(IMediator mediator) : ControllerBase
             await mediator.Send(new UpdateOrderStatusCommand(request));
             return NoContent();
         }
-        catch (InsufficientIngredientsException ex)
-        {
-            return Conflict(new InsufficientIngredientsResponse(ex.Shortages));
-        }
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { error = ex.Message });

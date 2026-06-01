@@ -2,11 +2,9 @@
 using GoldenBread.Desktop.Features.Administration.Companies.ViewModels;
 using GoldenBread.Desktop.Features.Administration.Users.ViewModels;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
-using GoldenBread.Desktop.Features.Procurement.Warehouse;
 using GoldenBread.Desktop.Features.Production.OrdersList.ViewModels;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
 using GoldenBread.Desktop.Features.References.Products.ViewModels;
-using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.UI.Common;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,10 +17,7 @@ public sealed class PageFactory(IServiceProvider provider)
         ["products"] = typeof(ProductsHostPageViewModel),
         ["system_users"] = typeof(UsersHostPageViewModel),
         ["companies"] = typeof(CompaniesHostPageViewModel),
-        ["suppliers"] = typeof(SuppliersHostPageViewModel),
         ["employees"] = typeof(EmployeesHostPageViewModel),
-        ["purchase_positions"] = typeof(PurchasePositionsHostPageViewModel),
-        //["warehouse"] = typeof(WarehouseHostPageViewModel),
         ["orders"] = typeof(OrdersHostPageViewModel),
         //["analytics"] = typeof(AnalyticsHostPageViewModel),
     };

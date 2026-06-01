@@ -12,7 +12,6 @@ public class Order
     public DateOnly EndDate { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? CanceledAt { get; private set; }
-    public string? CancelReason { get; private set; }
 
     public OrderStatus Status { get; set; }
 
@@ -38,10 +37,9 @@ public class Order
         Status = status;
     }
 
-    public void Cancel(string? reason = null)
+    public void Cancel()
     {
         Status = OrderStatus.Canceled;
         CanceledAt = DateTime.UtcNow;
-        CancelReason = reason;
     }
 }

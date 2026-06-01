@@ -35,7 +35,7 @@ public partial class CompaniesListPageViewModel : PageViewModel, ISukiStackPageT
 
     public List<StatusesFilterOption> StatusFilterOptions => LocalizedVerificationStatuses.StatusesFilters;
     public ReadOnlyObservableCollection<CompanyListItem> FilteredItems { get; }
-    public string Title { get; set; } = ConstantMessages.HostTitlePage;
+    public string Title { get; set; } = "Список компаний";
 
     public CompaniesListPageViewModel(
         ICompaniesApi api,

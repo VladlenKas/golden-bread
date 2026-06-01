@@ -1,8 +1,11 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Styling;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.UI.Common;
 using Microsoft.Extensions.DependencyInjection;
+using SukiUI;
 using SukiUI.Controls;
+using SukiUI.Enums;
 using System.Diagnostics;
 
 namespace GoldenBread.Desktop.UI.Services;
@@ -15,6 +18,8 @@ public class WindowService(IServiceProvider serviceProvider)
 
     public void RegisterWindow(ViewModelBase viewModel, SukiWindow window)
     {
+        WindowThemeNormalize(window);
+
         _openedWindows[viewModel] = window;
         window.Closed += (_, _) => _openedWindows.Remove(viewModel);
     }
@@ -24,8 +29,11 @@ public class WindowService(IServiceProvider serviceProvider)
         where TViewModel : ViewModelBase
     {
         var vm = viewModel ?? serviceProvider.GetRequiredService<TViewModel>();
+
         var window = serviceProvider.GetRequiredService<TView>();
         window.DataContext = vm;
+
+        WindowThemeNormalize(window);
 
         // Запоминаем пару, чтобы потом закрыть
         _openedWindows[vm] = window;
@@ -43,5 +51,14 @@ public class WindowService(IServiceProvider serviceProvider)
             window.Close();
             _openedWindows.Remove(viewModel);
         }
+    }
+
+    private void WindowThemeNormalize(SukiWindow window)
+    {
+        window.BackgroundStyle = SukiBackgroundStyle.Gradient; // Базовый градиент
+
+        var theme = SukiTheme.GetInstance();
+        if (!theme.ActiveBaseTheme.Equals(ThemeVariant.Dark))
+            theme.SwitchBaseTheme(); // Темная тема
     }
 }

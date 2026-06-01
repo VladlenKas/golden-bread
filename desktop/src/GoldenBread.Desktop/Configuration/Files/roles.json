@@ -19,25 +19,15 @@
           "update": true,
           "delete": true
         },
-        "suppliers": {
-          "create": true,
-          "update": true,
-          "delete": true
-        },
-        "purchase_positions": {
-          "create": true,
-          "update": true,
-          "delete": true
-        },
-        "warehouse": {
-          "create": false,
-          "update": false,
-          "delete": false
-        },
         "orders": {
           "create": false,
           "update": false,
           "delete": false
+        },
+        "tasks": {
+          "create": true,
+          "update": true,
+          "delete": true
         },
         "employees": {
           "create": false,
@@ -86,21 +76,6 @@
           "delete": false
         },
         "products": {
-          "create": false,
-          "update": false,
-          "delete": false
-        },
-        "suppliers": {
-          "create": false,
-          "update": false,
-          "delete": false
-        },
-        "purchase_positions": {
-          "create": false,
-          "update": false,
-          "delete": false
-        },
-        "warehouse": {
           "create": false,
           "update": false,
           "delete": false

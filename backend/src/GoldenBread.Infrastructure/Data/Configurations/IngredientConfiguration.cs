@@ -18,11 +18,5 @@ public class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
             .HasForeignKey(r => r.IngredientId)
             .OnDelete(DeleteBehavior.NoAction)
             .HasConstraintName("fk_recipe_ingredient_id");
-
-        builder.HasMany(e => e.SupplierIngredients)
-            .WithOne(si => si.Ingredient)
-            .HasForeignKey(si => si.IngredientId)
-            .OnDelete(DeleteBehavior.NoAction)
-            .HasConstraintName("fk_supplier_ingredient_ingredient");
     }
 }

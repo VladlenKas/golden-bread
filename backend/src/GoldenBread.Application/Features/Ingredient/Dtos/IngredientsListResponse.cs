@@ -6,7 +6,6 @@ public record IngredientListItem(
     int IngredientId,
     string Name,
     IngredientUnit BaseUnit,
-    int RecipesCount,
-    int SupplierIngredientsCount);
+    int RecipesCount);
 
 public record IngredientsListResponse(List<IngredientListItem> IngredientsList);

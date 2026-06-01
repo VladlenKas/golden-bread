@@ -1,9 +1,0 @@
-﻿using System.Text.Json.Serialization;
-
-namespace GoldenBread.Desktop.Configuration.Models;
-
-public sealed class SectionsConfig
-{
-    [JsonPropertyName("sections")]
-    public List<SectionConfig> Sections { get; set; } = new();
-}

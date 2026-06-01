@@ -1,6 +1,4 @@
-﻿using GoldenBread.Domain.Enums;
-
-namespace GoldenBread.Domain.Entities;
+﻿namespace GoldenBread.Domain.Entities;
 
 public class OrderItem
 {
@@ -19,10 +17,7 @@ public class OrderItem
     public ProductBatch Batch { get; set; } = null!;
     public Order Order { get; set; } = null!;
 
-    public OrderStatus Status { get; set; }
-
     public ICollection<EmployeeTask> EmployeeTasks { get; set; } = new List<EmployeeTask>();
-    public ICollection<OrderItemIngredientReservation> IngredientReservations { get; set; } = new List<OrderItemIngredientReservation>();
 
     public OrderItem() { }
 

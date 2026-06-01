@@ -90,8 +90,8 @@
 	<Grid ColumnDefinitions="Auto *">
 
 		<!-- Боковая панель с разделами -->
-		<suki:SukiSideMenu ItemsSource="{Binding SidebarSections}"
-						   SelectedItem="{Binding SelectedSection}">
+		<suki:SukiSideMenu ItemsSource="{Binding SidebarPages}"
+						   SelectedItem="{Binding SelectedPage}">
 
 			<!-- Контент (разделы) -->
 			<suki:SukiSideMenu.ItemTemplate>
@@ -126,17 +126,11 @@
 		</suki:SukiSideMenu>
 
 		<!-- Основной контент справа от меню -->
-		<TabControl Grid.Column="1"
-					Margin="24"
-					ItemsSource="{Binding SectionPages}"
-					SelectedItem="{Binding ActivePage}">
+		<ContentControl Grid.Column="1"
+						Margin="24"
+						Content="{Binding ActivePage}">
 
-			<TabControl.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding DisplayName}" />
-				</DataTemplate>
-			</TabControl.ItemTemplate>
-		</TabControl>
+		</ContentControl>
 	</Grid>
 
 </sukiUI:SukiWindow>

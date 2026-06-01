@@ -10,11 +10,9 @@ using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.Features.Main;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
-using GoldenBread.Desktop.Features.Procurement.Warehouse;
 using GoldenBread.Desktop.Features.Production.OrdersList.ViewModels;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
 using GoldenBread.Desktop.Features.References.Products.ViewModels;
-using GoldenBread.Desktop.Features.References.Suppliers.ViewModels;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.UI.Services;
@@ -90,11 +88,8 @@ public partial class App : Application, IDisposable
         services.AddApiClient<IAccountApi>();
         services.AddApiClient<IUsersApi>();
         services.AddApiClient<IEmployeesApi>();
-        services.AddApiClient<ISuppliersApi>();
         services.AddApiClient<ICompaniesApi>();
         services.AddApiClient<IIngredientsApi>();
-        services.AddApiClient<ISupplierIngredientsApi>();
-        services.AddApiClient<ISupplierIngredientsApi>();
         services.AddApiClient<IProductsApi>();
         services.AddApiClient<IProductCategoriesApi>();
         services.AddApiClient<IImagesApi>();
@@ -123,11 +118,6 @@ public partial class App : Application, IDisposable
         services.AddTransient<EmployeesListPageViewModel>();
         services.AddTransient<EmployeeEditorPageViewModel>();
 
-        // Supplier Pages
-        services.AddTransient<SuppliersHostPageViewModel>();
-        services.AddTransient<SuppliersListPageViewModel>();
-        services.AddTransient<SupplierEditorPageViewModel>();
-
         // Users Pages
         services.AddTransient<UsersHostPageViewModel>();
         services.AddTransient<UsersListPageViewModel>();
@@ -145,14 +135,6 @@ public partial class App : Application, IDisposable
         services.AddTransient<ProductImageEditorPageViewModel>();
         services.AddTransient<ProductRecipeEditorPageViewModel>();
         services.AddTransient<ProductBatchEditorPageViewModel>();
-
-        // Warehouse Pages
-        services.AddTransient<WarehouseHostPageViewModel>();
-
-        // Purchase Positions Pages
-        services.AddTransient<PurchasePositionsHostPageViewModel>();
-        services.AddTransient<PurchasePositionsListPageViewModel>();
-        services.AddTransient<PurchasePositionEditorPageViewModel>();
 
         // Orders Pages
         services.AddTransient<OrdersHostPageViewModel>();

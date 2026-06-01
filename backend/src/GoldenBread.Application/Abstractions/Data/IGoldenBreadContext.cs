@@ -12,9 +12,6 @@ public interface IGoldenBreadContext
     DbSet<EmployeeTask> EmployeeTasks { get; set; }
     DbSet<Favorite> Favorites { get; set; }
     DbSet<Ingredient> Ingredients { get; set; }
-    DbSet<SupplierIngredient> SupplierIngredients { get; set; }
-    DbSet<OrderItemIngredientReservation> OrderItemIngredientReservations { get; set; }
-    DbSet<IngredientBatch> IngredientBatches { get; set; }
     DbSet<Order> Orders { get; set; }
     DbSet<OrderItem> OrderItems { get; set; }
     DbSet<Product> Products { get; set; }
@@ -22,7 +19,6 @@ public interface IGoldenBreadContext
     DbSet<ProductCategory> ProductCategories { get; set; }
     DbSet<ProductImage> ProductImages { get; set; }
     DbSet<Recipe> Recipes { get; set; }
-    DbSet<Supplier> Suppliers { get; set; }
     DbSet<User> Users { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken ct);

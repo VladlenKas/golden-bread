@@ -208,7 +208,8 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
                     EndDate = dto.EndDate,
                     TotalAmount = dto.TotalAmount,
                     TotalOrderItems = dto.TotalOrderItems,
-                    CompletedOrderItems = dto.CompletedOrderItems
+                    TotalTasks = dto.TotalTasks,   
+                    CompletedTasks = dto.CompletedTasks
                 };
                 GetList(card.Status)?.Add(card);
             }
@@ -290,7 +291,7 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
 
         try
         {
-            var request = new UpdateOrderStatusRequest(item.Id, status, null);
+            var request = new UpdateOrderStatusRequest(item.Id, status);
             var response = await _api.UpdateStatus(request);
 
             if (!response.IsSuccessStatusCode)

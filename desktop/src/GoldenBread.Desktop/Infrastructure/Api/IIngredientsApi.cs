@@ -1,4 +1,4 @@
-﻿using GoldenBread.Desktop.Features.Procurement.PurchasePositions.Models;
+﻿using GoldenBread.Desktop.Features.References.Products.Models;
 using Refit;
 
 namespace GoldenBread.Desktop.Infrastructure.Api;

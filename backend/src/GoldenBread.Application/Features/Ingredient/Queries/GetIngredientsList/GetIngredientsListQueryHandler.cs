@@ -14,8 +14,7 @@ public sealed class GetIngredientsListQueryHandler(IGoldenBreadContext context)
                 i.IngredientId,
                 i.Name,
                 i.BaseUnit,
-                i.Recipes.Count,
-                i.SupplierIngredients.Count(si => si.DeletedAt == null)))
+                i.Recipes.Count))
             .ToListAsync(ct);
 
         return new IngredientsListResponse(list);

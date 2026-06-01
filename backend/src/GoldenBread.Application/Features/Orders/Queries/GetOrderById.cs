@@ -1,5 +1,4 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
-using GoldenBread.Application.Abstractions.Services;
 using GoldenBread.Application.Features.Orders.Dtos;
 
 namespace GoldenBread.Application.Features.Orders.Queries;
@@ -7,7 +6,6 @@ namespace GoldenBread.Application.Features.Orders.Queries;
 public sealed record GetOrderByIdQuery(int Id) : IRequest<OrderDetailResponse?>;
 
 public sealed class GetOrderByIdQueryHandler(
-    IUnitConversionService unitConversion,
     IGoldenBreadContext context)
     : IRequestHandler<GetOrderByIdQuery, OrderDetailResponse?>
 {
@@ -24,21 +22,18 @@ public sealed class GetOrderByIdQueryHandler(
             .Include(o => o.OrderItems)
                 .ThenInclude(oi => oi.EmployeeTasks)
                     .ThenInclude(t => t.Employee)
-            .Include(o => o.OrderItems)
-                .ThenInclude(oi => oi.IngredientReservations)
-                    .ThenInclude(r => r.IngredientBatch)
-                        .ThenInclude(ib => ib.SupplierIngredient)
-                            .ThenInclude(si => si.Ingredient)
             .FirstOrDefaultAsync(o => o.OrderId == query.Id, ct);
 
         if (order is null) return null;
 
         var items = order.OrderItems.Select(oi => new OrderItemDetail(
+            oi.OrderItemId,
             oi.Batch.Product.Name,
             $"{oi.UnitsPerBatch}",
             oi.Quantity,
             oi.TotalAmount,
-            oi.Status)).ToList();
+            oi.EmployeeTasks.Count,
+            oi.EmployeeTasks.Count(t => t.Status == Domain.Enums.TaskStatus.Completed))).ToList();
 
         var tasks = order.OrderItems
             .SelectMany(oi => oi.EmployeeTasks)
@@ -49,15 +44,6 @@ public sealed class GetOrderByIdQueryHandler(
                 t.StartTime,
                 t.EndTime)).ToList();
 
-        var reservations = order.OrderItems
-            .SelectMany(oi => oi.IngredientReservations)
-            .Select(r => new IngredientReservationDetail(
-                r.IngredientBatch.SupplierIngredient.Ingredient.Name,
-                unitConversion.ToBaseUnit(r.ReservedQuantity, r.IngredientBatch.SupplierIngredient.Unit),
-                r.IngredientBatch.SupplierIngredient.Unit,
-                r.IngredientBatch.DeliveryDate,
-                r.IngredientBatch.ExpiryDate)).ToList();
-
         return new OrderDetailResponse(
             order.OrderId,
             order.Company?.Name ?? "-",
@@ -67,7 +53,6 @@ public sealed class GetOrderByIdQueryHandler(
             order.OrderItems.Sum(oi => oi.TotalAmount),
             order.CreatedAt,
             items,
-            tasks,
-            reservations);
+            tasks);
     }
 }

@@ -148,7 +148,7 @@
 				<ScrollViewer>
 					<suki:GlassCard Width="500">
 						<StackPanel>
-							<Expander Header="Выбор даты доставки">
+							<Expander Header="Выбор даты доставки" IsExpanded="True">
 								<StackPanel Spacing="16">
 									<suki:InfoBar Title="Выберите компанию и добавьте продукцию"
 												  Severity="Information"

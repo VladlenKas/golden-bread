@@ -1,0 +1,46 @@
+{
+  "pages": [
+    {
+      "key": "products",
+      "title": "Продукция",
+      "icon": "FoodCroissant",
+      "order": 0
+    },
+    {
+      "key": "employees",
+      "title": "Сотрудники",
+      "icon": "AccountGroup",
+      "order": 10
+    },
+    {
+      "key": "orders",
+      "title": "Заказы",
+      "icon": "ClipboardText",
+      "order": 20
+    },
+    {
+      "key": "tasks",
+      "title": "Задачи",
+      "icon": "CalendarCheck",
+      "order": 25
+    },
+    {
+      "key": "analytics",
+      "title": "Аналитика",
+      "icon": "ChartBar",
+      "order": 30
+    },
+    {
+      "key": "companies",
+      "title": "Компании",
+      "icon": "Domain",
+      "order": 40
+    },
+    {
+      "key": "system_users",
+      "title": "Пользователи",
+      "icon": "AccountCog",
+      "order": 50
+    }
+  ]
+}

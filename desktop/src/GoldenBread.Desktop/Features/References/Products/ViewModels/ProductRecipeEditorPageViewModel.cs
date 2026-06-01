@@ -1,5 +1,4 @@
-﻿using GoldenBread.Desktop.Features.Procurement.PurchasePositions.Models;
-using GoldenBread.Desktop.Features.References.Products.Forms;
+﻿using GoldenBread.Desktop.Features.References.Products.Forms;
 using GoldenBread.Desktop.Features.References.Products.Models;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Constants;

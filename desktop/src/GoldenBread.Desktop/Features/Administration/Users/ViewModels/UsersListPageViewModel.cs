@@ -37,7 +37,7 @@ public partial class UsersListPageViewModel : PageViewModel, ISukiStackPageTitle
     public List<StatusesFilterOption> StatusFilterOptions => LocalizedVerificationStatuses.StatusesFilters;
     public List<RoleFilterOption> RoleFilterOptions => LocalizedRoles.RolesFilters;
     public ReadOnlyObservableCollection<UserListItem> FilteredItems { get; }
-    public string Title { get; set; } = ConstantMessages.HostTitlePage;
+    public string Title { get; set; } = "Список пользователей";
 
     public UsersListPageViewModel(
         IUsersApi usersApi,

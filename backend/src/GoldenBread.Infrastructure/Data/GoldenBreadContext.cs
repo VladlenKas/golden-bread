@@ -18,9 +18,6 @@ public class GoldenBreadContext : DbContext, IGoldenBreadContext
     public DbSet<EmployeeTask> EmployeeTasks { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
-    public DbSet<SupplierIngredient> SupplierIngredients { get; set; }
-    public DbSet<OrderItemIngredientReservation> OrderItemIngredientReservations { get; set; }
-    public DbSet<IngredientBatch> IngredientBatches { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Product> Products { get; set; }
@@ -28,7 +25,6 @@ public class GoldenBreadContext : DbContext, IGoldenBreadContext
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<Recipe> Recipes { get; set; }
-    public DbSet<Supplier> Suppliers { get; set; }
     public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)

@@ -1,6 +1,4 @@
-﻿using GoldenBread.Domain.Enums;
-
-namespace GoldenBread.Domain.Entities;
+﻿namespace GoldenBread.Domain.Entities;
 
 public class EmployeeTask
 {
@@ -18,7 +16,7 @@ public class EmployeeTask
     public Employee Employee { get; private set; } = null!;
     public OrderItem OrderItem { get; private set; } = null!;
 
-    public OrderStatus Status { get; private set; }
+    public Enums.TaskStatus Status { get; private set; }
 
     public EmployeeTask() { }
 
@@ -41,7 +39,7 @@ public class EmployeeTask
         };
     }
 
-    public void UpdateStatus(OrderStatus status)
+    public void UpdateStatus(Enums.TaskStatus status)
     {
         Status = status;
     }

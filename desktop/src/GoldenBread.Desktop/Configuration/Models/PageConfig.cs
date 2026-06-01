@@ -10,6 +10,9 @@ public sealed class PageConfig
     [JsonPropertyName("title")]
     public string Title { get; set; } = string.Empty;
 
+    [JsonPropertyName("icon")]
+    public string Icon { get; set; } = string.Empty;
+
     [JsonPropertyName("order")]
     public int Order { get; set; }
 }

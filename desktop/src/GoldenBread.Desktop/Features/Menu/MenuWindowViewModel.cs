@@ -34,7 +34,7 @@ public partial class MenuWindowViewModel : ViewModelBase
 
     [Reactive] private string? _userData;
     [Reactive] private string? _userSessionData;
-    [Reactive] private SectionMenuItem? _selectedSection;
+    [Reactive] private PageMenuItem? _selectedPage;
     [Reactive] private HostPageViewModel? _activePage;
     [Reactive] private bool _isLoading = false;
     [Reactive] private string? _baseThemeHeader;
@@ -44,16 +44,21 @@ public partial class MenuWindowViewModel : ViewModelBase
     public IAvaloniaReadOnlyList<SukiColorTheme> Themes => _theme.ColorThemes;
     public IAvaloniaReadOnlyList<SukiBackgroundStyle> BackgroundStyles { get; } =
         new AvaloniaList<SukiBackgroundStyle>(Enum.GetValues<SukiBackgroundStyle>());
-    public IEnumerable<LocalizedBackground> LocalizedBackgrounds =>
-        BackgroundStyles.Select(s => new LocalizedBackground(s));
     public IEnumerable<LocalizedTheme> LocalizedThemes =>
-        Themes.Select(t => new LocalizedTheme(t));
+        _theme.ColorThemes
+            .Where(LocalizedTheme.IsAllowed)
+            .Select(t => new LocalizedTheme(t));
+    public IEnumerable<LocalizedBackground> LocalizedBackgrounds =>
+        Enum.GetValues<SukiBackgroundStyle>()
+            .Where(LocalizedBackground.IsAllowed)
+            .Select(s => new LocalizedBackground(s))
+            .OrderBy(s => s.DisplayName); 
+
     public ISukiDialogManager SukiDialogManager { get; } 
     public ISukiToastManager SukiToastManager { get; }
-    public ObservableCollection<SectionMenuItem> SidebarSections { get; } = new();
-    public ObservableCollection<HostPageViewModel> SectionPages { get; } = new();
+    public ObservableCollection<PageMenuItem> SidebarPages { get; } = new();
 
-    public MenuWindowViewModel(
+    public MenuWindowViewModel( 
         ISukiDialogManager sukiDialogManager,
         ISukiToastManager sukiToastManager,
         DialogService dialogService,
@@ -86,36 +91,26 @@ public partial class MenuWindowViewModel : ViewModelBase
         };
 
         // При смене выбранного раздела – загружаем его страницы и выбираем первую
-        this.WhenAnyValue(x => x.SelectedSection)
+        this.WhenAnyValue(x => x.SelectedPage)
             .WhereNotNull()
-            .Subscribe(section => LoadSectionPages(section));
+            .Subscribe(page => LoadPage(page));
 
-        // Отображаем разделы меню
-        var sections = _menuConfig.GetSidebarSectionsWithPages();
+        var pages = _menuConfig.GetSidebarPages();
+        SidebarPages.Clear();
+        foreach (var p in pages)
+            SidebarPages.Add(p);
 
-        SidebarSections.Clear();
-
-        foreach (var item in sections)
-            SidebarSections.Add(item);
-
-        SelectedSection = SidebarSections.FirstOrDefault();
+        SelectedPage = SidebarPages.FirstOrDefault();
     }
 
-    private void LoadSectionPages(SectionMenuItem section)
+    private void LoadPage(PageMenuItem page)
     {
-        SectionPages.Clear();
+        var perm = _menuConfig.GetPagePermissions(page.Key);
+        var vm = _pageFactory.GetHostPage(page.Key, page.Title, perm);
 
-        foreach (var page in section.Pages.OrderBy(p => p.Order))
-        {
-            var perm = _menuConfig.GetPagePermissions(page.Key);
-            var vm = _pageFactory.GetHostPage(page.Key, page.Title, perm);
+        if (vm is null) return;
 
-            if (vm is null) continue;
-
-            SectionPages.Add(vm);
-        }
-
-        ActivePage = SectionPages.FirstOrDefault();
+        ActivePage = vm;
     }
 
     public void ChangeTheme(SukiColorTheme theme) => _theme.ChangeColorTheme(theme);
