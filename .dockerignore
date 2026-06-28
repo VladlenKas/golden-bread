@@ -30,4 +30,5 @@ web/cert/
 docker-compose*.yml
 Dockerfile*
 .claude/
+web/.vscode/
 .dockerignore

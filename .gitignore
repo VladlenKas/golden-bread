@@ -364,6 +364,7 @@ FodyWeavers.xsd
 
 # Optionaly
 .claude/
+web/.vscode/
 data/postgres/
 dataprotection-keys/
 postgres/
