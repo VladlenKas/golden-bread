@@ -13,7 +13,7 @@ public partial class OrdersHostPageViewModel : HostPageViewModel
     public OrdersHostPageViewModel(PageFactory factory)
     {
         _factory = factory;
-        _listPage = factory.GetPage <OrdersListPageViewModel> ();
+        _listPage = factory.GetPage<OrdersListPageViewModel>();
 
         _listPage.AddCommand.Subscribe(_ => ShowEditor(null));
     }

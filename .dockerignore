@@ -1,0 +1,33 @@
+# .NET
+backend/**/bin/
+backend/**/obj/
+backend/**/artifacts/
+backend/**/*.user
+backend/**/*.suo
+
+# Node
+web/node_modules/
+web/dist/
+web/.vscode/
+
+# Git / OS
+.git/
+.gitignore
+.idea/
+.vs/
+*.swp
+Thumbs.db
+.DS_Store
+
+# Data
+data/postgres/
+data/dataprotection-keys/
+
+# Optional
+web/cert/
+**/*.md
+**/README*
+docker-compose*.yml
+Dockerfile*
+.claude/
+.dockerignore

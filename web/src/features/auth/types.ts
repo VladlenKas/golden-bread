@@ -33,3 +33,11 @@ export enum VerificationStatus {
   Rejected = 'Rejected',
   Suspended = 'Suspended',
 }
+
+export interface CompanyInfoDto {
+  name: string;
+  inn: string;
+  ogrn: string;
+  address?: string;
+  phone?: string;
+}

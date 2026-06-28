@@ -16,13 +16,17 @@ public partial class OrderCartItem : ViewModelBase
     [Reactive] int _totalUnits;
     [Reactive] decimal _totalCost;
 
+    [Reactive] public int _productionTimeMinutes;
+    [Reactive] int _totalProductionTimeMinutes;
+
     public ObservableCollection<ProductBatchOption> AvailableBatches { get; } = new();
 
     public OrderCartItem()
     {
         this.WhenAnyValue(
                 x => x.Quantity,
-                x => x.SelectedBatch)
+                x => x.SelectedBatch,
+                x => x.ProductionTimeMinutes)
             .Subscribe(_ => Recalculate());
     }
     private void Recalculate()
@@ -32,10 +36,13 @@ public partial class OrderCartItem : ViewModelBase
         {
             TotalUnits = 0;
             TotalCost = 0;
+            TotalProductionTimeMinutes = 0; // ← ДОБАВИТЬ
             return;
         }
 
         TotalUnits = Quantity * batch.QuantityUnits;
         TotalCost = TotalUnits * batch.UnitPrice;
+
+        TotalProductionTimeMinutes = Quantity * ProductionTimeMinutes;
     }
 }

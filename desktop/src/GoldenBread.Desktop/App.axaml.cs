@@ -10,9 +10,11 @@ using GoldenBread.Desktop.Features.Common.ViewModels;
 using GoldenBread.Desktop.Features.Main;
 using GoldenBread.Desktop.Features.Menu;
 using GoldenBread.Desktop.Features.Procurement.PurchasePositions.ViewModels;
+using GoldenBread.Desktop.Features.Production.EmployeeTasksList.ViewModels;
 using GoldenBread.Desktop.Features.Production.OrdersList.ViewModels;
 using GoldenBread.Desktop.Features.References.Employees.ViewModels;
 using GoldenBread.Desktop.Features.References.Products.ViewModels;
+using GoldenBread.Desktop.Features.Statistics.ViewModels;
 using GoldenBread.Desktop.Infrastructure.Api;
 using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.UI.Services;
@@ -95,6 +97,7 @@ public partial class App : Application, IDisposable
         services.AddApiClient<IImagesApi>();
         services.AddApiClient<IOrdersApi>();
         services.AddApiClient<IDocumentsApi>();
+        services.AddApiClient<IEmployeeTasksApi>();
 
         return services.BuildServiceProvider();
     }
@@ -140,6 +143,14 @@ public partial class App : Application, IDisposable
         services.AddTransient<OrdersHostPageViewModel>();
         services.AddTransient<OrdersListPageViewModel>();
         services.AddTransient<OrderEditorPageViewModel>();
+
+        // Tasks Pages
+        services.AddTransient<EmployeeTasksHostPageViewModel>();
+        services.AddTransient<EmployeeTasksListPageViewModel>();
+
+        // Statistic Pages
+        services.AddTransient<StatisticsHostPageViewModel>();
+        services.AddTransient<StatisticsListPageViewModel>();
 
         // Common Pages
         services.AddTransient<ChangePasswordPageViewModel>();

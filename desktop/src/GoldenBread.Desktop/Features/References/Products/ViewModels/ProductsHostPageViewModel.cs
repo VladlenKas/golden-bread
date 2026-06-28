@@ -53,6 +53,8 @@ public partial class ProductsHostPageViewModel : HostPageViewModel
         _listPage.ShowCreateCategoryDialogCommand.Subscribe(_ => { });
         _listPage.ShowEditCategoryDialogCommand.Where(a => a).Subscribe(_ => ShowList());
         _listPage.ShowDeleteCategoryDialogCommand.Where(a => a).Subscribe(_ => ShowList());
+        _listPage.ShowEditIngredientDialogCommand.Where(action => action).Subscribe(_ => ShowList());
+        _listPage.ShowDeleteIngredientDialogCommand.Where(action => action).Subscribe(_ => ShowList()); 
     }
 
     // === СОЗДАНИЕ ПРОДУКТА ===

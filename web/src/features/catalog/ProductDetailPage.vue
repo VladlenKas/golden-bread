@@ -241,7 +241,7 @@ function formatUnit(unit: string): string {
                 <span class="w-1 h-1 rounded-full bg-muted-foreground/40" />
                 <TooltipBase>
                   <template #icon><Scale class="w-4 h-4" /> </template>
-                  <template #trigger>{{ product.weight }} кг</template>
+                  <template #trigger>{{ product.weight }} г</template>
                   <template #content>Вес</template>
                 </TooltipBase>
               </div>

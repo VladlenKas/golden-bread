@@ -59,5 +59,5 @@ internal static class WorkScheduleConstants
     public const int LunchStartHour = 12;
     public const int LunchEndHour = 13;
     public const int WorkEndHour = 17;
-    public const int MaxPlanningDays = 30;
+    public const int MaxPlanningDays = 90;
 }

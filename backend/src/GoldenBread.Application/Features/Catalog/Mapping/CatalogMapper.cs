@@ -6,9 +6,21 @@ namespace GoldenBread.Application.Features.Catalog.Mapping;
 
 public class CatalogMapper
 {
-    public static ProductListItemResponse ToListItems(Product p, int? companyId)
+    public static ProductListItemResponse ToListItems(
+        Product p,
+        int? companyId,
+        ProductSalesStatistics? stats = null)
     {
         var batch = SelectBatch(p.ProductBatches, companyId);
+
+        var topSeason = stats?.SeasonalSales
+            .Where(s => s.TotalUnitsSold > 0)
+            .OrderByDescending(s => s.TotalUnitsSold)
+            .FirstOrDefault();
+
+        var badge = topSeason != null
+            ? $"Топ {topSeason.Season.ToRussianString().ToLowerInvariant()} {topSeason.Year}"
+            : null;
 
         return new ProductListItemResponse(
             ProductId: p.ProductId,
@@ -27,10 +39,20 @@ public class CatalogMapper
             SalePrice: batch?.UnitPrice ?? 0,
             ImageUrl: p.ProductImages.FirstOrDefault()?.ImagePath,
             IsFavorite: p.Favorites.Any(f => f.CompanyId == companyId),
-            QuantityInCart: p.GetQuantityInCart(companyId));
+            QuantityInCart: p.GetQuantityInCart(companyId),
+
+            TotalSoldAllTime: stats?.TotalSoldAllTime ?? 0,
+            SeasonalSales: stats?.SeasonalSales ?? Array.Empty<SeasonalSalesData>(),
+            TopSeasonBadge: badge,
+
+            CreatedAt: p.CreatedAt
+        );
     }
 
-    public static ProductDetailResponse ToDetail(Product p, int? companyId)
+    public static ProductDetailResponse ToDetail(
+        Product p,
+        int? companyId,
+        ProductSalesStatistics? stats = null)
     {
         var currentBatch = SelectBatch(p.ProductBatches, companyId);
 
@@ -66,17 +88,13 @@ public class CatalogMapper
                 IngredientId: r.Ingredient.IngredientId,
                 Name: r.Ingredient.Name,
                 Quantity: r.Quantity,
-                Unit: r.Ingredient.BaseUnit.ToString())).ToList()
+                Unit: r.Ingredient.BaseUnit.ToString())).ToList(),
+
+            TotalSoldAllTime: stats?.TotalSoldAllTime ?? 0,
+            SeasonalSales: stats?.SeasonalSales ?? Array.Empty<SeasonalSalesData>()
         );
     }
 
-    /// <summary>
-    /// Возвращает партию продукта, выбранную для текущей компании,
-    /// которая уже есть в корзине, либо (если нет) партию с наименьшим объёмом поставки.
-    /// </summary>
-    /// <param name="batches"></param>
-    /// <param name="companyId"></param>
-    /// <returns>Null, если партий нет</returns>
     private static ProductBatch? SelectBatch(
         IEnumerable<ProductBatch> batches,
         int? companyId)

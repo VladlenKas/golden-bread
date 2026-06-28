@@ -39,6 +39,16 @@
 					<ComboBoxItem>Позиций ↓</ComboBoxItem>
 				</ComboBox>
 
+				<ComboBox DockPanel.Dock="Left"
+						  Margin="-5"
+						  SelectedIndex="{Binding SelectedDateFilterIndex}">
+					<ComboBoxItem>Все</ComboBoxItem>
+					<ComboBoxItem>Сегодня</ComboBoxItem>
+					<ComboBoxItem>Актуальные</ComboBoxItem>
+					<ComboBoxItem>Просроченные</ComboBoxItem>
+					<ComboBoxItem>Без слота</ComboBoxItem>
+				</ComboBox>
+
 				<CalendarDatePicker DockPanel.Dock="Left"
 									Watermark="Дата от:"
 									SelectedDate="{Binding DateFrom}"/>
@@ -121,20 +131,12 @@
 													</StackPanel>
 
 													<Grid ColumnDefinitions="Auto,*,Auto" Margin="0 4">
-														<TextBlock Grid.Column="0"
-																   Text="{Binding CompletedTasks}"
-																   FontSize="11" FontWeight="SemiBold"
-																   VerticalAlignment="Center"/>
 														<ProgressBar Grid.Column="1"
 																	 Value="{Binding Progress}"
 																	 Maximum="1"
 																	 Margin="8 0"
 																	 Height="4"
 																	 CornerRadius="2"/>
-														<TextBlock Grid.Column="2"
-																   Text="{Binding TotalTasks}"
-																   FontSize="11" FontWeight="SemiBold"
-																   VerticalAlignment="Center"/>
 													</Grid>
 
 													<StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">

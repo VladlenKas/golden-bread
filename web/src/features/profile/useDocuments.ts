@@ -1,47 +1,54 @@
-import { ref } from "vue";
-import { createDeliveryInvoiceXlsx } from "./api";
+import { ref } from 'vue';
+import { me as meApi } from '../auth/api'
+import { createDeliveryInvoicePdf, createCooperationAgreementPdf } from './api';
 
 export function useDocuments() {
   const isDownloadingInvoice = ref<number | null>(null);
+  const isDownloadingAgreement = ref(false);
 
-  const downloadDeliveryInvoice = async (orderId: number): Promise<void> => {
+  const downloadDeliveryInvoice = async (orderId: number) => {
     isDownloadingInvoice.value = orderId;
-    
     try {
-      // Получаем response, а не только data
-      const response = await createDeliveryInvoiceXlsx(orderId);
-      
-      // Создаем Blob из response.data (который уже Blob из-за responseType: 'blob')
-      const blob = new Blob([response.data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-      
-      // Имя файла из заголовка или дефолтное
-      const contentDisposition = response.headers['content-disposition'];
-      const fileName = contentDisposition
-        ? contentDisposition.split('filename=')[1]?.replace(/["']/g, '')
-        : `Накладная_№${orderId}.xlsx`;
-      
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName;
-      
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      
-    } catch (err) {
-      console.error('Download failed:', err);
-      throw err;
+      const response = await createDeliveryInvoicePdf(orderId);
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const fileName = response.headers['content-disposition']?.split('filename=')[1]?.replace(/["']/g, '')
+        || `Накладная_№${orderId}.pdf`;
+      downloadBlob(blob, fileName);
     } finally {
       isDownloadingInvoice.value = null;
     }
   };
 
-  return { 
+  const downloadCooperationAgreement = async () => {
+    isDownloadingAgreement.value = true;
+    try {
+
+      const account = await meApi();
+      const response = await createCooperationAgreementPdf(account.id);
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const fileName = response.headers['content-disposition']?.split('filename=')[1]?.replace(/["']/g, '')
+        || 'Договор_сотрудничества.pdf';
+      downloadBlob(blob, fileName);
+    } finally {
+      isDownloadingAgreement.value = false;
+    }
+  };
+
+  const downloadBlob = (blob: Blob, fileName: string) => {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  return {
     isDownloadingInvoice,
+    isDownloadingAgreement,
     downloadDeliveryInvoice,
+    downloadCooperationAgreement,
   };
 }

@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
              xmlns:vm="using:GoldenBread.Desktop.Features.References.Products.ViewModels"
+             xmlns:conv="using:GoldenBread.Desktop.UI.Converters"
              x:Class="GoldenBread.Desktop.Features.References.Products.Views.ProductCategoryEditDialogView"
              x:DataType="vm:ProductCategoryEditDialogViewModel">
 
@@ -9,7 +10,7 @@
         <suki:GlassCard>
             <StackPanel Spacing="12">
                 <DockPanel HorizontalSpacing="8">
-                    <TextBlock Text="Категория:" VerticalAlignment="Center"/>
+                    <TextBlock Text="Категория:" VerticalAlignment="Center" Width="80"/>
                     <AutoCompleteBox ItemsSource="{Binding Categories}"
                                      SelectedItem="{Binding SelectedCategory}"
                                      FilterMode="Contains"
@@ -18,20 +19,35 @@
                 </DockPanel>
             </StackPanel>
         </suki:GlassCard>
+
         <suki:GlassCard>
             <Expander Header="Данные категории" IsExpanded="True">
                 <StackPanel Spacing="12">
                     <DockPanel HorizontalSpacing="8">
-                        <TextBlock Text="Название:" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding Name}" MaxLength="50"/>
+                        <TextBlock Text="Название:" VerticalAlignment="Center" Width="80"/>
+                        <TextBox Text="{Binding Name}" MaxLength="15"/>
                     </DockPanel>
+
                     <DockPanel HorizontalSpacing="8">
-                        <TextBlock Text="Цвет:" VerticalAlignment="Center"/>
-                        <ColorPicker Color="{Binding Color}"/>
+                        <TextBlock Text="Цвет:" VerticalAlignment="Center" Width="80"/>
+                        <TextBox Text="{Binding Color}" 
+                                 MaxLength="6"
+                                 Width="210"
+                                 VerticalAlignment="Center"/>
+                        <Border Background="{Binding Color, Converter={StaticResource HexColorConverter}}"
+                                BorderBrush="{DynamicResource SukiBorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Width="32"
+                                Height="32"
+                                VerticalAlignment="Center"
+                                Margin="8 0 0 0"
+                                ToolTip.Tip="#{Binding Color}"/>
                     </DockPanel>
                 </StackPanel>
             </Expander>
         </suki:GlassCard>
+        
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
             <Button Content="Отмена" Command="{Binding CancelCommand}"/>
             <Button Content="Сохранить" Command="{Binding SaveCommand}" Classes="Flat"/>

@@ -6,7 +6,7 @@ import type {
   ProfileResponse,
   UpdateContactsRequest,
   UpdateRequisitesRequest,
-  OrdersListResponse
+  OrdersListResponse,
 } from './types';
 import type { ProductListItem } from '../catalog/types';
 
@@ -41,14 +41,29 @@ export async function getFavorites(): Promise<ProductListItem[]> {
   return data;
 }
 
-export async function createDeliveryInvoiceXlsx(orderId: number) {
+export async function createDeliveryInvoicePdf(orderId: number) {
   const response = await clientDocument.post(
-    `/api/document/delivery-invoice-xlsx/${orderId}`,
+    `/api/document/delivery-invoice-pdf/${orderId}`,
     {}, 
     { 
       responseType: 'blob', 
       headers: {
-        'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        'Accept': 'application/pdf'
+      }
+    }
+  );
+  
+  return response; 
+}
+
+export async function createCooperationAgreementPdf(orderId: number) {
+  const response = await clientDocument.post(
+    `/api/document/cooperation-agreement-pdf/${orderId}`,
+    {}, 
+    { 
+      responseType: 'blob', 
+      headers: {
+        'Accept': 'application/pdf'
       }
     }
   );

@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.References.Products.Models;
+using GoldenBread.Desktop.Features.Statistics.Dtos;
 using Refit;
 
 namespace GoldenBread.Desktop.Infrastructure.Api;
@@ -31,4 +32,9 @@ public interface IProductsApi
 
     [Delete("/api/products/{id}")]
     Task<IApiResponse> Delete(int id);
+
+    [Get("/api/products/raw-data")]
+    Task<IApiResponse<RawStatisticsData>> GetRawData(
+        [AliasAs("dateFrom")] DateTime? dateFrom = null,
+        [AliasAs("dateTo")] DateTime? dateTo = null);
 }

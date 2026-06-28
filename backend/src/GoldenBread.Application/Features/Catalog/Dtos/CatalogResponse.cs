@@ -21,7 +21,13 @@ public record ProductListItemResponse(
     decimal SalePrice,
     string? ImageUrl,
     bool IsFavorite,
-    int QuantityInCart);
+    int QuantityInCart,
+
+    int TotalSoldAllTime,
+    IReadOnlyList<SeasonalSalesData> SeasonalSales,
+    string? TopSeasonBadge,
+
+    DateTime CreatedAt);
 
 public sealed record ProductCategoryResponse(
     int ProductCategoryId,

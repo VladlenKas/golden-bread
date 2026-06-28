@@ -12,6 +12,9 @@
             <helpers:ThemeToIconConverter x:Key="ThemeToIconConverter"/>
             <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
             <helpers:HexColorConverter x:Key="HexColorConverter"/>
+            <helpers:IntGreaterThanZeroConverter x:Key="IntGreaterThanZeroConverter"/>
+            <helpers:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter"/>
+            <helpers:StringEqualsConverter x:Key="StringEqualsConverter"/>
             <FontFamily x:Key="DefaultFontFamily">avares://GoldenBread.Desktop/Assets/Fonts#SF Pro Display</FontFamily> 
         </ResourceDictionary> 
     </Application.Resources> 

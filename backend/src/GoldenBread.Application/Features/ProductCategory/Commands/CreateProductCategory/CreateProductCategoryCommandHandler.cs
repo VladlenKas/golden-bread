@@ -1,5 +1,6 @@
 ﻿using GoldenBread.Application.Abstractions.Data;
 using GoldenBread.Application.Abstractions.Data.Repositories;
+using GoldenBread.Application.Common.Exceptions;
 
 namespace GoldenBread.Application.Features.ProductCategory.Commands.CreateProductCategory;
 
@@ -11,6 +12,10 @@ public sealed class CreateProductCategoryCommandHandler(
     public async Task<int> Handle(CreateProductCategoryCommand request, CancellationToken ct)
     {
         var dto = request.Dto;
+
+        if (await repository.ExistsByNameAsync(dto.Name, null, ct))
+            throw new DuplicateEntityException(nameof(dto.Name));
+
         var entity = new DbEntities.ProductCategory
         {
             Name = dto.Name,

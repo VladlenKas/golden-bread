@@ -1,8 +1,9 @@
-import { client } from '@/shared/api';
+import { client, clientDocument } from '@/shared/api';
 import type { 
   AuthResponse, 
   LoginRequest, 
-  RegisterRequest 
+  RegisterRequest,
+  CompanyInfoDto
 } from './types'
 
 export async function register(value: RegisterRequest): Promise<void> {
@@ -21,4 +22,19 @@ export async function logout(): Promise<void> {
 export async function me(): Promise<AuthResponse> {
   const { data } = await client.get('api/auth/me');
   return data;
+}
+
+export async function createCooperationAgreementForRegistrationPdf(companyInfo: CompanyInfoDto) {
+  const response = await clientDocument.post(
+    '/api/document/cooperation-agreement-pdf/public',
+    companyInfo,
+    { 
+      responseType: 'blob', 
+      headers: {
+        'Accept': 'application/pdf'
+      }
+    }
+  );
+  
+  return response; 
 }

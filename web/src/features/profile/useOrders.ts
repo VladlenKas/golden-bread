@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue';
-import { createDeliveryInvoiceXlsx, getOrders } from './api';
+import { createDeliveryInvoicePdf, getOrders } from './api';
 import type { OrderListItemResponse, OrderStatus } from './types';
 
 export function useOrders() {
@@ -9,7 +9,7 @@ export function useOrders() {
 
   // Фильтры и сортировка
   const searchQuery = ref('');
-  const statusFilter = ref<OrderStatus | 'all'>('all');
+  const statusFilter = ref<OrderStatus | 'all'>('all'); 
   const sortBy = ref<'newest' | 'oldest' | 'expensive' | 'cheap'>('newest');
 
   const fetchOrders = async () => {

@@ -131,7 +131,7 @@ public sealed class UpdateOrderStatusCommandHandler(
             .ToListAsync(ct);
 
         foreach (var task in tasks)
-            task.UpdateStatus(Domain.Enums.TaskStatus.Completed);
+            task.UpdateStatus(Domain.Enums.TaskStatus.Canceled);
 
         order.Cancel();
     }

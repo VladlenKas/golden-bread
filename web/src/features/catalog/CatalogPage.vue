@@ -62,7 +62,6 @@ const {
   toggleTimeFilter,
 } = useCatalog();
 
-
 </script>
 
 <template>
@@ -101,7 +100,7 @@ const {
       </div>
 
       <!-- Сетка страницы -->
-      <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-[260px_1fr_260px] gap-6">
 
         <!-- Левая панель: Навигация по категориям -->
         <aside class="space-y-6 lg:block lg:sticky lg:top-24 h-fit"">

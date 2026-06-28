@@ -1,0 +1,170 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:suki="https://github.com/kikipoulet/SukiUI"
+    xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+    xmlns:vm="using:GoldenBread.Desktop.Features.Statistics.ViewModels"
+    xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+    x:Class="GoldenBread.Desktop.Features.Statistics.Views.StatisticsListPageView"
+    x:DataType="vm:StatisticsListPageViewModel"
+    mc:Ignorable="d"
+    x:CompileBindings="False">
+
+    <suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+        <DockPanel VerticalSpacing="12">
+
+            <!-- ТУЛБАР: фильтры дат -->
+            <DockPanel DockPanel.Dock="Top" HorizontalSpacing="8" LastChildFill="False">
+                <CalendarDatePicker DockPanel.Dock="Left"
+                                    Width="160"
+                                    Watermark="Дата от:"
+                                    SelectedDate="{Binding DateFrom}"/>
+                <CalendarDatePicker DockPanel.Dock="Left"
+                                    Width="160"
+                                    Watermark="Дата до:"
+                                    SelectedDate="{Binding DateTo}"/>
+
+                <Button DockPanel.Dock="Right"
+                        Classes="Flat"
+                        Content="Сбросить"
+                        suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Refresh}"
+                        Command="{Binding ResetFiltersCommand}"/>
+                <Button DockPanel.Dock="Right"
+                        Classes="Flat"
+                        Content="Обновить"
+                        suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Sync}"
+                        Command="{Binding RefreshCommand}"/>
+            </DockPanel>
+
+            <ScrollViewer>
+                <StackPanel Spacing="16">
+
+                    <!-- Пустое состояние -->
+                    <TextBlock Text="Нет данных за выбранный период"
+                               IsVisible="{Binding IsEmpty}"
+                               HorizontalAlignment="Center"
+                               Classes="h5"
+                               Margin="0 40"/>
+
+                    <!-- ===== СВОДНЫЕ КАРТОЧКИ ===== -->
+                    <UniformGrid Columns="4" IsVisible="{Binding !IsEmpty}">
+                        <suki:GlassCard Margin="4">
+                            <StackPanel>
+                                <TextBlock Text="Выручка" Classes="caption"/>
+                                <TextBlock Text="{Binding TotalRevenue, StringFormat='{}{0:N2} ₽'}" Classes="h4"/>
+                            </StackPanel>
+                        </suki:GlassCard>
+                        <suki:GlassCard Margin="4">
+                            <StackPanel>
+                                <TextBlock Text="Продано штук" Classes="caption"/>
+                                <TextBlock Text="{Binding TotalUnitsSold, StringFormat='{}{0:N0} шт.'}" Classes="h4"/>
+                            </StackPanel>
+                        </suki:GlassCard>
+                        <suki:GlassCard Margin="4">
+                            <StackPanel>
+                                <TextBlock Text="Заказов" Classes="caption"/>
+                                <TextBlock Text="{Binding TotalOrders, StringFormat='{}{0:N0} заказов'}" Classes="h4"/>
+                            </StackPanel>
+                        </suki:GlassCard>
+                        <suki:GlassCard Margin="4">
+                            <StackPanel>
+                                <TextBlock Text="Средний чек" Classes="caption"/>
+                                <TextBlock Text="{Binding AverageOrderValue, StringFormat='{}{0:N2} ₽'}" Classes="h4"/>
+                            </StackPanel>
+                        </suki:GlassCard>
+                    </UniformGrid>
+
+                    <!-- ===== ГРАФИКИ ===== -->
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" IsVisible="{Binding !IsEmpty}">
+                        <!-- Динамика по месяцам -->
+                        <suki:GlassCard Grid.Row="0" Grid.Column="0" Margin="4">
+                            <StackPanel>
+                                <TextBlock Text="Динамика по месяцам" Classes="h6" Margin="0 0 0 8"/>
+                                <lvc:CartesianChart Series="{Binding MonthlySeries}"
+                                                    XAxes="{Binding MonthlyXAxes}"
+                                                    YAxes="{Binding MonthlyYAxes}"
+                                                    Height="260"/>
+                            </StackPanel>
+                        </suki:GlassCard>
+
+                        <!-- Круговая диаграмма категорий -->
+                        <suki:GlassCard Grid.Row="0" Grid.Column="1" Margin="4">
+                            <StackPanel>
+                                <TextBlock Text="Доли категорий (в рублях)" Classes="h6" Margin="0 0 0 8"/>
+                                <lvc:PieChart Series="{Binding CategorySeries}"
+                                              Height="260"/>
+                            </StackPanel>
+                        </suki:GlassCard>
+
+                        <!-- Сезонность -->
+                        <suki:GlassCard Grid.Row="1" Grid.Column="0" Margin="4">
+                            <StackPanel>
+                                <TextBlock Text="Сезонность продаж" Classes="h6" Margin="0 0 0 8"/>
+                                <lvc:CartesianChart Series="{Binding SeasonalitySeries}"
+                                                    XAxes="{Binding SeasonalityXAxes}"
+                                                    Height="260"/>
+                            </StackPanel>
+                        </suki:GlassCard>
+
+                        <!-- Общая эффективность производства -->
+                        <suki:GlassCard Grid.Row="1" Grid.Column="1" IsVisible="{Binding !IsEmpty}" Margin="4">
+                        <StackPanel>
+                            <TextBlock Text="Производственная эффективность" Classes="h6" Margin="0 0 0 8"/>
+                            <DataGrid ItemsSource="{Binding ProductionEfficiency}"
+                                      AutoGenerateColumns="False"
+                                      Height="250">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Продукт" Binding="{Binding ProductName}" />
+                                    <DataGridTextColumn Header="Задач" Binding="{Binding TotalTasks, StringFormat='{}{0:N0} шт.'}" />
+                                    <DataGridTextColumn Header="Назначено" Binding="{Binding TotalAssigned, StringFormat='{}{0:N0} шт.'}" />
+                                    <DataGridTextColumn Header="Выполнено" Binding="{Binding TotalCompleted, StringFormat='{}{0:N0} шт.'}" />
+                                    <DataGridTextColumn Header="Выполнено %" Binding="{Binding CompletionRate, StringFormat='{}{0:F1} %'}" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </suki:GlassCard>
+                    </Grid>
+
+                    <!-- ===== ТАБЛИЦЫ ===== -->
+                    <Grid ColumnDefinitions="*,*" IsVisible="{Binding !IsEmpty}">
+                        <!-- Все продукты (не топ-10) -->
+                        <suki:GlassCard Margin="4" Grid.Column="0">
+                            <StackPanel>
+                                <TextBlock Text="Продажи по продуктам" Classes="h6" Margin="0 0 0 8"/>
+                                <DataGrid ItemsSource="{Binding TopProducts}"
+                                          AutoGenerateColumns="False"
+                                          Height="280">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Продукт" Binding="{Binding ProductName}" />
+                                        <DataGridTextColumn Header="Категория" Binding="{Binding CategoryName}" />
+                                        <DataGridTextColumn Header="Штук" Binding="{Binding TotalUnitsSold, StringFormat='{}{0:N0} шт.'}" />
+                                        <DataGridTextColumn Header="Выручка" Binding="{Binding TotalRevenue, StringFormat='{}{0:N2} ₽'}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </suki:GlassCard>
+
+                        <!-- Все клиенты (не топ-10) -->
+                        <suki:GlassCard Margin="4" Grid.Column="1">
+                            <StackPanel>
+                                <TextBlock Text="Клиенты" Classes="h6" Margin="0 0 0 8"/>
+                                <DataGrid ItemsSource="{Binding TopCustomers}"
+                                          AutoGenerateColumns="False"
+                                          Height="280">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Компания" Binding="{Binding CompanyName}" />
+                                        <DataGridTextColumn Header="Заказов" Binding="{Binding OrdersCount, StringFormat='{}{0:N0} шт.'}" />
+                                        <DataGridTextColumn Header="Выручка" Binding="{Binding TotalRevenue, StringFormat='{}{0:N2} ₽'}" />
+                                        <DataGridTextColumn Header="Средний чек" Binding="{Binding AverageOrderValue, StringFormat='{}{0:N2} ₽'}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </suki:GlassCard>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </DockPanel>
+    </suki:BusyArea>
+</UserControl>

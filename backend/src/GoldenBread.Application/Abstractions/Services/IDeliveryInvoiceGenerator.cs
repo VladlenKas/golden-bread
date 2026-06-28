@@ -4,6 +4,5 @@ namespace GoldenBread.Application.Abstractions.Services;
 
 public interface IDeliveryInvoiceGenerator
 {
-    byte[] Generate(Order order, Company company);
-
+    byte[] Generate(Order order, Company company, User? issuedBy);
 }

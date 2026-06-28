@@ -19,6 +19,9 @@
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="LiveChartsCore" Version="2.0.4" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView" Version="2.0.4" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.4" />
 	<PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
 	<PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
 	<PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="10.0.7" />
@@ -30,7 +33,7 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Refit" Version="10.1.6" />
+	<PackageReference Include="Refit" Version="10.1.6" />   
 	<PackageReference Include="Refit.HttpClientFactory" Version="10.1.6" />
 	<PackageReference Include="SukiUI" Version="6.0.3" />
 	<PackageReference Include="HotAvalonia" Version="3.0.2" PrivateAssets="All" Publish="True" />
@@ -45,6 +48,12 @@
     </Compile>
     <Compile Update="Features\References\Products\Views\ProductEditorPageView.axaml.cs">
       <DependentUpon>ProductEditorPageView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Features\Statistics\Views\StatisticsHostPageView.axaml.cs">
+      <DependentUpon>StatisticsHostPageView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Features\Statistics\Views\StatisticsListPageView.axaml.cs">
+      <DependentUpon>StatisticsListPageView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

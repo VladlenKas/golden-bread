@@ -38,6 +38,8 @@ public partial class OrdersListPageView : UserControl
     {
         if (!e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) return;
         if (sender is not Control card || card.DataContext is not KanbanItem item) return;
+        if (DataContext is OrdersListPageViewModel { Permissions.Update: false })
+            return;
 
         _dragItem = item;
         _dragSourceColumn = FindParentColumnTag(card);
@@ -114,9 +116,9 @@ public partial class OrdersListPageView : UserControl
 
         ResetHighlights();
 
-        _dragItem = null; 
+        _dragItem = null;
         _dragSourceColumn = null;
-        _originalCard = null; 
+        _originalCard = null;
         _isDragging = false;
     }
 

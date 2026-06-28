@@ -8,15 +8,16 @@ public class HexColorConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        if (value is string hex)
-        {
-            if (!hex.StartsWith('#'))
-                hex = "#" + hex;
+        var hex = value as string;
+        if (string.IsNullOrWhiteSpace(hex))
+            return new SolidColorBrush(Colors.Transparent);
 
-            if (Color.TryParse(hex, out var color))
-                return new SolidColorBrush(color);
-        }
-        return new SolidColorBrush(Colors.Gray);
+        var withHash = hex.StartsWith('#') ? hex : '#' + hex;
+
+        if (Color.TryParse(withHash, out var color))
+            return new SolidColorBrush(color);
+
+        return new SolidColorBrush(Colors.Transparent);
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

@@ -17,6 +17,11 @@ public partial class ProductListItem : ReactiveObject
     public int QuantityPerBatch { get; set; }
     public decimal SalePrice { get; set; }
     public string? ImageUrl { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public int TotalSoldAllTime { get; set; }
+    public List<SeasonalSalesData> SeasonalSales { get; set; } = new();
+    public string? TopSeasonBadge { get; set; }
 
     public string SearchText => $"{Name}{Description}{CategoryName}".ToLowerInvariant();
     public decimal AmountPrice => SalePrice * QuantityPerBatch;
@@ -25,3 +30,8 @@ public partial class ProductListItem : ReactiveObject
 }
 
 public record ProductsListResponse(List<ProductListItem> ProductsList);
+
+public record SeasonalSalesData(
+    Season Season,
+    int Year,
+    int TotalUnitsSold);

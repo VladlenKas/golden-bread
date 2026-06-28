@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.References.Products.Models;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -36,13 +37,13 @@ public partial class ProductBatchForm : ViewModelBase
     int? _productBatchId;
 
     [Reactive]
-    [Required]
-    [Range(0, 1000)] 
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(0, 1000, ErrorMessage = "Значение наценки должно быть в диапозоне от 0 до 1000")] 
     int _markupPercent;
 
     [Reactive]
-    [Required]
-    [Range(1, 25)] 
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(1, 25, ErrorMessage = "Значение количества единиц должно быть в диапозоне от 1 до 25")] 
     int _quantityUnits;
 
     // Базовая цена за 1 шт от продукта (приходит извне, не вычисляется)

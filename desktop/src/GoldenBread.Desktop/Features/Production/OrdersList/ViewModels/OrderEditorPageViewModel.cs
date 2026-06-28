@@ -16,6 +16,8 @@ namespace GoldenBread.Desktop.Features.Production.OrdersList.ViewModels;
 
 public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTitleProvider
 {
+    private const int MaxProductionTimeMinutes = 8 * 60; // 480 минут
+
     private readonly IOrdersApi _ordersApi;
     private readonly ToastService _toastService;
     private readonly DialogService _dialogService;
@@ -37,6 +39,17 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
     [Reactive] private bool _isCartEmpty = true;
     [Reactive] private bool _canSelectDate;
     [Reactive] private bool _isOrderTooLarge;
+
+    // Для вычисления времени производства заказа
+    [Reactive] private int _totalProductionTimeMinutes;
+    [Reactive] private double _productionProgressPercent;
+    [Reactive] private bool _isWithinProductionLimit = true;
+    [Reactive] private string _formattedProductionTime = "0ч 0мин";
+
+    // Плашки 
+    [Reactive] private bool _showSelectCompanyInfo = true;
+    [Reactive] private bool _showAddProductsInfo = true;
+    [Reactive] private bool _isProductionLimitExceeded;
 
     public string Title { get; set; } = "Новый заказ";
 
@@ -85,8 +98,7 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
                 foreach (var item in e.NewItems.OfType<OrderCartItem>())
                     ObserveCartItem(item);
 
-            UpdateCartState();
-            UpdateCanSelectDate();
+            UpdateCartState();      
             await OnCartChangedAsync();
         };
     }
@@ -99,6 +111,28 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
         item.WhenAnyValue(x => x.Quantity, x => x.SelectedBatch)
             .Throttle(TimeSpan.FromMilliseconds(100))
             .Subscribe(_ => OnCartChangedAsync().ConfigureAwait(false));
+
+        item.WhenAnyValue(x => x.TotalProductionTimeMinutes)
+            .Subscribe(_ => UpdateProductionTime());
+    }
+
+    private void UpdateProductionTime()
+    {
+        TotalProductionTimeMinutes = Form.CartItems.Sum(x => x.TotalProductionTimeMinutes);
+
+        var hours = TotalProductionTimeMinutes / 60;
+        var minutes = TotalProductionTimeMinutes % 60;
+        FormattedProductionTime = $"{hours}ч {minutes}мин";
+
+        ProductionProgressPercent = Math.Min(
+            (double)TotalProductionTimeMinutes / MaxProductionTimeMinutes * 100,
+            100);
+
+        IsWithinProductionLimit = TotalProductionTimeMinutes <= MaxProductionTimeMinutes;
+        IsProductionLimitExceeded = !IsWithinProductionLimit;
+
+        // ← обновляем CanSelectDate, чтобы блокировать дату при превышении
+        UpdateCanSelectDate();
     }
 
     private void UpdateCartState()
@@ -107,11 +141,22 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
         TotalUnits = Form.CartItems.Sum(x => x.TotalUnits);
         HasCartItems = Form.CartItems.Any();
         IsCartEmpty = !HasCartItems;
+
+        UpdateProductionTime(); 
     }
 
     private void UpdateCanSelectDate()
     {
-        CanSelectDate = Form.CompanyId > 0 && HasCartItems && !IsOrderTooLarge;
+        bool companyOk = Form.CompanyId > 0;
+        bool itemsOk = HasCartItems;
+        bool sizeOk = !IsOrderTooLarge;
+        bool timeOk = IsWithinProductionLimit;
+
+        CanSelectDate = companyOk && itemsOk && sizeOk && timeOk;
+
+        // Показываем "выберите компанию" только если корзина не пуста (иначе в корзине своя плашка),
+        // компания не выбрана, и нет проблем с размером/временем
+        ShowSelectCompanyInfo = !companyOk && itemsOk && sizeOk && timeOk;
     }
 
     [ReactiveCommand]
@@ -169,7 +214,8 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
         {
             ProductId = product.ProductId,
             ProductName = product.Name,
-            CostPrice = product.CostPrice
+            CostPrice = product.CostPrice,
+            ProductionTimeMinutes = product.ProductionTimeMinutes
         };
 
         foreach (var b in product.Batches)
@@ -193,10 +239,7 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
     private void RemoveProduct(OrderCartItem? item)
     {
         if (item != null)
-        {
             Form.CartItems.Remove(item);
-            UpdateCartState();
-        }
     }
 
     [ReactiveCommand]
@@ -275,6 +318,12 @@ public partial class OrderEditorPageViewModel : PageViewModel, ISukiStackPageTit
         if (!HasCartItems)
         {
             _toastService.ShowError("Добавьте продукцию в заказ");
+            return false;
+        }
+
+        if (IsProductionLimitExceeded)
+        {
+            _toastService.ShowError($"Превышен лимит 8 часов. Текущее: {FormattedProductionTime}");
             return false;
         }
 

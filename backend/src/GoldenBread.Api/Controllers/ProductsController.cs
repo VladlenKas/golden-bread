@@ -6,8 +6,9 @@ using GoldenBread.Application.Features.Products.Commands.UpdateProduct;
 using GoldenBread.Application.Features.Products.Commands.UpdateProductBatches;
 using GoldenBread.Application.Features.Products.Commands.UpdateProductImages;
 using GoldenBread.Application.Features.Products.Commands.UpdateProductRecipe;
-using GoldenBread.Application.Features.Products.Queries.GetProductById;
 using GoldenBread.Application.Features.Products.Dtos;
+using GoldenBread.Application.Features.Products.Queries.GetProductById;
+using GoldenBread.Application.Features.Statistics.Dtos;
 using Microsoft.AspNetCore.Authorization;
 
 namespace GoldenBread.Api.Controllers;
@@ -83,5 +84,17 @@ public class ProductsController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new DeleteProductCommand(id));
         return result ? NoContent() : NotFound();
+    }
+
+    [Authorize]
+    [HttpGet("raw-data")]
+    public async Task<ActionResult<RawStatisticsData>> GetRawData(
+        [FromQuery] DateTime? dateFrom,
+        [FromQuery] DateTime? dateTo,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetRawStatisticsQuery(dateFrom, dateTo);
+        var result = await mediator.Send(query, cancellationToken);
+        return Ok(result);
     }
 }

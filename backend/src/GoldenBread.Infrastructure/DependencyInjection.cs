@@ -50,6 +50,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentAccountContext, CurrentAccountContext>();
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<IDeliveryInvoiceGenerator, DeliveryInvoiceGenerator>();
+        services.AddScoped <ICooperationAgreementGenerator, CooperationAgreementGenerator>();
         services.AddScoped<IUnitConversionService, UnitConversionService>();
 
         // Repositories
@@ -71,7 +72,13 @@ public static class DependencyInjection
         services.AddScoped<ICatalogQueryService, CatalogQueryService>();
 
         // Scheduling Module
-        var timeZone = TimeZoneInfo.FindSystemTimeZoneById("Ekaterinburg Standard Time");
+        var timeZoneId = 
+            Environment.GetEnvironmentVariable("TZ")
+            ?? configuration["TimeZone"]
+            ?? "Asia/Yekaterinburg";
+
+        var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                
         services.AddSingleton(timeZone);
         services.AddSingleton(WorkSchedule.Default());
         services.AddScoped<IWorkCalendar, WorkCalendar>();

@@ -35,8 +35,12 @@ public static class DependencyInjection
                 options.ExpireTimeSpan = TimeSpan.FromHours(24);
                 options.SlidingExpiration = true;
             });
+
+        var keysPath = configuration["Data:KeysPath"] ?? 
+               Path.Combine(Directory.GetCurrentDirectory(), "data", "dataprotection-keys");
+
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(configuration["Data:KeysPath"]!))
+            .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
             .SetApplicationName("GoldenBread");
         services.AddAuthorization();
 

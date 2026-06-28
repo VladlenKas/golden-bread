@@ -21,7 +21,7 @@ public record OrderEditorDataResponse(List<CompanyLookup> Companies, List<Produc
 
 public record CompanyLookup(int CompanyId, string Name);
 
-public record ProductEditorDto(int ProductId, string Name, decimal CostPrice, List<ProductBatchEditorDto> Batches);
+public record ProductEditorDto(int ProductId, string Name, decimal CostPrice, int ProductionTimeMinutes, List<ProductBatchEditorDto> Batches);
 
 public record ProductBatchEditorDto(int ProductBatchId, int MarkupPercent, int QuantityUnits);
 

@@ -56,10 +56,14 @@ export const registerSchema = toTypedSchema(
         .string({ required_error: validationMessages.required })
         .min(8, { message: validationMessages.minLength(8) })
         .max(50, { message: validationMessages.maxLength(50) }),
+      agreedToTerms: z
+        .boolean({ required_error: validationMessages.required })
+        .refine((val) => val === true, {
+          message: 'Необходимо согласие с условиями',
+        }),
     })
     .refine((data) => data.password === data.passwordConfirm, {
       message: validationMessages.passwordsMismatch,
       path: ['passwordConfirm'],
     }),
 );
-  

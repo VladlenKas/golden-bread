@@ -2,6 +2,7 @@
 using GoldenBread.Desktop.Features.Administration.Users.Models;
 using GoldenBread.Desktop.Features.Common;
 using GoldenBread.Desktop.Features.Common.DetailData;
+using GoldenBread.Desktop.Features.Production.EmployeeTasksList.Dtos;
 using GoldenBread.Desktop.Features.Production.OrdersList.Dtos;
 using GoldenBread.Desktop.Features.References.Employees.Models;
 using GoldenBread.Desktop.Features.References.Products.Models;
@@ -170,6 +171,47 @@ public static class DetailDialogFactory
                                 $"• Статус: {GetStatusName(t.Status)}"))
                     ]
                     : [new DetailFieldData("Нет назначенных задач", "")])
+            ]);
+    }
+
+    public static DetailDialogData FromEmployeeTask(EmployeeTaskDetailResponse item)
+    {
+        var progress = item.AssignedQuantity == 0
+            ? "0%"
+            : $"{(item.CompletedQuantity * 100.0 / item.AssignedQuantity):F0}%";
+
+        var timeSlot = item.StartTime.HasValue && item.EndTime.HasValue
+            ? $"{item.StartTime.Value:HH:mm}–{item.EndTime.Value:HH:mm}"
+            : "Не назначен";
+
+        return new DetailDialogData(
+            Sections:
+            [
+                new DetailSectionData(
+                Header: "Основная информация",
+                Fields:
+                [
+                    new("Номер задачи", $"Задача №{item.EmployeeTaskId}"),
+                    new("Сотрудник", item.EmployeeName),
+                    new("Статус", GetStatusName(item.Status)),
+                    new("Заказ", $"Заказ №{item.OrderId}"),
+                    new("Компания", item.CompanyName),
+                    new("Продукция", item.ProductName),
+                    new("Дата начала", item.StartTime?.ToString("dd.MM.yyyy HH:mm") ?? "Не назначена"),
+                    new("Дата завершения", item.EndTime?.ToString("dd.MM.yyyy HH:mm") ?? "Не назначена"),
+                    new("Временной слот", timeSlot),
+                    new("Назначено", $"{item.AssignedQuantity} ед."),
+                    new("Выполнено", $"{item.CompletedQuantity} ед."),
+                    new("Прогресс выполнения", progress)
+                ]),
+
+            new DetailSectionData(
+                Header: "Информация о партии и стоимости",
+                Fields:
+                [
+                    new("Параметры партии", item.BatchInfo),
+                    new("Сумма позиции", item.TotalAmount.HasValue ? $"{item.TotalAmount:N2} ₽" : "—")
+                ])
             ]);
     }
 

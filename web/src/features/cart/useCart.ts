@@ -1,6 +1,11 @@
 import { ref, computed } from 'vue';
 import type { CartItem, CartSummary, CreateOrderResponse } from './types';
-import { getCart, updateCartItem, toggleFavorite as toggleFavoriteApi, createOrder } from './api';
+import {
+  getCart,
+  updateCartItem,
+  toggleFavorite as toggleFavoriteApi,
+  createOrder,
+} from './api';
 import { getLocalTimeZone, type DateValue } from '@internationalized/date';
 import { format } from 'date-fns';
 import { useNotifications } from '@/shared/composables';
@@ -14,6 +19,7 @@ export function useCart() {
   const minimalDeliveryDate = ref<string | null>(null);
   const maximalDeliveryDate = ref<string | null>(null);
   const togglingFavorites = ref<Set<number>>(new Set());
+  const PRODUCTION_LIMIT_MINUTES = 480;
 
   const loadCart = async () => {
     isLoading.value = true;
@@ -21,8 +27,8 @@ export function useCart() {
       const response = await getCart();
       minimalDeliveryDate.value = response.minimalDeliveryDate;
       maximalDeliveryDate.value = response.maximalDeliveryDate;
-      
-      items.value = (response.cartItemsList || []).map(dto => ({
+
+      items.value = (response.cartItemsList || []).map((dto) => ({
         ...dto,
         isSelected: true,
       }));
@@ -30,20 +36,58 @@ export function useCart() {
       isLoading.value = false;
     }
   };
+  
+const totalProductionTimeMinutes = computed(() => {
+  const selectedItems = items.value.filter((item) => item.isSelected);
+  return selectedItems.reduce((sum, item) => {
+    const batchCount = item.quantityInCart;
+    return sum + item.productionTimeMinutes * batchCount;
+  }, 0);
+});
+
+const isWithinProductionLimit = computed(() => {
+  return totalProductionTimeMinutes.value <= PRODUCTION_LIMIT_MINUTES;
+});
+
+const formattedProductionTime = computed(() => {
+  const total = totalProductionTimeMinutes.value;
+  const hours = Math.floor(total / 60);
+  const minutes = total % 60;
+  return hours > 0 && minutes > 0
+    ? `${hours} ч ${minutes} мин`
+    : hours > 0
+      ? `${hours} ч`
+      : `${minutes} мин`;
+});
+
+// Оставшееся время в процентах для прогресс-бара
+const productionProgressPercent = computed(() => {
+  return Math.min((totalProductionTimeMinutes.value / PRODUCTION_LIMIT_MINUTES) * 100, 100);
+});
 
   // ✅ Верни CartSummary, а не CartSummaryResponse
   const summary = computed<CartSummary>(() => {
-    const selectedItems = items.value.filter(item => item.isSelected);
+    const selectedItems = items.value.filter((item) => item.isSelected);
     return {
       totalItems: items.value.length,
       selectedItems: selectedItems.length,
-      totalPrice: selectedItems.reduce((sum, item) => sum + item.totalCostInCart, 0),
-      totalUnits: selectedItems.reduce((sum, item) => sum + (item.quantityPerBatch * item.quantityInCart), 0),
+      totalPrice: selectedItems.reduce(
+        (sum, item) => sum + item.totalCostInCart,
+        0,
+      ),
+      totalUnits: selectedItems.reduce(
+        (sum, item) => sum + item.quantityPerBatch * item.quantityInCart,
+        0,
+      ),
     };
   });
 
-  const updateQuantity = async (productId: number, productBatchId: number, newCount: number) => {
-    const item = items.value.find(i => i.productBatchId === productBatchId);
+  const updateQuantity = async (
+    productId: number,
+    productBatchId: number,
+    newCount: number,
+  ) => {
+    const item = items.value.find((i) => i.productBatchId === productBatchId);
     if (!item || newCount < 0) return;
 
     const oldCount = item.quantityInCart;
@@ -51,7 +95,9 @@ export function useCart() {
 
     // Оптимистичное обновление UI
     if (newCount === 0) {
-      items.value = items.value.filter(i => i.productBatchId !== productBatchId);
+      items.value = items.value.filter(
+        (i) => i.productBatchId !== productBatchId,
+      );
     } else {
       item.quantityInCart = newCount;
       item.totalCostInCart = (item.totalCostInCart / oldCount) * newCount;
@@ -63,9 +109,9 @@ export function useCart() {
       await updateCartItem({
         productId,
         productBatchId,
-        quantity: newCount
+        quantity: newCount,
       });
-      
+
       // Перезагружаем корзину для синхронизации с сервером
       await loadCart();
     } catch (error) {
@@ -84,13 +130,13 @@ export function useCart() {
   };
 
   const toggleFavorite = async (productId: number) => {
-    const item = items.value.find(i => i.productId === productId);
+    const item = items.value.find((i) => i.productId === productId);
     if (!item) return;
 
     // Оптимистично меняем UI сразу
     const previousState = item.isFavorite;
     item.isFavorite = !previousState;
-    
+
     // Добавляем в Set для возможного отображения загрузки на конкретной кнопке
     togglingFavorites.value.add(productId);
 
@@ -108,15 +154,21 @@ export function useCart() {
     }
   };
 
-  const incrementQuantity = async (productId: number, productBatchId: number) => {
-    const item = items.value.find(i => i.productBatchId === productBatchId);
+  const incrementQuantity = async (
+    productId: number,
+    productBatchId: number,
+  ) => {
+    const item = items.value.find((i) => i.productBatchId === productBatchId);
     if (item) {
       await updateQuantity(productId, productBatchId, item.quantityInCart + 1);
     }
   };
 
-  const decrementQuantity = async (productId: number, productBatchId: number) => {
-    const item = items.value.find(i => i.productBatchId === productBatchId);
+  const decrementQuantity = async (
+    productId: number,
+    productBatchId: number,
+  ) => {
+    const item = items.value.find((i) => i.productBatchId === productBatchId);
     if (item && item.quantityInCart > 1) {
       await updateQuantity(productId, productBatchId, item.quantityInCart - 1);
     } else if (item && item.quantityInCart === 1) {
@@ -129,30 +181,36 @@ export function useCart() {
   };
 
   const toggleSelection = (productBatchId: number) => {
-    const item = items.value.find(i => i.productBatchId === productBatchId);
+    const item = items.value.find((i) => i.productBatchId === productBatchId);
     if (item) {
       item.isSelected = !item.isSelected;
     }
   };
 
   const selectAll = (selected: boolean) => {
-    items.value.forEach(item => {
+    items.value.forEach((item) => {
       item.isSelected = selected;
     });
   };
 
-  const isTogglingFavorite = (productId: number) => togglingFavorites.value.has(productId);
+  const isTogglingFavorite = (productId: number) =>
+    togglingFavorites.value.has(productId);
 
   // ✅ Создание заказа с "искусственной" задержкой 3 секунды
   // useCart.ts
-  const submitOrder = async (selectedDate: DateValue): Promise<CreateOrderResponse> => {
+  const submitOrder = async (
+    selectedDate: DateValue,
+  ): Promise<CreateOrderResponse> => {
     isCreatingOrder.value = true;
     const startTime = Date.now();
-    
+
     try {
       // Конвертируем DateValue в ISO строку прямо здесь
-      const isoDate = format(selectedDate.toDate(getLocalTimeZone()), 'yyyy-MM-dd');
-      
+      const isoDate = format(
+        selectedDate.toDate(getLocalTimeZone()),
+        'yyyy-MM-dd',
+      );
+
       const response = await createOrder({
         desiredDeliveryDate: isoDate,
       });
@@ -160,18 +218,20 @@ export function useCart() {
       // Задержка 3 секунды
       const elapsed = Date.now() - startTime;
       const remainingDelay = Math.max(0, 3000 - elapsed);
-      
+
       if (remainingDelay > 0) {
-        await new Promise(resolve => setTimeout(resolve, remainingDelay));
+        await new Promise((resolve) => setTimeout(resolve, remainingDelay));
       }
 
       // Очищаем выбранные товары
-      items.value = items.value.filter(item => !item.isSelected);
+      items.value = items.value.filter((item) => !item.isSelected);
 
       return response;
     } finally {
       isCreatingOrder.value = false;
-      successToast(`Поздравляем! Заказ оформлен успешно! Можете просмотреть детали в профиле`);
+      successToast(
+        `Поздравляем! Заказ оформлен успешно! Можете просмотреть детали в профиле`,
+      );
     }
   };
 
@@ -193,5 +253,9 @@ export function useCart() {
     isTogglingFavorite,
     isCreatingOrder,
     submitOrder, // Добавь сюда
+    totalProductionTimeMinutes,
+    isWithinProductionLimit,
+    formattedProductionTime,
+    productionProgressPercent 
   };
 }

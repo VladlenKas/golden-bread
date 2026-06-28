@@ -28,7 +28,10 @@ public sealed record ProductDetailResponse(
     decimal TotalCostInCart,
 
     // Рецепт
-    List<IngredientResponse> Ingredients);
+    List<IngredientResponse> Ingredients,
+
+    int TotalSoldAllTime,
+    IReadOnlyList<SeasonalSalesData> SeasonalSales);
 
 public sealed record ProductBatchResponse(
     int ProductBatchId,

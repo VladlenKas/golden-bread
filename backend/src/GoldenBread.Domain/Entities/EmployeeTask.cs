@@ -41,6 +41,18 @@ public class EmployeeTask
 
     public void UpdateStatus(Enums.TaskStatus status)
     {
+        if (status == Enums.TaskStatus.Completed)
+            CompletedQuantity = AssignedQuantity;
+
         Status = status;
+    }
+
+    public void UpdateCompletedQuantity(int quantity)
+    {
+        if (quantity < 0 || quantity > AssignedQuantity)
+            throw new ArgumentOutOfRangeException(nameof(quantity),
+                "Количество выполненных единиц вне диапазона 0..AssignedQuantity");
+
+        CompletedQuantity = quantity;
     }
 }

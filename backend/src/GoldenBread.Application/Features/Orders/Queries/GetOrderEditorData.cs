@@ -27,6 +27,7 @@ public sealed class GetOrderEditorDataQueryHandler(IGoldenBreadContext context)
                 p.ProductId,
                 p.Name,
                 p.CostPrice,
+                p.ProductionTimeMinutes,
                 p.ProductBatches.Select(b => new ProductBatchEditorDto(
                     b.ProductBatchId,
                     b.MarkupPercent,

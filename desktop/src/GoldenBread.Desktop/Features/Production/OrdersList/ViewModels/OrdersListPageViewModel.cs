@@ -4,6 +4,7 @@ using GoldenBread.Desktop.Features.Common;
 using GoldenBread.Desktop.Features.Production.OrdersList.Dtos;
 using GoldenBread.Desktop.Features.Production.OrdersList.Models;
 using GoldenBread.Desktop.Infrastructure.Api;
+using GoldenBread.Desktop.Infrastructure.Auth;
 using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.Infrastructure.Helpers;
 using GoldenBread.Desktop.UI.Common;
@@ -20,6 +21,7 @@ namespace GoldenBread.Desktop.Features.Production.OrdersList.ViewModels;
 public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitleProvider
 {
     private readonly IOrdersApi _api;
+    private readonly CurrentUserStore _userStore;
     private readonly DialogService _dialogService;
     private readonly ToastService _toastService;
     private readonly IDocumentsApi _documentsApi;
@@ -33,6 +35,7 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
     [Reactive] private DateTime? _dateTo;
     [Reactive] private bool _canDragged = true;
     [Reactive] public KanbanItem? _selectedItem;
+    [Reactive] private int _selectedDateFilterIndex;
 
     public string Title { get; set; } = "Заказы производства";
 
@@ -56,12 +59,14 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
 
     public OrdersListPageViewModel(
         IOrdersApi api,
+        CurrentUserStore userStore,
         IDocumentsApi documentsApi,
         WindowService windowService,
         DialogService dialogService,
         ToastService toastService)
     {
         _api = api;
+        _userStore = userStore;
         _documentsApi = documentsApi;
         _windowService = windowService;
         _dialogService = dialogService;
@@ -71,7 +76,8 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
             x => x.SearchText,
             x => x.SelectedSortIndex,
             x => x.DateFrom,
-            x => x.DateTo)
+            x => x.DateTo,
+            x => x.SelectedDateFilterIndex)
             .Select(_ => SearchPredicate);
 
         var sortComparer = this.WhenAnyValue(x => x.SelectedSortIndex)
@@ -113,18 +119,29 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
 
     private Func<KanbanItem, bool> SearchPredicate => item =>
     {
-        // Текстовый поиск
         var textMatch = string.IsNullOrWhiteSpace(SearchText) ||
             item.SearchText.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase);
 
-        // Фильтр по дате создания
+        // Фильтр по дате завершения (как раньше)
         var dateMatch = true;
         if (DateFrom.HasValue)
             dateMatch = dateMatch && item.EndDate >= DateOnly.FromDateTime(DateFrom.Value);
         if (DateTo.HasValue)
             dateMatch = dateMatch && item.EndDate <= DateOnly.FromDateTime(DateTo.Value);
 
-        return textMatch && dateMatch;
+        // Быстрый фильтр
+        var quickFilterMatch = SelectedDateFilterIndex switch
+        {
+            0 => true,
+            1 => item.EndDate == DateOnly.FromDateTime(DateTime.Today),
+            2 => item.EndDate >= DateOnly.FromDateTime(DateTime.Today),
+            3 => item.EndDate < DateOnly.FromDateTime(DateTime.Today)
+                 && item.Status is not "Completed" and not "Canceled",
+            4 => item.StartDate is null,
+            _ => true
+        };
+
+        return textMatch && dateMatch && quickFilterMatch;
     };
 
     private IComparer<KanbanItem> SortExpression
@@ -176,6 +193,7 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
     {
         SearchText = string.Empty;
         SelectedSortIndex = 0;
+        SelectedDateFilterIndex = 0;
         DateFrom = null;
         DateTo = null;
     }
@@ -237,9 +255,23 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
         if (!Permissions.Update)
             return false;
 
+        // 1. Нельзя перетаскивать НИЧЕГО в "Необработанные"
+        if (toColumn == "Created")
+        {
+            _toastService.ShowWarning("Перемещение в 'Необработанные' запрещено");
+            return false;
+        }
+
+        // 2. Нельзя переводить "В процессе" → "Выполненные", если не все задачи готовы
+        if (fromColumn == "InProgress" && toColumn == "Completed" && item.CompletedTasks < item.TotalTasks)
+        {
+            _toastService.ShowWarning("Нельзя завершить заказ: не все задачи выполнены");
+            return false;
+        }
+
         CanDragged = false;
 
-        var message = $"Переместить «{item.Title}» из «{ColumnNames[fromColumn]}» в «{ColumnNames[toColumn]}»?";
+        var message = $"Переместить «{item.Title}» из «{ColumnNames[fromColumn]}» в «{ColumnNames[toColumn]}»? Это действие нельзя будет отменить";
         var tcs = _toastService.ShowWarningQuestion(message);
         var confirmed = await tcs.Task;
 
@@ -349,7 +381,7 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
             IsBusy = true;
 
             // 1. Скачиваем с сервера
-            var response = await _documentsApi.DownloadDeliveryInvoiceAsync(item.Id);
+            var response = await _documentsApi.DownloadDeliveryInvoiceAsync(item.Id, _userStore.UserId.Value);
 
             if (!response.IsSuccessStatusCode || response.Content is null)
             {
@@ -368,11 +400,11 @@ public partial class OrdersListPageViewModel : PageViewModel, ISukiStackPageTitl
             var file = await window.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
             {
                 Title = "Сохранить накладную",
-                SuggestedFileName = $"Накладная_№{item.Id}.xlsx",
-                DefaultExtension = "xlsx",
+                SuggestedFileName = $"Накладная_№{item.Id}.pdf",
+                DefaultExtension = "pdf",
                 FileTypeChoices = new[]
                 {
-                new FilePickerFileType("Excel (*.xlsx)") { Patterns = new[] { "*.xlsx" } }
+                new FilePickerFileType("PDF (*.pdf)") { Patterns = new[] { "*.pdf" } }
             }
             });
 

@@ -1,0 +1,432 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:icon="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:vm="using:GoldenBread.Desktop.Features.Production.EmployeeTasksList.ViewModels"
+			 x:Class="GoldenBread.Desktop.Features.Production.EmployeeTasksList.Views.EmployeeTasksListPageView"
+			 x:DataType="vm:EmployeeTasksListPageViewModel"
+			 x:CompileBindings="False">
+
+	<suki:BusyArea BusyText="Загрузка..." IsBusy="{Binding IsBusy}">
+		<DockPanel VerticalSpacing="12">
+
+			<!-- Toolbar -->
+			<DockPanel DockPanel.Dock="Top"
+					   HorizontalSpacing="8"
+					   LastChildFill="False">
+
+				<TextBox DockPanel.Dock="Left"
+						 Width="300"
+						 MaxLength="50"
+						 Text="{Binding SearchText}"
+						 Watermark="{Binding AllItemsCount, StringFormat='Искать среди {0} записей...'}"
+						 suki:TextBoxExtensions.Prefix="{icon:MaterialIconExt Kind=Search}" />
+
+				<ComboBox DockPanel.Dock="Left"
+						  Margin="-5"
+						  SelectedIndex="{Binding SelectedSortIndex}">
+					<ComboBoxItem>Номер задачи ↑</ComboBoxItem>
+					<ComboBoxItem>Номер задачи ↓</ComboBoxItem>
+					<ComboBoxItem>Сотрудник А-Я</ComboBoxItem>
+					<ComboBoxItem>Сотрудник Я-А</ComboBoxItem>
+					<ComboBoxItem>Дата начала ↑</ComboBoxItem>
+					<ComboBoxItem>Дата начала ↓</ComboBoxItem>
+					<ComboBoxItem>Прогресс ↑</ComboBoxItem>
+					<ComboBoxItem>Прогресс ↓</ComboBoxItem>
+				</ComboBox>
+
+				<ComboBox DockPanel.Dock="Left"
+						  Margin="-5"
+						  SelectedIndex="{Binding SelectedDateFilterIndex}">
+					<ComboBoxItem>Все</ComboBoxItem>
+					<ComboBoxItem>Сегодня</ComboBoxItem>
+					<ComboBoxItem>Актуальные</ComboBoxItem>
+					<ComboBoxItem>Просроченные</ComboBoxItem>
+					<ComboBoxItem>Без слота</ComboBoxItem>
+				</ComboBox>
+
+				
+				<CalendarDatePicker DockPanel.Dock="Left"
+									Watermark="Дата от:"
+									SelectedDate="{Binding DateFrom}"/>
+
+				<CalendarDatePicker DockPanel.Dock="Left"
+									Watermark="Дата до:"
+									SelectedDate="{Binding DateTo}"/>
+
+				<Button DockPanel.Dock="Left"
+						Classes="Basic Small"
+						Command="{Binding ResetFiltersCommand}"
+						suki:ButtonExtensions.Icon="{icon:MaterialIconExt Kind=Restore}"/>
+			</DockPanel>
+
+			<!-- Kanban Columns -->
+			<Grid ColumnDefinitions="*,*,*,*" HorizontalAlignment="Stretch" ColumnSpacing="16">
+
+				<!-- InProgress -->
+				<suki:GlassCard Grid.Column="0"
+								x:Name="ColInProgress"
+								Tag="InProgress"
+								Padding="12"
+								CornerRadius="16"
+								IsHitTestVisible="{Binding CanDragged}">
+					<DockPanel>
+						<Expander DockPanel.Dock="Top" IsExpanded="True">
+							<Expander.Header>
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<icon:MaterialIcon Kind="ProgressClock" Foreground="{DynamicResource SukiPrimaryColor}"/>
+									<TextBlock Text="{Binding InProgressItems.Count, StringFormat='{} В работе ({0})'}"
+											   Classes="h6"/>
+								</StackPanel>
+							</Expander.Header>
+							<ScrollViewer>
+								<ItemsControl x:Name="ItemsList1" ItemsSource="{Binding InProgressItems}" HorizontalAlignment="Stretch">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<suki:GlassCard CornerRadius="12"
+															Margin="0 0 0 8"
+															Padding="16"
+															IsInteractive="True"
+															PointerPressed="OnCardPointerPressed"
+															DoubleTapped="ItemCard_DoubleTapped"
+															Cursor="Hand"
+															Tag="{Binding}">
+												<StackPanel Spacing="6">
+													<StackPanel Orientation="Horizontal" Spacing="8">
+														<TextBlock Text="{Binding Title}"
+																   FontWeight="Bold" FontSize="14"
+																   VerticalAlignment="Center"/>
+														<Border Background="{DynamicResource SukiPrimaryColor}"
+																CornerRadius="8" Padding="6 2">
+															<TextBlock Text="{Binding OrderId, StringFormat='{}Заказ №{0}'}"
+																	   FontSize="10" Foreground="White"/>
+														</Border>
+													</StackPanel>
+
+													<TextBlock Text="{Binding EmployeeName}"
+															   Opacity="0.7" FontSize="12"/>
+													<TextBlock Text="{Binding ProductName}"
+															   Opacity="0.7" FontSize="12"/>
+
+													<StackPanel Orientation="Horizontal" Spacing="12">
+														<StackPanel Orientation="Horizontal" Spacing="4" Opacity="0.6">
+															<icon:MaterialIcon Kind="CalendarStart" Width="14" Height="14"/>
+															<TextBlock Text="{Binding StartTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="11"/>
+														</StackPanel>
+														<StackPanel Orientation="Horizontal" Spacing="4" Opacity="0.6">
+															<icon:MaterialIcon Kind="CalendarEnd" Width="14" Height="14"/>
+															<TextBlock Text="{Binding EndTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="11"/>
+														</StackPanel>
+													</StackPanel>
+
+													<Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0 4">
+														<Button Grid.Column="0"
+																Classes="Basic Small"
+																IsVisible="{Binding IsEditable}"
+																Command="{Binding #ItemsList1.DataContext.DecrementProgressCommand}"
+																CommandParameter="{Binding}"
+																VerticalAlignment="Center">
+															<icon:MaterialIcon Kind="Minus" Width="12" Height="12"/>
+														</Button>
+
+														<TextBlock Grid.Column="1"
+																   Text="{Binding CompletedQuantity}"
+																   FontSize="11" FontWeight="SemiBold"
+																   VerticalAlignment="Center"
+																   Margin="4 0"/>
+
+														<ProgressBar Grid.Column="2"
+																	 Value="{Binding Progress}"
+																	 Maximum="1"
+																	 Margin="8 0"
+																	 Height="4"
+																	 CornerRadius="2"/>
+
+														<TextBlock Grid.Column="3"
+																   Text="{Binding AssignedQuantity}"
+																   FontSize="11" FontWeight="SemiBold"
+																   VerticalAlignment="Center"
+																   Margin="4 0"/>
+
+														<Button Grid.Column="4"
+																Classes="Basic Small"
+																IsVisible="{Binding IsEditable}"
+																Command="{Binding #ItemsList1.DataContext.IncrementProgressCommand}"
+																CommandParameter="{Binding}"
+																VerticalAlignment="Center">
+															<icon:MaterialIcon Kind="Plus" Width="12" Height="12"/>
+														</Button>
+													</Grid>
+
+													<StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+														<icon:MaterialIcon Kind="Domain" Width="14" Height="14" Opacity="0.8"/>
+														<TextBlock Text="{Binding CompanyName}"
+																   FontSize="13" FontWeight="SemiBold"/>
+													</StackPanel>
+												</StackPanel>
+											</suki:GlassCard>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</ScrollViewer>
+						</Expander>
+					</DockPanel>
+				</suki:GlassCard>
+
+				<!-- Paused -->
+				<suki:GlassCard Grid.Column="1"
+								x:Name="ColPaused"
+								Tag="Paused"
+								Padding="12"
+								CornerRadius="16"
+								IsHitTestVisible="{Binding CanDragged}">
+					<DockPanel>
+						<Expander DockPanel.Dock="Top" IsExpanded="True">
+							<Expander.Header>
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<icon:MaterialIcon Kind="PauseCircle" Foreground="{DynamicResource SukiAccentColor}"/>
+									<TextBlock Text="{Binding PausedItems.Count, StringFormat='{} Приостановленные ({0})'}"
+											   Classes="h6"/>
+								</StackPanel>
+							</Expander.Header>
+							<ScrollViewer>
+								<ItemsControl x:Name="ItemsList2" ItemsSource="{Binding PausedItems}" HorizontalAlignment="Stretch">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<suki:GlassCard CornerRadius="12"
+															Margin="0 0 0 8"
+															Padding="16"
+															IsInteractive="True"
+															PointerPressed="OnCardPointerPressed"
+															DoubleTapped="ItemCard_DoubleTapped"
+															Cursor="Hand"
+															Tag="{Binding}">
+												<StackPanel Spacing="6">
+													<StackPanel Orientation="Horizontal" Spacing="8">
+														<TextBlock Text="{Binding Title}"
+																   FontWeight="Bold" FontSize="14"
+																   VerticalAlignment="Center"/>
+														<Border Background="{DynamicResource SukiAccentColor}"
+																CornerRadius="8" Padding="6 2">
+															<TextBlock Text="{Binding OrderId, StringFormat='{}Заказ №{0}'}"
+																	   FontSize="10" Foreground="White"/>
+														</Border>
+													</StackPanel>
+
+													<TextBlock Text="{Binding EmployeeName}"
+															   Opacity="0.7" FontSize="12"/>
+													<TextBlock Text="{Binding ProductName}"
+															   Opacity="0.7" FontSize="12"/>
+
+													<StackPanel Orientation="Horizontal" Spacing="12">
+														<StackPanel Orientation="Horizontal" Spacing="4" Opacity="0.6">
+															<icon:MaterialIcon Kind="CalendarStart" Width="14" Height="14"/>
+															<TextBlock Text="{Binding StartTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="11"/>
+														</StackPanel>
+														<StackPanel Orientation="Horizontal" Spacing="4" Opacity="0.6">
+															<icon:MaterialIcon Kind="CalendarEnd" Width="14" Height="14"/>
+															<TextBlock Text="{Binding EndTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="11"/>
+														</StackPanel>
+													</StackPanel>
+
+													<Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" Margin="0 4">
+														<TextBlock Grid.Column="1"
+																   Text="{Binding CompletedQuantity}"
+																   FontSize="11" FontWeight="SemiBold"
+																   VerticalAlignment="Center"
+																   Margin="4 0"/>
+
+														<ProgressBar Grid.Column="2"
+																	 Value="{Binding Progress}"
+																	 Maximum="1"
+																	 Margin="8 0"
+																	 Height="4"
+																	 CornerRadius="2"
+																	 Foreground="{DynamicResource SukiAccentColor}"/>
+
+														<TextBlock Grid.Column="3"
+																   Text="{Binding AssignedQuantity}"
+																   FontSize="11" FontWeight="SemiBold"
+																   VerticalAlignment="Center"
+																   Margin="4 0"/>
+													</Grid>
+
+													<StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+														<icon:MaterialIcon Kind="Domain" Width="14" Height="14" Opacity="0.8"/>
+														<TextBlock Text="{Binding CompanyName}"
+																   FontSize="13" FontWeight="SemiBold"/>
+													</StackPanel>
+												</StackPanel>
+											</suki:GlassCard>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</ScrollViewer>
+						</Expander>
+					</DockPanel>
+				</suki:GlassCard>
+
+				<!-- Completed -->
+				<suki:GlassCard Grid.Column="2"
+								x:Name="ColCompleted"
+								Tag="Completed"
+								Padding="12"
+								CornerRadius="16"
+								IsHitTestVisible="{Binding CanDragged}">
+					<DockPanel>
+						<Expander DockPanel.Dock="Top" IsExpanded="True">
+							<Expander.Header>
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<icon:MaterialIcon Kind="CheckCircle" Foreground="#4CAF50"/>
+									<TextBlock Text="{Binding CompletedItems.Count, StringFormat='{} Выполненные ({0})'}"
+											   Classes="h6"/>
+								</StackPanel>
+							</Expander.Header>
+							<ScrollViewer>
+								<ItemsControl x:Name="ItemsList3" ItemsSource="{Binding CompletedItems}" HorizontalAlignment="Stretch">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<suki:GlassCard CornerRadius="12"
+															Margin="0 0 0 8"
+															Padding="16"
+															IsInteractive="True"
+															Cursor="Hand"
+															PointerPressed="OnCardPointerPressed"
+															DoubleTapped="ItemCard_DoubleTapped"
+															Tag="{Binding}">
+												<StackPanel Spacing="6">
+													<StackPanel Orientation="Horizontal" Spacing="8">
+														<TextBlock Text="{Binding Title}"
+																   FontWeight="Bold" FontSize="14"
+																   VerticalAlignment="Center"/>
+														<Border Background="#4CAF50"
+																CornerRadius="8" Padding="6 2">
+															<TextBlock Text="{Binding OrderId, StringFormat='{}Заказ №{0}'}"
+																	   FontSize="10" Foreground="White"/>
+														</Border>
+													</StackPanel>
+
+													<TextBlock Text="{Binding EmployeeName}"
+															   Opacity="0.7" FontSize="12"/>
+													<TextBlock Text="{Binding ProductName}"
+															   Opacity="0.7" FontSize="12"/>
+
+													<StackPanel Orientation="Horizontal" Spacing="12">
+														<StackPanel Orientation="Horizontal" Spacing="4" Opacity="0.6">
+															<icon:MaterialIcon Kind="CalendarCheck" Width="14" Height="14"/>
+															<TextBlock Text="{Binding EndTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="11"/>
+														</StackPanel>
+													</StackPanel>
+
+													<Grid ColumnDefinitions="Auto,*,Auto" Margin="0 4">
+														<TextBlock Grid.Column="0"
+																   Text="{Binding CompletedQuantity}"
+																   FontSize="11" FontWeight="SemiBold"
+																   VerticalAlignment="Center"
+																   Foreground="#4CAF50"/>
+														<ProgressBar Grid.Column="1"
+																	 Value="1"
+																	 Maximum="1"
+																	 Margin="8 0"
+																	 Height="4"
+																	 CornerRadius="2"
+																	 Foreground="#4CAF50"/>
+														<TextBlock Grid.Column="2"
+																   Text="{Binding AssignedQuantity}"
+																   FontSize="11" FontWeight="SemiBold"
+																   VerticalAlignment="Center"
+																   Foreground="#4CAF50"/>
+													</Grid>
+
+													<StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+														<icon:MaterialIcon Kind="Domain" Width="14" Height="14" Opacity="0.8"/>
+														<TextBlock Text="{Binding CompanyName}"
+																   FontSize="13" FontWeight="SemiBold"/>
+													</StackPanel>
+												</StackPanel>
+											</suki:GlassCard>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</ScrollViewer>
+						</Expander>
+					</DockPanel>
+				</suki:GlassCard>
+
+				<!-- Canceled -->
+				<suki:GlassCard Grid.Column="3"
+								x:Name="ColCanceled"
+								Tag="Canceled"
+								Padding="12"
+								CornerRadius="16"
+								IsHitTestVisible="{Binding CanDragged}">
+					<DockPanel>
+						<Expander DockPanel.Dock="Top" IsExpanded="True">
+							<Expander.Header>
+								<StackPanel Orientation="Horizontal" Spacing="8">
+									<icon:MaterialIcon Kind="CloseCircle" Foreground="#9E9E9E"/>
+									<TextBlock Text="{Binding CanceledItems.Count, StringFormat='{} Отмененные ({0})'}"
+											   Classes="h6"/>
+								</StackPanel>
+							</Expander.Header>
+							<ScrollViewer>
+								<ItemsControl x:Name="ItemsList4" ItemsSource="{Binding CanceledItems}" HorizontalAlignment="Stretch">
+									<ItemsControl.ItemTemplate>
+										<DataTemplate>
+											<suki:GlassCard CornerRadius="12"
+															Margin="0 0 0 8"
+															IsInteractive="True"
+															Cursor="No"
+															Padding="16"
+															DoubleTapped="ItemCard_DoubleTapped"
+															Tag="{Binding}">
+												<StackPanel Spacing="6">
+													<StackPanel Orientation="Horizontal" Spacing="8">
+														<TextBlock Text="{Binding Title}"
+																   FontWeight="Bold" FontSize="14"
+																   VerticalAlignment="Center"
+																   TextDecorations="Strikethrough"/>
+														<Border Background="#9E9E9E"
+																CornerRadius="8" Padding="6 2">
+															<TextBlock Text="{Binding OrderId, StringFormat='{}Заказ №{0}'}"
+																	   FontSize="10" Foreground="White"/>
+														</Border>
+													</StackPanel>
+
+													<TextBlock Text="{Binding EmployeeName}"
+															   Opacity="0.5" FontSize="12"
+															   TextDecorations="Strikethrough"/>
+													<TextBlock Text="{Binding ProductName}"
+															   Opacity="0.5" FontSize="12"
+															   TextDecorations="Strikethrough"/>
+
+													<StackPanel Orientation="Horizontal" Spacing="12">
+														<StackPanel Orientation="Horizontal" Spacing="4" Opacity="0.4">
+															<icon:MaterialIcon Kind="CalendarRemove" Width="14" Height="14"/>
+															<TextBlock Text="{Binding EndTime, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" FontSize="11"/>
+														</StackPanel>
+													</StackPanel>
+
+													<Border Background="#9E9E9E" Height="3" CornerRadius="2" Margin="0 4"/>
+
+													<StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Right">
+														<icon:MaterialIcon Kind="Domain" Width="14" Height="14" Opacity="0.5"/>
+														<TextBlock Text="{Binding CompanyName}"
+																   FontSize="13" FontWeight="SemiBold"
+																   TextDecorations="Strikethrough"/>
+													</StackPanel>
+												</StackPanel>
+											</suki:GlassCard>
+										</DataTemplate>
+									</ItemsControl.ItemTemplate>
+								</ItemsControl>
+							</ScrollViewer>
+						</Expander>
+					</DockPanel>
+				</suki:GlassCard>
+
+				<Canvas x:Name="DragLayer" IsHitTestVisible="False" Background="Transparent"/>
+			</Grid>
+		</DockPanel>
+	</suki:BusyArea>
+</UserControl>

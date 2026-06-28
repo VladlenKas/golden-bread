@@ -11,7 +11,7 @@ export const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: () => import('@/pages/HomePage.vue'),
+      component: () => import('@/features/home/HomePage.vue'),
     },
     {
       path: '/cart',

@@ -1,4 +1,5 @@
 ﻿using GoldenBread.Desktop.Features.References.Products.Models;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using GoldenBread.Desktop.UI.Helpers;
 using ReactiveUI.SourceGenerators;
@@ -12,14 +13,15 @@ public partial class RecipeItemForm : ViewModelBase
     int? _recipeId;
 
     [Reactive]
-    [Required]
-    [Range(1, int.MaxValue)] int _ingredientId;
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(1, int.MaxValue, ErrorMessage = "Значение ID должно начинаться от 1")] int _ingredientId;
 
-    [Reactive] string _ingredientName = string.Empty;
+    [Reactive] 
+    string _ingredientName = string.Empty;
 
     [Reactive]
-    [Required]
-    [Range(0.01, 999999.99)] decimal _quantity;
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [Range(0.01, 999999.99, ErrorMessage = "Значение количества должно начинаться от 0.01 до 999999.99")] decimal _quantity;
 
     public string Unit { get; set; } = string.Empty;
     public string UnitLocalized => LocalizedIngredientUnits.UnitsDetail(Unit);

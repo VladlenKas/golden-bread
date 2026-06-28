@@ -20,9 +20,9 @@ public class ProductBatch
     public decimal TotalPrice => UnitPrice * QuantityUnits;
 
     public static ProductBatch Create(
-    int productId,
-    int quantityUnits,
-    int markupPercent)
+        int productId,
+        int quantityUnits,
+        int markupPercent)
     {
         return new ProductBatch
         {

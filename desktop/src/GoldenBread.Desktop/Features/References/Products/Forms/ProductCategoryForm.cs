@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using GoldenBread.Desktop.Features.References.Products.Models;
+using GoldenBread.Desktop.Infrastructure.Constants;
 using GoldenBread.Desktop.UI.Common;
 using ReactiveUI.SourceGenerators;
 
@@ -8,8 +9,14 @@ namespace GoldenBread.Desktop.Features.References.Products.Forms;
 public partial class ProductCategoryForm : ViewModelBase
 {
     [Reactive] int _productCategoryId;
-    [Reactive][Required][StringLength(50, MinimumLength = 2)] string _name = null!;
-    [Reactive][Required][RegularExpression(@"^#[0-9A-Fa-f]{6}$")] string _color = "#FF0000";
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [StringLength(50, MinimumLength = 2)] string _name = null!;
+
+    [Reactive]
+    [Required(ErrorMessage = ConstantMessages.RequiredValidation)]
+    [RegularExpression(@"^#[0-9A-Fa-f]{6}$", ErrorMessage = "Цвет должен соответствовать HEX значению")] string _color = "#FF0000";
 
     public static ProductCategoryForm FromDto(ProductCategoryDto dto) => new()
     {

@@ -15,6 +15,7 @@ public class Product
     public decimal StorageTempMin { get; set; }
     public decimal StorageTempMax { get; set; }
     public DateTime? DeletedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     public ProductCategory Category { get; set; } = null!;
 
@@ -40,7 +41,8 @@ public class Product
             Weight = 0,
             ShelfLifeDays = 0,
             StorageTempMin = 0,
-            StorageTempMax = 0
+            StorageTempMax = 0,
+            CreatedAt = DateTime.UtcNow
         };
     }
 

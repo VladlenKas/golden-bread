@@ -52,7 +52,7 @@ public sealed class CalculateDeliveryDateQueryHandler(
         if (scheduleResult.IsFeasible)
         {
             minimalDate = DateOnly.FromDateTime(scheduleResult.PlanEnd);
-            maximalDate = DateOnly.FromDateTime(DateTime.Now).AddDays(30);
+            maximalDate = DateOnly.FromDateTime(DateTime.Now).AddDays(90);
         }
 
         return new CalculateDeliveryResponse(minimalDate, maximalDate);

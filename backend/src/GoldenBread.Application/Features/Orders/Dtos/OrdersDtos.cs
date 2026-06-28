@@ -24,6 +24,7 @@ public record ProductEditorDto(
     int ProductId,
     string Name,
     decimal CostPrice,
+    int ProductionTimeMinutes,
     List<ProductBatchEditorDto> Batches);
 
 public record ProductBatchEditorDto(

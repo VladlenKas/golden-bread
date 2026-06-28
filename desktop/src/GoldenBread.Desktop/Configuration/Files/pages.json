@@ -25,12 +25,6 @@
       "order": 25
     },
     {
-      "key": "analytics",
-      "title": "Аналитика",
-      "icon": "ChartBar",
-      "order": 30
-    },
-    {
       "key": "companies",
       "title": "Компании",
       "icon": "Domain",
@@ -41,6 +35,12 @@
       "title": "Пользователи",
       "icon": "AccountCog",
       "order": 50
+    },
+    {
+      "key": "statistic",
+      "title": "Статистика",
+      "icon": "ChartBar",
+      "order": 60
     }
   ]
 }
